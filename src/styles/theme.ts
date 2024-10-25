@@ -1,38 +1,40 @@
 export const COLORS = {
-  MAIN_GREEN: '#88CD34',
-  MAIN_GREEN2: '#3E5617',
-  MAIN_BLACK: '#201E50',
-  MAIN_BG: '#FFFFFF',
+  MAIN_GREEN: "#88CD34",
+  MAIN_GREEN2: "#3E5617",
+  LIGHT_GREEN: "#F7FAED",
+  LIGTH_GREEN_GRAY: "#ACB59D",
+  MAIN_BLACK: "#201E50",
+  MAIN_BG: "#FFFFFF",
 };
 
 export const PADDINGS = {
-  X_SMALL: '0.75rem',
-  SMALL: '1rem',
-  MEDIUM: '1.5rem',
-  LARGE: '2rem',
-  X_LARGE: '3rem',
+  X_SMALL: "0.75rem",
+  SMALL: "1rem",
+  MEDIUM: "1.5rem",
+  LARGE: "2rem",
+  X_LARGE: "3rem",
 };
 
 export const FONT_SIZE = {
-  HEADING1: '3rem',
-  HEADING2: '2.25rem',
-  HEADING3: '1.5rem',
-  CONTENT: '1rem',
-  DESCRIPTION: '0.875rem',
-  TAG: '0.75rem',
+  HEADING1: "3rem",
+  HEADING2: "2.25rem",
+  HEADING3: "1.5rem",
+  CONTENT: "1rem",
+  DESCRIPTION: "0.875rem",
+  TAG: "0.75rem",
 };
 
 export const FONT_WEIGHT = {
-  THICKER: '700',
-  THICK: '600',
-  DEFAULT: '400',
-  THIN: '300',
+  THICKER: "700",
+  THICK: "600",
+  DEFAULT: "400",
+  THIN: "300",
 };
 
 export const BORDER_RADIUS = {
-  CIRCLE: '50%',
-  DEFAULT: '0.5rem',
-  HALF_CIRCLE: '100rem',
+  CIRCLE: "50%",
+  DEFAULT: "0.5rem",
+  HALF_CIRCLE: "100rem",
 };
 
 export const theme = {
