@@ -90,6 +90,7 @@ export const global = css`
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    font-family: 'Pretendard', sans-serif;
   }
   /* HTML5 display-role reset for older browsers */
   article,
@@ -130,6 +131,7 @@ export const global = css`
 
   * {
     box-sizing: border-box;
+    font-family: 'Pretendard', sans-serif;
   }
 
   a {
