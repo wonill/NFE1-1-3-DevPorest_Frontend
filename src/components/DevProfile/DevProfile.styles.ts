@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { SwiperSlide } from 'swiper/react';
 
 export const DevProfileCard = styled.div`
-  font-family: 'Pretendard', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
