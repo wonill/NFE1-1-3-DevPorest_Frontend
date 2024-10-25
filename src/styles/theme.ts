@@ -1,13 +1,11 @@
-// import { DefaultTheme } from '@emotion/react';
-
-export const colors = {
+export const COLORS = {
   MAIN_GREEN: '#88CD34',
   MAIN_GREEN2: '#3E5617',
   MAIN_BLACK: '#201E50',
   MAIN_BG: '#FFFFFF',
 };
 
-export const paddings = {
+export const PADDINGS = {
   X_SMALL: '0.75rem',
   SMALL: '1rem',
   MEDIUM: '1.5rem',
@@ -15,32 +13,34 @@ export const paddings = {
   X_LARGE: '3rem',
 };
 
-export const fontSize = {
-  heading1: '3rem',
-  heading2: '2.25rem',
-  heading3: '1.5rem',
-  content: '1rem',
-  description: '0.875rem',
-  tag: '0.75rem',
+export const FONT_SIZE = {
+  HEADING1: '3rem',
+  HEADING2: '2.25rem',
+  HEADING3: '1.5rem',
+  CONTENT: '1rem',
+  DESCRIPTION: '0.875rem',
+  TAG: '0.75rem',
 };
 
-export const fontWeight = {
-  thicker: '700',
-  thick: '600',
-  default: '400',
-  thin: '300',
+export const FONT_WEIGHT = {
+  THICKER: '700',
+  THICK: '600',
+  DEFAULT: '400',
+  THIN: '300',
 };
 
-export const borderRadius = {
-  circle: '50%',
+export const BORDER_RADIUS = {
+  CIRCLE: '50%',
+  DEFAULT: '0.5rem',
+  HALF_CIRCLE: '100rem',
 };
 
 export const theme = {
-  colors,
-  paddings,
-  fontSize,
-  fontWeight,
-  borderRadius,
+  COLORS,
+  PADDINGS,
+  FONT_SIZE,
+  FONT_WEIGHT,
+  BORDER_RADIUS,
 };
 
 export type ThemeType = typeof theme;
