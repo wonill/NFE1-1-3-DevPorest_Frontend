@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from "@emotion/react";
 
 export const global = css`
   html,
@@ -118,7 +118,7 @@ export const global = css`
   blockquote:after,
   q:before,
   q:after {
-    content: '';
+    content: "";
     content: none;
   }
   table {
@@ -128,6 +128,7 @@ export const global = css`
 
   * {
     box-sizing: border-box;
+    font-family: "Pretendard", sans-serif;
   }
 
   a {
