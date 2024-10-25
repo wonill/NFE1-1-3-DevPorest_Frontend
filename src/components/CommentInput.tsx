@@ -11,7 +11,7 @@ interface CommentInputProps {
 
 export const CommentInputWrapper = styled.div`
   & {
-    border: 2px solid black;
+    /* border: 2px solid black; */
     position: relative;
     padding: ${({ theme }) => theme.PADDINGS.SMALL};
     font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
