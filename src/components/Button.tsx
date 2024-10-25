@@ -62,6 +62,58 @@ export const ButtonWrapper = styled.div<ButtonWrapperProps>`
       }
     }};
   }
+
+  .btn.disabled {
+    cursor: default;
+    border: 1.5px solid ${({ theme }) => theme.COLORS.MAIN_BG};
+    background-color: ${({ theme }) => theme.COLORS.MAIN_GRAY};
+    color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
+
+    opacity: 0.2;
+  }
+  .btn:hover.active {
+    /* 테두리 설정 */
+    border: 1.5px solid
+      ${({ theme, colorType }) => {
+        switch (colorType) {
+          case 1:
+            return theme.COLORS.MAIN_GRAY;
+          case 2:
+          case 3:
+            return theme.COLORS.MAIN_GREEN;
+          default:
+            return "transparent";
+        }
+      }};
+
+    /* 배경색 설정 */
+    background-color: ${({ theme, colorType }) => {
+      switch (colorType) {
+        case 1:
+          return theme.COLORS.MAIN_GRAY;
+        case 2:
+          return theme.COLORS.MAIN_GREEN;
+        case 3:
+          return theme.COLORS.MAIN_BG;
+        default:
+          return "transparent";
+      }
+    }};
+
+    /* 글자 색상 설정 */
+    color: ${({ theme, colorType }) => {
+      switch (colorType) {
+        case 1:
+          return theme.COLORS.MAIN_BG;
+        case 2:
+          return theme.COLORS.MAIN_BG;
+        case 3:
+          return theme.COLORS.MAIN_GREEN;
+        default:
+          return "transparent";
+      }
+    }};
+  }
 `;
 
 const Button: React.FC<ButtonProps> = ({
@@ -72,7 +124,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <ButtonWrapper colorType={colorType} onClick={onClick}>
-      <button className="btn" disabled={!isDisabled}>
+      <button className={`btn ${isDisabled ? "disabled" : "active"}`}>
         {text}
       </button>
     </ButtonWrapper>
