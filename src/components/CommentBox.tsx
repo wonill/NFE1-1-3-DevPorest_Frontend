@@ -1,21 +1,24 @@
 import styled from "@emotion/styled";
 
 interface CommentBoxProps {
-  name: string;
+  name: string; // 댓 작성자 이름
   job: string;
   profileImg: string;
   writeTime: Date;
   commentText: string;
-  isMyComment: boolean;
-  onClick: () => void;
+  isMyComment: boolean; // 댓 작성자와 로그인된 사용자가 동일한지
+  onClick?: () => void; // x 버튼 활성화된 경우 클릭시 댓글 삭제
 }
 
 export const CommentBoxWrapper = styled.div`
   & {
+    border: 2px solid black;
     position: relative;
-    height: 5rem;
     padding: ${({ theme }) => theme.PADDINGS.SMALL};
     font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
+
+    margin: 0;
+    box-sizing: border-box;
   }
 
   .commentInfo {
@@ -33,8 +36,13 @@ export const CommentBoxWrapper = styled.div`
     margin-left: 10px;
   }
 
-  .infoWrap .name {
-    padding-bottom: 8px;
+  .infoWrap * {
+    margin: 0;
+  }
+  .infoWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .textBox {
@@ -42,17 +50,17 @@ export const CommentBoxWrapper = styled.div`
     flex-direction: column;
     justify-content: space-between;
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
-    background-color: ${({ theme }) => theme.COLORS.LIGHT_GREEN};
-    padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+    background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_BG};
+    padding: 0 ${({ theme }) => theme.PADDINGS.X_SMALL};
     min-height: 6rem;
   }
   .textBox .writeTime {
-    color: ${({ theme }) => theme.COLORS.LIGTH_GREEN_GRAY};
+    color: ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
     text-align: end;
   }
 
   .closeBtn {
-    color: ${({ theme }) => theme.COLORS.LIGTH_GREEN_GRAY};
+    color: ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
     position: absolute;
     right: 2.5rem;
     top: 1.5rem;
