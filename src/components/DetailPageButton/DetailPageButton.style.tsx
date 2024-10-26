@@ -6,8 +6,8 @@ interface StyledButtonProps {
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
-  width: 300px;
-  height: 100px;
+  width: 288px;
+  height: 103px;
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
   border: solid 2px ${({ theme }) => theme.COLORS.MAIN_GREEN};
   background-color: ${({ theme, isLiked, text }) =>
@@ -19,4 +19,11 @@ export const StyledButton = styled.button<StyledButtonProps>`
       ? theme.COLORS.MAIN_GREEN
       : theme.COLORS.MAIN_BG};
   font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+  font-size: 1rem;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
 `;
