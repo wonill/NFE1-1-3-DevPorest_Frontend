@@ -5,6 +5,7 @@ export const StatsWrapper = styled.div`
   gap: 1rem;
   align-items: center;
   font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICKER};
+  color: #7c8484;
 
   > span {
     gap: 2px;

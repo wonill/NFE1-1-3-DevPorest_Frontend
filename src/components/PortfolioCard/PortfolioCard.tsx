@@ -11,27 +11,33 @@ import {
 } from "./PortfolioCard.style";
 
 interface PortfolioCardProps {
+  portfolio_id: number;
   title: string;
   thumbnailImg: string;
   profileImg: string;
   userName: string;
   views: number;
   likes: number;
+  onClick: (portfolio_id: number) => void;
 }
 
+const noImage = "/src/assets/no_image.svg";
+
 const PortfolioCard: React.FC<PortfolioCardProps> = ({
+  portfolio_id,
   title,
   thumbnailImg,
   profileImg,
   userName,
   views,
   likes,
+  onClick,
 }) => {
   return (
     <Card>
       <ImgCon>
-        <ThumbnailImg src={thumbnailImg} alt="Thumbnail" />
-        <TitleBox className="title-box">
+        <ThumbnailImg src={thumbnailImg || noImage} alt="Thumbnail" />
+        <TitleBox className="title-box" onClick={() => onClick(portfolio_id)}>
           <p>{title}</p>
         </TitleBox>
       </ImgCon>

@@ -1,14 +1,12 @@
 import styled from "@emotion/styled";
 
 export const Card = styled.div`
-  max-width: 344px;
-  height: 400px;
-
+  min-width: 200px;
+  aspect-ratio: 1;
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
 `;
 
 export const ImgCon = styled.div`
-  width: 100%;
   height: 90%;
   position: relative;
 
@@ -21,14 +19,14 @@ export const ImgCon = styled.div`
 
 export const TitleBox = styled.div`
   position: absolute;
+  border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
   padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.4);
   color: ${({ theme }) => theme.COLORS.MAIN_BG};
-  opacity: 0.7;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,4 +73,15 @@ export const ProfileImg = styled.div`
 
 export const Name = styled.p`
   font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+  font-size: 14px;
+  color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
+
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 600px) {
+    max-width: 100px;
+  }
 `;

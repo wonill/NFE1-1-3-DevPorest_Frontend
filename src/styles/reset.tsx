@@ -1,6 +1,8 @@
-import { css } from "@emotion/react";
+import { css } from '@emotion/react';
 
 export const global = css`
+  @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700&display=swap');
+
   html,
   body,
   div,
@@ -88,6 +90,7 @@ export const global = css`
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    font-family: 'Pretendard', sans-serif;
   }
   /* HTML5 display-role reset for older browsers */
   article,
@@ -118,7 +121,7 @@ export const global = css`
   blockquote:after,
   q:before,
   q:after {
-    content: "";
+    content: '';
     content: none;
   }
   table {
@@ -128,7 +131,7 @@ export const global = css`
 
   * {
     box-sizing: border-box;
-    font-family: "Pretendard", sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
 
   a {
