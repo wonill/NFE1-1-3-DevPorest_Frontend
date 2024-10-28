@@ -23,14 +23,14 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<MainPage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="detail" element={<DetailPage />} />
-          <Route path="edit_portfolio" element={<EditPortfolioPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/detail" element={<DetailPage />} />
+          <Route path="/edit_portfolio" element={<EditPortfolioPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/register" element={<Register />} />
         </Route>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<Register />} />
-        <Route path="edit_profile" element={<EditProfilePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/edit_profile" element={<EditProfilePage />} />
       </Routes>
     </BrowserRouter>
   );
