@@ -1,6 +1,6 @@
 import { HeaderWrapper } from "./Header.styles";
 import Button from "../Button/Button";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   onEnterSearch?: (word: string) => void;
@@ -15,12 +15,12 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <HeaderWrapper>
-      {/* <Link to="/" className="logo"> */}
-      <i className="logo">
+      <Link to="/" className="logo">
+        {/* <i className="logo"> */}
         <img src="/Tree_logo.svg" alt="tree-logo" />
         <img src="/DEVPOREST_logo.svg" alt="DevPorest" />
-      </i>
-      {/* </Link> */}
+        {/* </i> */}
+      </Link>
       <div className="wrap">
         <input
           type="text"
