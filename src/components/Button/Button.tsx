@@ -3,14 +3,14 @@ import { ButtonWrapper } from "./Button.styles";
 interface ButtonProps {
   text: string;
   colorType: number;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   onClick?: () => void;
 }
 
 const Button: React.FC<ButtonProps> = ({
   text,
   colorType,
-  isDisabled,
+  isDisabled = false,
   onClick,
 }) => {
   return (
