@@ -1,10 +1,10 @@
 import { LogoWrapper } from "./Logo.styles";
 
 interface LogoProps {
-  scale: number;
+  scale?: number;
 }
 
-const Logo: React.FC<LogoProps> = ({ scale }) => {
+const Logo: React.FC<LogoProps> = ({ scale = 1 }) => {
   return (
     <LogoWrapper scale={scale}>
       <img src="/tree-logo.svg" alt="tree" />
