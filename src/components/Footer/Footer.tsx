@@ -3,9 +3,7 @@ import { StyledFooter, FooterText, FooterLogo } from "./Footer.style";
 const Footer = () => {
   return (
     <StyledFooter>
-      <p>
-        Dev Porest <img src="/src/assets/instagram.svg" alt="" />
-      </p>
+      <p>Dev Porest</p>
       <FooterText>
         ⓒ <strong>2024 STUNNING INC.</strong>
       </FooterText>
