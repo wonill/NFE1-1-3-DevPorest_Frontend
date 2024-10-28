@@ -24,7 +24,7 @@ export const EditProfileWrapper = styled.div`
   justify-content: center;
   gap: 4rem;
   padding: ${({ theme }) => theme.PADDINGS.X_LARGE};
-  border: 3px solid ${({ theme }) => theme.COLORS.LIGHTGREEN_BG_SUB};
+  border: 3px solid ${({ theme }) => theme.COLORS.LIGHTGREEN_SUB};
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
   background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_BG};
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
