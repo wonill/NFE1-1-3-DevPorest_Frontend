@@ -17,8 +17,8 @@ const Header: React.FC<HeaderProps> = ({
     <HeaderWrapper>
       <Link to="/" className="logo">
         {/* <i className="logo"> */}
-        <img src="/Tree_logo.svg" alt="tree-logo" />
-        <img src="/DEVPOREST_logo.svg" alt="DevPorest" />
+        <img src="/tree-logo.svg" alt="tree-logo" />
+        <img src="/devporest-logo.svg" alt="DevPorest" />
         {/* </i> */}
       </Link>
       <div className="wrap">
@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({
             }
           }}
         />
-        <img src="/search.svg" className="searchIcon" alt="" />
+        <img src="/search-icon.svg" className="searchIcon" alt="" />
         <Button text="로그인" colorType={0} onClick={onClickLogin} />
         <Button text="회원가입" colorType={3} onClick={onClickRegister} />
       </div>
