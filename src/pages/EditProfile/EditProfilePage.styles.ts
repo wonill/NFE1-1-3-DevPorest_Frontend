@@ -38,38 +38,6 @@ export const LeftUserInfo = styled.div`
   gap: ${({ theme }) => theme.PADDINGS.MEDIUM};
 `;
 
-export const ProfileImageWrapper = styled.div`
-  width: 250px;
-  height: 250px;
-  position: relative;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
-  }
-
-  input {
-    display: none;
-  }
-`;
-
-export const PencilImage = styled.div`
-  position: absolute;
-  right: ${({ theme }) => theme.PADDINGS.X_SMALL};
-  bottom: ${({ theme }) => theme.PADDINGS.X_SMALL};
-  width: 50px;
-  background-color: ${({ theme }) => theme.COLORS.MAIN_BG};
-  border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
-  cursor: pointer;
-
-  img {
-    padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
-  }
-`;
-
 export const UserInfoInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -94,7 +62,8 @@ export const SelectContainer = styled.div`
   height: 50%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  gap: ${({ theme }) => theme.PADDINGS.X_LARGE};
 `;
 
 export const SelectWrapper = styled.div`
