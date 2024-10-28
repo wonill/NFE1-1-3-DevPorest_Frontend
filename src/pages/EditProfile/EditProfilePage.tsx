@@ -5,8 +5,6 @@ import {
   H2,
   EditProfileWrapper,
   LeftUserInfo,
-  ProfileImageWrapper,
-  PencilImage,
   UserInfoInputWrapper,
   RightUserInfo,
   SelectContainer,
@@ -15,18 +13,13 @@ import {
   Intro,
   SubmitBtn,
 } from "./EditProfilePage.styles";
-import email from "../../assets/email.svg";
-import mobile from "../../assets/mobile.svg";
-import blog from "../../assets/blog.svg";
-import gitHub from "../../assets/github.svg";
-import instagram from "../../assets/instagram.svg";
-import pencil from "../../assets/pencil.svg";
 import Button from "../../components/Button/Button";
-import TechStack from "../../components/TechStack/TechStack";
-import Tag from "../../components/Tag/Tag";
 import Dropdown from "../../components/Dropdown/Dropdown";
-import InfoInput from "./InfoInput";
-import { dummyTags, dummyTechStacks, techStacks, jobs } from "../../data/dummyData";
+import ProfileImage from "./ProfileImage";
+import UserInfoInputs from "./UserInfoInputs";
+import { techStacks, jobs, dummyTags, dummyTechStacks } from "../../data/dummyData";
+import Tag from "../../components/Tag/Tag";
+import TechStack from "../../components/TechStack/TechStack";
 
 const EditProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -43,7 +36,7 @@ const EditProfilePage: React.FC = () => {
       const rect = techStackBtnRef.current.getBoundingClientRect();
       setTechStackPosition({ x: rect.left, y: rect.bottom });
     }
-    setIsTechStackOpen(!isTechStackOpen);
+    setIsTechStackOpen(prev => !prev);
   };
 
   const handleJobClick = () => {
@@ -51,7 +44,7 @@ const EditProfilePage: React.FC = () => {
       const rect = jobBtnRef.current.getBoundingClientRect();
       setJobPosition({ x: rect.left, y: rect.bottom });
     }
-    setIsJobOpen(!isJobOpen);
+    setIsJobOpen(prev => !prev);
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,26 +64,9 @@ const EditProfilePage: React.FC = () => {
         <H2>DEVPOREST 회원정보를 작성해주세요</H2>
         <EditProfileWrapper>
           <LeftUserInfo>
-            <ProfileImageWrapper>
-              <img
-                src={
-                  profileImage ||
-                  "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"
-                }
-                alt="Profile"
-              />
-              <PencilImage onClick={() => document.getElementById("fileInput")?.click()}>
-                <img src={pencil} alt="Edit" />
-              </PencilImage>
-              <input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} />
-            </ProfileImageWrapper>
+            <ProfileImage imageUrl={profileImage} onImageChange={handleImageChange} />
             <UserInfoInputWrapper>
-              <p>홍길동</p>
-              <InfoInput icon={email} placeholder="이메일을 입력해주세요." />
-              <InfoInput icon={mobile} placeholder="휴대폰 번호를 입력해주세요." />
-              <InfoInput icon={gitHub} placeholder="GitHub 링크를 입력해주세요." />
-              <InfoInput icon={instagram} placeholder="Instagram 링크를 입력해주세요." />
-              <InfoInput icon={blog} placeholder="Blog 링크를 입력해주세요." />
+              <UserInfoInputs />
             </UserInfoInputWrapper>
           </LeftUserInfo>
           <RightUserInfo>
@@ -98,7 +74,7 @@ const EditProfilePage: React.FC = () => {
               <SelectWrapper>
                 <p>직무 선택</p>
                 <div>
-                  <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}></SelectBtn>
+                  <SelectBtn ref={jobBtnRef} onClick={handleJobClick}></SelectBtn>
                   {dummyTags.map(tag => (
                     <Tag key={tag.content} {...tag} />
                   ))}
@@ -107,7 +83,7 @@ const EditProfilePage: React.FC = () => {
               <SelectWrapper>
                 <p>기술스택 선택</p>
                 <div>
-                  <SelectBtn ref={jobBtnRef} onClick={handleJobClick}></SelectBtn>
+                  <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}></SelectBtn>
                   {dummyTechStacks.map(techStack => (
                     <TechStack key={techStack.name} {...techStack} />
                   ))}
