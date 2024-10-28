@@ -7,11 +7,12 @@ export interface PopularPortfolioType {
   title: string;
   name: string;
   job: string;
+  onClick: () => void;
 }
 
-const PopularPortfolio: React.FC<PopularPortfolioType> = ({ id, image, title, name, job }) => {
+const PopularPortfolio: React.FC<PopularPortfolioType> = ({ image, title, name, job, onClick }) => {
   return (
-    <PopularPortfolioContainer onClick={() => console.log(id)}>
+    <PopularPortfolioContainer onClick={onClick}>
       <ImageWrapper>
         <img src={image} alt="Popular Portfolio" />
         <InfoWrapper>
