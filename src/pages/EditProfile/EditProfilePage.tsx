@@ -8,9 +8,6 @@ import {
   ProfileImageWrapper,
   PencilImage,
   UserInfoInputWrapper,
-  UserInfoInput,
-  IconWrapper,
-  Input,
   RightUserInfo,
   SelectContainer,
   SelectWrapper,
@@ -29,6 +26,7 @@ import TechStack, { TechStackType } from "../../components/TechStack/TechStack";
 import Tag from "../../components/Tag/Tag";
 import { Job } from "../../types/job";
 import Dropdown from "../../components/Dropdown/Dropdown";
+import InfoInput from "./InfoInput";
 
 const dummyTags = [
   {
@@ -246,11 +244,6 @@ const jobs: Job[] = [
   { jobCode: 15, name: "Technical Support Specialist" },
 ];
 
-/**
- * todo
- * - 첨부파일로 이미지 등록 가능한지 알아보기
- */
-
 const EditProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isTechStackOpen, setIsTechStackOpen] = useState(false);
@@ -305,40 +298,15 @@ const EditProfilePage: React.FC = () => {
               <PencilImage onClick={() => document.getElementById("fileInput")?.click()}>
                 <img src={pencil} alt="Edit" />
               </PencilImage>
-              <Input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} />
+              <input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} />
             </ProfileImageWrapper>
             <UserInfoInputWrapper>
               <p>홍길동</p>
-              <UserInfoInput>
-                <IconWrapper>
-                  <img src={email} alt="" />
-                </IconWrapper>
-                <Input type="text" placeholder="이메일을 입력해주세요." />
-              </UserInfoInput>
-              <UserInfoInput>
-                <IconWrapper>
-                  <img src={mobile} alt="" />
-                </IconWrapper>
-                <Input type="text" placeholder="휴대폰 번호를 입력해주세요." />
-              </UserInfoInput>
-              <UserInfoInput>
-                <IconWrapper>
-                  <img src={gitHub} alt="" />
-                </IconWrapper>
-                <Input type="text" placeholder="GitHub 링크를 입력해주세요." />
-              </UserInfoInput>
-              <UserInfoInput>
-                <IconWrapper>
-                  <img src={instagram} alt="" />
-                </IconWrapper>
-                <Input type="text" placeholder="Instagram 링크를 입력해주세요." />
-              </UserInfoInput>
-              <UserInfoInput>
-                <IconWrapper>
-                  <img src={blog} alt="" />
-                </IconWrapper>
-                <Input type="text" placeholder="Blog 링크를 입력해주세요." />
-              </UserInfoInput>
+              <InfoInput icon={email} placeholder="이메일을 입력해주세요." />
+              <InfoInput icon={mobile} placeholder="휴대폰 번호를 입력해주세요." />
+              <InfoInput icon={gitHub} placeholder="GitHub 링크를 입력해주세요." />
+              <InfoInput icon={instagram} placeholder="Instagram 링크를 입력해주세요." />
+              <InfoInput icon={blog} placeholder="Blog 링크를 입력해주세요." />
             </UserInfoInputWrapper>
           </LeftUserInfo>
           <RightUserInfo>
