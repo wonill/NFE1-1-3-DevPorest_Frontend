@@ -51,7 +51,7 @@ export const ButtonWrapper = styled.div<ButtonWrapperProps>`
         case 3:
           return theme.COLORS.MAIN_BG;
         default:
-          return "transparent";
+          return theme.COLORS.MAIN_BLACK;
       }
     }};
   }
@@ -87,7 +87,7 @@ export const ButtonWrapper = styled.div<ButtonWrapperProps>`
         case 2:
           return theme.COLORS.MAIN_GREEN;
         case 3:
-          return theme.COLORS.MAIN_BG;
+          return theme.COLORS.MAIN_GREEN;
         default:
           return "transparent";
       }
@@ -97,13 +97,11 @@ export const ButtonWrapper = styled.div<ButtonWrapperProps>`
     color: ${({ theme, colorType }) => {
       switch (colorType) {
         case 1:
-          return theme.COLORS.MAIN_BG;
         case 2:
-          return theme.COLORS.MAIN_BG;
         case 3:
-          return theme.COLORS.MAIN_GREEN;
+          return theme.COLORS.MAIN_BG;
         default:
-          return "transparent";
+          return theme.COLORS.MAIN_GREEN;
       }
     }};
   }
