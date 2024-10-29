@@ -3,7 +3,7 @@ import { Global, css } from "@emotion/react";
 import { global } from "./styles/reset";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/main/MainPage";
-import ProfilePage from "./pages/profile/ProfilePage";
+import ProfilePage from "./pages/Profile/ProfilePage";
 import SearchPage from "./pages/search/SearchPage";
 import LoginPage from "./pages/login/LoginPage";
 import DetailPage from "./pages/detail/DetailPage";
