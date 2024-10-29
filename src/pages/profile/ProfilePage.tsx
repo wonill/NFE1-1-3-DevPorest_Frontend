@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import "swiper/swiper-bundle.css";
+import { DummyData, dummyTechStacks } from "../../data/profilePageData.ts";
+import PortfolioCard from "../../components/PortfolioCard/PortfolioCard.tsx";
+import TechStack from "../../components/TechStack/TechStack.tsx";
 import ExternalLink from "../../components/ExternalLink/ExternalLink.tsx";
 import {
   ProfilePageWrapper,
@@ -9,6 +12,7 @@ import {
   UserInfoLeft,
   UserInfoRight,
   UserInfo,
+  StyledSwiperSlide,
   TechStackList,
   EditProfile,
   TotalLikes,
@@ -33,6 +37,10 @@ import {
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+
+  const handleCardClick = (portfolio_id: number) => {
+    console.log(`${portfolio_id}에 해당하는 페이지로 이동`);
+  };
 
   const onClickEditProfile = () => {
     // 수정 버튼 클릭 시 프로필 수정 페이지로 이동
@@ -81,7 +89,16 @@ const ProfilePage = () => {
                 freeMode={true}
                 modules={[FreeMode]}
               >
-                {/* 유저 기술스택 리스트*/}
+                {dummyTechStacks.map((item, i) => (
+                  <StyledSwiperSlide key={i}>
+                    <TechStack
+                      name={item.name}
+                      backgroundColor={item.backgroundColor}
+                      color={item.color}
+                      onClick={item.onClick}
+                    />
+                  </StyledSwiperSlide>
+                ))}
               </Swiper>
             </TechStackList>
           </UserInfoLeft>
@@ -109,7 +126,15 @@ const ProfilePage = () => {
             </ExternalLinkWrapper>
           </UserInfoRight>
         </UserInfo>
-        <UserPortfolioList>{/* 유저의 포트폴리오 리스트 */}</UserPortfolioList>
+        <UserPortfolioList>
+          {DummyData.map((item, index) => (
+            <PortfolioCard
+              key={index}
+              {...item}
+              onClick={() => handleCardClick(item.portfolio_id)}
+            />
+          ))}
+        </UserPortfolioList>
       </ProfileContainer>
     </ProfilePageWrapper>
   );
