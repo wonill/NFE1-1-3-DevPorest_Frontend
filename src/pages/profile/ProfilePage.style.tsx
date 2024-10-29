@@ -52,6 +52,7 @@ export const TechStackList = styled.div`
 `;
 
 export const EditProfile = styled.div`
+  background-color: white;
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
   position: absolute;
   width: 50px;
@@ -60,6 +61,12 @@ export const EditProfile = styled.div`
   bottom: 0;
   overflow: hidden;
   cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+  > img {
+    transform: translate(12px, 14px);
+    scale: 1.1;
+  }
 `;
 
 export const TotalLikes = styled.div`
