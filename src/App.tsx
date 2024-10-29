@@ -4,7 +4,7 @@ import { global } from "./styles/reset";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/main/MainPage";
 import ProfilePage from "./pages/Profile/ProfilePage";
-import SearchPage from "./pages/search/SearchPage";
+import SearchPage from "./pages/Search/SearchPage";
 import LoginPage from "./pages/login/LoginPage";
 import DetailPage from "./pages/detail/DetailPage";
 import Register from "./pages/register/Register";
