@@ -12,6 +12,7 @@ export const DropdownContainer = styled.div<Pick<DropdownType, "position">>`
   position: absolute;
   left: ${({ position }) => position.x}px;
   top: ${({ position }) => position.y}px;
+  z-index: 100;
 `;
 
 export const InputWrapper = styled.div`
@@ -58,5 +59,31 @@ export const Li = styled.li`
 
   &:hover {
     background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
+  }
+`;
+
+export const DropBtn = styled.button`
+  width: 95px;
+  height: 42px;
+  border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
+  background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
+  border: none;
+  padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+  padding-right: ${({ theme }) => theme.PADDINGS.MEDIUM};
+  cursor: pointer;
+  position: relative;
+
+  color: ${({ theme }) => theme.COLORS.MAIN_GREEN2};
+  font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid ${({ theme }) => theme.COLORS.MAIN_BLACK};
   }
 `;
