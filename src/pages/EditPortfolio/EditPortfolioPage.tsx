@@ -3,13 +3,13 @@ import { EditPortfolioPageWrapper } from "./EditPortfolioPage.styles";
 import Tag from "../../components/Tag/Tag";
 import ThumbnailInput from "./ThumbnailInput/ThumbnailInput";
 import DropdownWithBtn from "../../components/Dropdown/DropdownWithBtn";
-import TechStackSwiper from "./TechStackSwiper";
 import {
   techStacks,
   jobs,
   dummyTags,
   dummyTechStacks,
 } from "../../data/dummyData";
+import TechStack from "../../components/TechStack/TechStack";
 
 const EditPortfolioPage = () => {
   const [previewThumbnail, setPreviewThumbnail] = useState<string>("");
@@ -40,7 +40,10 @@ const EditPortfolioPage = () => {
             items={techStacks}
             placeholder="기술스텍을 입력해주세요."
           />
-          <TechStackSwiper items={dummyTechStacks} />
+          {dummyTechStacks.map((techStack) => (
+            <TechStack key={techStack.name} {...techStack} />
+          ))}
+          {/* <TechStackSwiper items={dummyTechStacks} /> */}
         </div>
         <div className="input big">
           <DropdownWithBtn
