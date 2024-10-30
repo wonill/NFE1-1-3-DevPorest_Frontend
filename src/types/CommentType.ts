@@ -5,11 +5,11 @@
  * --------------------------------------------------
  */
 // ReqBody
-export interface Comment {
+export interface CommentType {
   content: string; // 댓글 내용
 }
 // ResBody
-export interface CommentRes extends Comment {
+export interface CommentResType extends CommentType {
   _id: string;
   userID: string; // 작성자 ID
   portfolioID: string; // 포트폴리오 ID
@@ -22,7 +22,7 @@ export interface CommentRes extends Comment {
  * --------------------------------------------------
  */
 // ResBody
-export interface CommentApiRes {
+export interface CommentApiResType {
   success: boolean; // 성공여부
   pagination: {
     currentPage: number; // 현재 페이지
@@ -32,5 +32,5 @@ export interface CommentApiRes {
     hasPrevPage: boolean; // 이전 페이지 유무
     limit: number; // 한번에 가져올 데이터 수
   };
-  data: CommentRes[]; // 댓글 배열
+  data: CommentResType[]; // 댓글 배열
 }

@@ -4,7 +4,7 @@
  * /api/job-group
  * --------------------------------------------------
  */
-export interface JobGroup {
+export interface JobGroupType {
   _id: string;
   job: string; // 직군명
 }
@@ -14,8 +14,9 @@ export interface JobGroup {
  * API 응답
  * --------------------------------------------------
  */
-export interface JobGroupApiRes {
+// ResBody
+export interface JobGroupApiResType {
   success: boolean; // 성공시
-  data?: JobGroup | JobGroup[]; // 성공시
+  data?: JobGroupType | JobGroupType[]; // 성공시
   error?: string; // 실패시 에러 메세지
 }

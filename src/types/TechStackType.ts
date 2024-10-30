@@ -1,4 +1,4 @@
-export interface ITechStack {
+export interface ITechStackType {
   skill: string; // 기술명
   bgColor: string; // 배경색
   textColor: string; // 텍스트색
@@ -11,7 +11,8 @@ export interface ITechStack {
  * /api/techstacks
  * --------------------------------------------------
  */
-export interface AddTechStack extends ITechStack {
+// ReqBody
+export interface AddTechStackType extends ITechStackType {
   useNum: number; // 사용횟수
   adminCode: string; // 관리자 코드
 }
@@ -22,17 +23,18 @@ export interface AddTechStack extends ITechStack {
  * /api/techstacks/statistic
  * --------------------------------------------------
  */
-export interface TechStackStat extends ITechStack {
+export interface TechStackStatType extends ITechStackType {
   total_count: number; // 사용횟수
 }
 
 /**
  * --------------------------------------------------
  * API 응답
- * T에 ITechStack 또는 TechStackStat을 넣어 사용
+ * T에 ITechStackType 또는 AddTechStackType을 넣어 사용
  * --------------------------------------------------
  */
-export interface TechStackApiRes<T> {
+// ResBody
+export interface TechStackApiResType<T> {
   success: boolean; // 성공시
   data?: T[]; // 성공시 기술스택사용횟수 배열
   error?: string; // 실패시 에러 메세지
