@@ -12,11 +12,13 @@ import {
   dummyTags,
   dummyTechStacks,
 } from "../../data/dummyData";
+import TagInput from "./TagInput/TagInput";
 
 const EditPortfolioPage = () => {
   const [previewThumbnail, setPreviewThumbnail] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [link, setLink] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -95,6 +97,13 @@ const EditPortfolioPage = () => {
         <div className="editor">
           <MyCKEditor />
         </div>
+        <div className="input ">
+          <TagInput tags={tags} setTags={setTags} />
+          {tags.map((tag) => (
+            <Tag content={tag} />
+          ))}
+        </div>
+
         <div className="submitBtn">
           <Button text="등록" colorType={3} />
         </div>

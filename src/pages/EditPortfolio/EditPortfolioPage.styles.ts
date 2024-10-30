@@ -56,7 +56,7 @@ export const EditPortfolioPageWrapper = styled.section`
   }
 
   .editor {
-    margin: 2rem 0;
+    margin-top: 2rem;
   }
   .submitBtn {
     display: flex;
