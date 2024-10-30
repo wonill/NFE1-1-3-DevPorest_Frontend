@@ -48,6 +48,11 @@ const ThumbnailInput: React.FC<ThumbnailInputProps> = ({
       setThumbnailFileName(file.name);
     }
   };
+
+  const deleteFile = () => {
+    setThumbnailFileName("대표사진 선택");
+    setPreviewThumbnail("");
+  };
   return (
     <ThumbnailInputWrapper>
       <label htmlFor="file">
@@ -60,6 +65,9 @@ const ThumbnailInput: React.FC<ThumbnailInputProps> = ({
         id="file"
         onChange={getThumbnail}
       />
+      <button className="deleteBtn" onClick={deleteFile}>
+        x
+      </button>
     </ThumbnailInputWrapper>
   );
 };
