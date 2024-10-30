@@ -1,5 +1,4 @@
 export interface ITechStack {
-  _id?: string;
   skill: string; // 기술명
   bgColor: string; // 배경색
   textColor: string; // 텍스트색
