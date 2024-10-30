@@ -1,28 +1,50 @@
-import React from "react";
-import { ProfileImageWrapper, PencilImage } from "./ProfileImage.styles";
-import pencil from "../../assets/pencil.svg";
+import React, { forwardRef } from "react";
+import { ProfileImageWrapper, PencilImage, SetProfileModal } from "./ProfileImage.styles";
+import profileAdd from "../../assets/profile-add.svg";
+import noImg from "../../assets/no_image.svg";
 
 interface ProfileImageProps {
   imageUrl: string | null;
   onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSetDefaultProfile: () => void;
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
 }
 
-const ProfileImage: React.FC<ProfileImageProps> = ({ imageUrl, onImageChange }) => {
-  return (
-    <ProfileImageWrapper>
-      <img
-        src={
-          imageUrl ||
-          "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"
-        }
-        alt="Profile"
-      />
-      <PencilImage onClick={() => document.getElementById("fileInput")?.click()}>
-        <img src={pencil} alt="Edit" />
-      </PencilImage>
-      <input id="fileInput" type="file" accept="image/*" onChange={onImageChange} />
-    </ProfileImageWrapper>
-  );
-};
+const ProfileImage = forwardRef<HTMLDivElement, ProfileImageProps>(
+  ({ imageUrl, onImageChange, onSetDefaultProfile, isModalOpen, setIsModalOpen }, ref) => {
+    return (
+      <ProfileImageWrapper>
+        <img src={imageUrl || `${noImg}`} alt="Profile" />
+        <PencilImage onClick={() => setIsModalOpen(!isModalOpen)}>
+          <img src={profileAdd} alt="Edit" />
+        </PencilImage>
+        <input id="fileInput" type="file" accept="image/*" onChange={onImageChange} />
+        {isModalOpen && (
+          <SetProfileModal ref={ref}>
+            <button
+              onClick={() => {
+                document.getElementById("fileInput")?.click();
+                setIsModalOpen(false);
+              }}
+            >
+              프로필 변경
+            </button>
+            {imageUrl && (
+              <button
+                onClick={() => {
+                  onSetDefaultProfile();
+                  setIsModalOpen(false);
+                }}
+              >
+                기본 프로필로 설정
+              </button>
+            )}
+          </SetProfileModal>
+        )}
+      </ProfileImageWrapper>
+    );
+  }
+);
 
 export default ProfileImage;

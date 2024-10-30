@@ -31,3 +31,32 @@ export const PencilImage = styled.div`
     padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
   }
 `;
+
+export const SetProfileModal = styled.div`
+  position: absolute;
+  top: 13rem;
+  right: -7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.COLORS.MAIN_BG};
+  border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  padding: 0 ${({ theme }) => theme.PADDINGS.X_SMALL};
+  color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
+
+  button {
+    width: 115px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+    font-size: ${({ theme }) => theme.FONT_SIZE.TAG};
+    cursor: pointer;
+  }
+
+  button:nth-of-type(2) {
+    border-top: 1px solid ${({ theme }) => theme.COLORS.MAIN_GRAY};
+  }
+`;
