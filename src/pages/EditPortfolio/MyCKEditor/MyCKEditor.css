@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+@media print {
+  body {
+    margin: 0 !important;
+  }
+}
+
+.main-container {
+  font-family: "Lato";
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ck-content {
+  font-family: "Lato";
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.editor-container_classic-editor .editor-container__editor {
+  max-width: 900px;
+  min-width: 795px;
+}
+
+.ck-editor__editable {
+  height: 40rem; /* 기본 높이 설정 */
+  overflow-y: auto; /* 내용이 많을 경우 스크롤 */
+}

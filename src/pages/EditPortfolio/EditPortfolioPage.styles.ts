@@ -5,10 +5,9 @@ export const EditPortfolioPageWrapper = styled.section`
     background-color: rgba(
       from ${({ theme }) => theme.COLORS.MAIN_GRAY} r g b / 0.25
     );
-    height: 80vh;
   }
-  .mw-800 {
-    max-width: 700px;
+  .mw-900 {
+    max-width: 900px;
     margin: 0 auto;
 
     padding-top: 1.5rem;
@@ -54,5 +53,14 @@ export const EditPortfolioPageWrapper = styled.section`
     height: 4rem;
     display: flex;
     gap: 1rem;
+  }
+
+  .editor {
+    margin: 2rem 0;
+  }
+  .submitBtn {
+    display: flex;
+    justify-content: end;
+    padding-bottom: 1rem;
   }
 `;

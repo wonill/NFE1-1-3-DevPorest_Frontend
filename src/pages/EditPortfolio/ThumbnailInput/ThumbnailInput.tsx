@@ -10,7 +10,7 @@ const ThumbnailInput: React.FC<ThumbnailInputProps> = ({
   setPreviewThumbnail,
 }) => {
   const [thumbnailFileName, setThumbnailFileName] =
-    useState<string>("사진선택");
+    useState<string>("대표사진 선택");
 
   const getThumbnail = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const file = ev.target.files?.[0];
