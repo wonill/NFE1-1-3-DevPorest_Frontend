@@ -6,7 +6,7 @@ interface ButtonWrapperProps {
 
 export const ButtonWrapper = styled.div<ButtonWrapperProps>`
   .btn {
-    padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+    padding: ${({ theme }) => theme.PADDINGS.X_SMALL} ${({ theme }) => theme.PADDINGS.MEDIUM};
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
     font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
     font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
