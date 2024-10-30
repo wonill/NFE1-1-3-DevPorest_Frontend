@@ -4,7 +4,7 @@ export const CommentInputWrapper = styled.div`
   & {
     /* border: 2px solid black; */
     position: relative;
-    padding: ${({ theme }) => theme.PADDINGS.SMALL};
+    padding: ${({ theme }) => theme.PADDINGS.SMALL} 0;
     font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
 
     margin: 0;
@@ -14,7 +14,8 @@ export const CommentInputWrapper = styled.div`
   .textBox {
     border: 1.5px solid transparent;
     min-height: 6rem;
-    width: calc(100% - 2 * ${({ theme }) => theme.PADDINGS.X_SMALL});
+    /* width: calc(100% - 2 * ${({ theme }) => theme.PADDINGS.X_SMALL}); */
+    width: 100%;
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
     background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_BG};
     padding: ${({ theme }) => theme.PADDINGS.X_SMALL};

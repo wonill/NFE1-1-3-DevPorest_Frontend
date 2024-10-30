@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 
 export const CommentBoxWrapper = styled.div`
+  color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
+
   & {
-    /* border: 2px solid black; */
     position: relative;
-    padding: ${({ theme }) => theme.PADDINGS.SMALL};
     font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
 
     margin: 0;
@@ -16,6 +16,7 @@ export const CommentBoxWrapper = styled.div`
     align-items: center;
     gap: 15px;
     padding-bottom: 13px;
+    height: 50px;
   }
   .commentInfo img {
     width: 2.5rem;
@@ -23,7 +24,6 @@ export const CommentBoxWrapper = styled.div`
     object-fit: cover;
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-    margin-left: 10px;
   }
 
   .infoWrap * {
@@ -32,7 +32,8 @@ export const CommentBoxWrapper = styled.div`
   .infoWrap {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    height: 100%;
   }
 
   .textBox {
@@ -41,7 +42,7 @@ export const CommentBoxWrapper = styled.div`
     justify-content: space-between;
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
     background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_BG};
-    padding: 0 ${({ theme }) => theme.PADDINGS.X_SMALL};
+    padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
     min-height: 6rem;
   }
   .textBox .writeTime {
@@ -52,7 +53,7 @@ export const CommentBoxWrapper = styled.div`
   .closeBtn {
     color: ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
     position: absolute;
-    right: 2.5rem;
+    right: 0;
     top: 1.5rem;
     cursor: pointer;
     font-size: 1.5rem;
