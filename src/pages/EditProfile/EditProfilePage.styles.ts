@@ -22,8 +22,8 @@ export const H2 = styled.h2`
 export const EditProfileWrapper = styled.div`
   display: flex;
   justify-content: center;
-  gap: 4rem;
-  padding: ${({ theme }) => theme.PADDINGS.X_LARGE};
+  gap: ${({ theme }) => `calc(${theme.PADDINGS.X_LARGE} * 2)`};
+  padding: ${({ theme }) => `calc(${theme.PADDINGS.X_LARGE} * 1.5)`};
   border: 3px solid ${({ theme }) => theme.COLORS.LIGHTGREEN_SUB};
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
   background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_BG};
@@ -31,7 +31,7 @@ export const EditProfileWrapper = styled.div`
 `;
 
 export const LeftUserInfo = styled.div`
-  flex: 3;
+  flex: 4;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -52,7 +52,7 @@ export const UserInfoInputWrapper = styled.div`
 `;
 
 export const RightUserInfo = styled.div`
-  flex: 7;
+  flex: 6;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.PADDINGS.X_LARGE};
