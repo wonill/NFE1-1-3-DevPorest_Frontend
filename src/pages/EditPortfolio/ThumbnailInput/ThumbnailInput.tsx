@@ -3,7 +3,7 @@ import { ThumbnailInputWrapper } from "./ThumbnailInput.styles";
 
 // useState의 set함수를 props로 전달받음
 interface ThumbnailInputProps {
-  setPreviewThumbnail: React.Dispatch<React.SetStateAction<string>>;
+  setPreviewThumbnail: (tags: string) => void;
 }
 
 const ThumbnailInput: React.FC<ThumbnailInputProps> = ({
