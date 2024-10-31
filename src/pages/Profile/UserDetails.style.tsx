@@ -34,7 +34,11 @@ export const Contact = styled.div`
   display: flex;
   gap: 1rem;
   color: #525b76;
+
+  transform: translateX(-3px);
+
   @media (max-width: calc(768px)) {
+    transform: translateX(0);
     flex-direction: column;
     gap: 10px;
   }
@@ -77,7 +81,8 @@ export const Intro = styled.p`
     max-width: 50dvw;
   }
 
-  @media (max-width: calc(768px)) {
+  @media (max-width: 768px) {
     max-width: 80dvw;
+    margin-top: 0.5rem;
   }
 `;

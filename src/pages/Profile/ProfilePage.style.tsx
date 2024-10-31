@@ -42,6 +42,7 @@ export const TechStackList = styled.div`
   display: flex;
   max-width: 700px;
   overflow: hidden;
+  cursor: grab;
 
   @media (max-width: calc(1100px + 2rem)) {
     max-width: 50dvw;
@@ -49,6 +50,10 @@ export const TechStackList = styled.div`
   @media (max-width: calc(768px)) {
     align-self: center;
   }
+`;
+
+export const TechStackWrapper = styled.div`
+  pointer-events: none;
 `;
 
 export const EditProfile = styled.div`
@@ -103,6 +108,11 @@ export const UserPortfolioList = styled.div`
 `;
 
 export const StyledSwiperSlide = styled(SwiperSlide)`
-  width: auto;
-  flex: none;
+  width: fit-content;
+  display: flex;
+`;
+
+export const Indicator = styled.div`
+  height: 20px;
+  margin: 20px 0;
 `;
