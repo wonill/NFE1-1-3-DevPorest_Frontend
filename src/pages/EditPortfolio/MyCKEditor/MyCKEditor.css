@@ -1,0 +1,133 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+@media print {
+  body {
+    margin: 0 !important;
+  }
+}
+
+.main-container {
+  font-family: "Lato";
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ck-content {
+  font-family: "Lato";
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.editor-container_classic-editor .editor-container__editor {
+  max-width: 900px;
+  min-width: 795px;
+}
+
+.ck-editor__editable {
+  height: 50rem; /* 기본 높이 설정 */
+  overflow-y: auto; /* 내용이 많을 경우 스크롤 */
+}
+
+/* 에디터 컨테이너 스타일 */
+.editor-container {
+  position: relative;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.editor-container__editor {
+  min-height: 400px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* CKEditor 컨텐츠 스타일 */
+.ck-content {
+  min-height: 400px;
+  max-height: 800px;
+  overflow-y: auto;
+}
+
+/* 헤딩 스타일 */
+.ck-content h1 {
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.ck-content h2 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.ck-content h3 {
+  font-size: 1.75em;
+  font-weight: bold;
+}
+
+.ck-content h4 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.ck-content h5 {
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+.ck-content h6 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+/* 볼드, 이탤릭, 밑줄 스타일 */
+.ck-content strong {
+  font-weight: bold;
+}
+
+.ck-content em {
+  font-style: italic;
+}
+
+.ck-content u {
+  text-decoration: underline;
+}
+
+/* 리스트 스타일 */
+.ck-content ul,
+.ck-content ol {
+  margin-left: 20px;
+  padding: 0;
+}
+
+.ck-content li {
+  margin: 5px 0;
+}
+
+/* 인용구 스타일 */
+.ck-content blockquote {
+  margin: 1em 0;
+  padding: 1em;
+  border-left: 5px solid #ccc;
+  background-color: #f8f8f8;
+}
+
+/* 테이블 스타일 */
+.ck-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.ck-content th,
+.ck-content td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+/* 이미지 스타일 */
+.ck-content img {
+  max-width: 100%;
+  height: auto;
+}

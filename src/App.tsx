@@ -8,7 +8,7 @@ import SearchPage from "./pages/Search/SearchPage";
 import LoginPage from "./pages/login/LoginPage";
 import DetailPage from "./pages/Detail/DetailPage";
 import Register from "./pages/register/Register";
-import EditPortfolioPage from "./pages/edit_portfolio/EditPortfolioPage";
+import EditPortfolioPage from "./pages/EditPortfolio/EditPortfolioPage";
 import EditProfilePage from "./pages/EditProfile/EditProfilePage";
 import MainLayout from "./layouts/MainLayout";
 
