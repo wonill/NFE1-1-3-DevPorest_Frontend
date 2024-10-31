@@ -264,8 +264,8 @@ export interface TechStackType {
 
 export const dummyTechStacks: Array<TechStackType> = [
   {
-    name: "React",
-    backgroundColor: "#61dafb",
+    name: "JavaScript",
+    backgroundColor: "yellow",
     color: "#282c34",
     onClick: () => console.log("React clicked"),
   },
@@ -288,8 +288,8 @@ export const dummyTechStacks: Array<TechStackType> = [
     onClick: () => console.log("TypeScript clicked"),
   },
   {
-    name: "TypeScript",
-    backgroundColor: "#007acc",
+    name: "SASS",
+    backgroundColor: "pink",
     color: "#ffffff",
     onClick: () => console.log("TypeScript clicked"),
   },

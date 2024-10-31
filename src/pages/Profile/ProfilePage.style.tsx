@@ -103,6 +103,6 @@ export const UserPortfolioList = styled.div`
 `;
 
 export const StyledSwiperSlide = styled(SwiperSlide)`
-  width: auto;
-  flex: none;
+  width: fit-content;
+  display: flex;
 `;

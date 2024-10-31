@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
 import { FreeMode } from "swiper/modules";
@@ -34,9 +35,17 @@ import {
   ProfileImageInnerWrapper,
   ProfileImage,
 } from "./ProfileImage.style.tsx";
+import TabComponent from "./TabComponent";
+
+const tabs = ["나의 포레스트", "좋아요"];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("나의 포레스트");
+
+  useEffect(() => {
+    console.log(activeTab);
+  }, [activeTab]);
 
   const handleCardClick = (portfolio_id: number) => {
     console.log(`${portfolio_id}에 해당하는 페이지로 이동`);
@@ -46,6 +55,7 @@ const ProfilePage = () => {
     // 수정 버튼 클릭 시 프로필 수정 페이지로 이동
     navigate("/edit_profile");
   };
+
   return (
     <ProfilePageWrapper>
       <ProfileContainer>
@@ -88,6 +98,7 @@ const ProfilePage = () => {
                 spaceBetween={10}
                 freeMode={true}
                 modules={[FreeMode]}
+                touchEventsTarget="container"
               >
                 {dummyTechStacks.map((item, i) => (
                   <StyledSwiperSlide key={i}>
@@ -119,13 +130,17 @@ const ProfilePage = () => {
               </EditProfile>
             </ProfileImageWrapper>
             <ExternalLinkWrapper>
-              {/* 외부 링크 주소 */}
               <ExternalLink imgType={0} link="https://github.com/" />
               <ExternalLink imgType={1} link="https://instagram.com/username" />
               <ExternalLink imgType={2} link="https://velog.io/" />
             </ExternalLinkWrapper>
           </UserInfoRight>
         </UserInfo>
+        <TabComponent
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
         <UserPortfolioList>
           {DummyData.map((item, index) => (
             <PortfolioCard
