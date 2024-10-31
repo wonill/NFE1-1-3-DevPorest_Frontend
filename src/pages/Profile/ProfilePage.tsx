@@ -15,6 +15,7 @@ import {
   UserInfo,
   StyledSwiperSlide,
   TechStackList,
+  TechStackWrapper,
   EditProfile,
   TotalLikes,
   ExternalLinkWrapper,
@@ -36,6 +37,7 @@ import {
   ProfileImage,
 } from "./ProfileImage.style.tsx";
 import TabComponent from "./TabComponent";
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
 
 const tabs = ["나의 포레스트", "좋아요"];
 
@@ -102,12 +104,14 @@ const ProfilePage = () => {
               >
                 {dummyTechStacks.map((item, i) => (
                   <StyledSwiperSlide key={i}>
-                    <TechStack
-                      name={item.name}
-                      backgroundColor={item.backgroundColor}
-                      color={item.color}
-                      onClick={item.onClick}
-                    />
+                    <TechStackWrapper>
+                      <TechStack
+                        name={item.name}
+                        backgroundColor={item.backgroundColor}
+                        color={item.color}
+                        onClick={item.onClick}
+                      />
+                    </TechStackWrapper>
                   </StyledSwiperSlide>
                 ))}
               </Swiper>
@@ -142,13 +146,17 @@ const ProfilePage = () => {
           onTabChange={setActiveTab}
         />
         <UserPortfolioList>
-          {DummyData.map((item, index) => (
-            <PortfolioCard
-              key={index}
-              {...item}
-              onClick={() => handleCardClick(item.portfolio_id)}
-            />
-          ))}
+          {DummyData.length ? (
+            DummyData.map((item, index) => (
+              <PortfolioCard
+                key={index}
+                {...item}
+                onClick={() => handleCardClick(item.portfolio_id)}
+              />
+            ))
+          ) : (
+            <EmptyPortfolio text={"등록된 작업물이 없습니다"} />
+          )}
         </UserPortfolioList>
       </ProfileContainer>
     </ProfilePageWrapper>

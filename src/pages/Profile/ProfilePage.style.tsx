@@ -42,6 +42,11 @@ export const TechStackList = styled.div`
   display: flex;
   max-width: 700px;
   overflow: hidden;
+  cursor: grab;
+
+  > div {
+    pointer-events: auto;
+  }
 
   @media (max-width: calc(1100px + 2rem)) {
     max-width: 50dvw;
@@ -49,6 +54,10 @@ export const TechStackList = styled.div`
   @media (max-width: calc(768px)) {
     align-self: center;
   }
+`;
+
+export const TechStackWrapper = styled.div`
+  pointer-events: none;
 `;
 
 export const EditProfile = styled.div`
