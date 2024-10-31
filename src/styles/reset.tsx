@@ -1,6 +1,38 @@
-import { css } from '@emotion/react';
+import { css } from "@emotion/react";
 
 export const global = css`
+  @font-face {
+    font-family: "Pretendard";
+    src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+      format("woff");
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pretendard";
+    src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Light.woff")
+      format("woff");
+    font-weight: 300;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pretendard";
+    src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff")
+      format("woff");
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Pretendard";
+    src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff")
+      format("woff");
+    font-weight: 700;
+    font-style: normal;
+  }
+
   html,
   body,
   div,
@@ -88,6 +120,7 @@ export const global = css`
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    font-family: "Pretendard", sans-serif;
   }
   /* HTML5 display-role reset for older browsers */
   article,
@@ -118,7 +151,7 @@ export const global = css`
   blockquote:after,
   q:before,
   q:after {
-    content: '';
+    content: "";
     content: none;
   }
   table {
@@ -128,6 +161,7 @@ export const global = css`
 
   * {
     box-sizing: border-box;
+    font-family: "Pretendard", sans-serif;
   }
 
   a {

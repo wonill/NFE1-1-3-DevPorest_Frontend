@@ -3,35 +3,36 @@ import { Global, css } from "@emotion/react";
 import { global } from "./styles/reset";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/main/MainPage";
-import ProfilePage from "./pages/profile/ProfilePage";
-import SearchPage from "./pages/search/SearchPage";
+import ProfilePage from "./pages/Profile/ProfilePage";
+import SearchPage from "./pages/Search/SearchPage";
 import LoginPage from "./pages/login/LoginPage";
-import DetailPage from "./pages/detail/DetailPage";
+import DetailPage from "./pages/Detail/DetailPage";
 import Register from "./pages/register/Register";
 import EditPortfolioPage from "./pages/edit_portfolio/EditPortfolioPage";
-import EditProfilePage from "./pages/edit_profile/EditProfilePage";
+import EditProfilePage from "./pages/EditProfile/EditProfilePage";
+import MainLayout from "./layouts/MainLayout";
 
 const App: React.FC = () => {
   return (
-    <div>
+    <BrowserRouter>
       <Global
         styles={css`
           ${global}
         `}
       />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<MainPage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/detail" element={<DetailPage />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/edit_portfolio" element={<EditPortfolioPage />} />
-          <Route path="/edit_profile" element={<EditProfilePage />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/edit_profile" element={<EditProfilePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
