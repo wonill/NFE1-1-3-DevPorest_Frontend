@@ -40,6 +40,10 @@ import TabComponent from "./TabComponent";
 import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
 
 const tabs = ["나의 포레스트", "좋아요"];
+import phoneImg from "../../assets/profile_page_phone.svg";
+import emailImg from "../../assets/email.svg";
+import heartImg from "../../assets/active_heart.svg";
+import pencilImg from "../../assets/pencil.svg";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -106,19 +110,13 @@ const ProfilePage = () => {
               <Contact>
                 <TelWrapper>
                   <span>
-                    <img
-                      src="/src/assets/profile_page_phone.svg"
-                      alt="전화번호"
-                    />
+                    <img src={phoneImg} alt="전화번호" />
                   </span>
                   <p>010-1234-1234</p>
                 </TelWrapper>
                 <EmailWrpper>
                   <span>
-                    <img
-                      src="/src/assets/profile_page_email.svg"
-                      alt="이메일"
-                    />
+                    <img src={emailImg} alt="이메일" />
                   </span>
                   <p>email@gmail.com</p>
                 </EmailWrpper>
@@ -149,7 +147,7 @@ const ProfilePage = () => {
           <UserInfoRight>
             <ProfileImageWrapper>
               <TotalLikes>
-                <img src="/src/assets/active_heart.svg" alt="TotalLikes" />
+                <img src={heartImg} alt="TotalLikes" />
                 <p>274</p>
               </TotalLikes>
               <ProfileImageInnerWrapper>
@@ -159,7 +157,7 @@ const ProfilePage = () => {
                 />
               </ProfileImageInnerWrapper>
               <EditProfile onClick={onClickEditProfile}>
-                <img src="/src/assets/pencil.svg" alt="프로필 수정" />
+                <img src={pencilImg} alt="프로필 수정" />
               </EditProfile>
             </ProfileImageWrapper>
             <ExternalLinkWrapper>

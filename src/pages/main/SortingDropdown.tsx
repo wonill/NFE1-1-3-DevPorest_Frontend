@@ -7,6 +7,7 @@ import {
   DropdownItem,
   DropdownArrow,
 } from "./SortingDropdown.style";
+import dropDown from "../../assets/dropdown_arrow.svg";
 
 interface DropdownProps {
   options: string[];
@@ -14,11 +15,7 @@ interface DropdownProps {
   selectedSortOption: string;
 }
 
-const SortingDropdown: React.FC<DropdownProps> = ({
-  options,
-  onSelect,
-  selectedSortOption,
-}) => {
+const SortingDropdown: React.FC<DropdownProps> = ({ options, onSelect, selectedSortOption }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleRef = useRef<HTMLDivElement>(null);
 
@@ -33,10 +30,7 @@ const SortingDropdown: React.FC<DropdownProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        toggleRef.current &&
-        !toggleRef.current.contains(event.target as Node)
-      ) {
+      if (toggleRef.current && !toggleRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -65,7 +59,7 @@ const SortingDropdown: React.FC<DropdownProps> = ({
         </DropdownList>
       )}
       <DropdownArrow isOpen={isOpen}>
-        <img src="/src/assets/dropdown_arrow.svg" alt="드롭다운" />
+        <img src={dropDown} alt="드롭다운" />
       </DropdownArrow>
     </DropdownContainer>
   );
