@@ -1,6 +1,6 @@
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
-import { FreeMode } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { DummyData, dummyTechStacks } from "../../data/profilePageData.ts";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard.tsx";
@@ -14,10 +14,12 @@ import {
   UserInfo,
   StyledSwiperSlide,
   TechStackList,
+  TechStackWrapper,
   EditProfile,
   TotalLikes,
   ExternalLinkWrapper,
   UserPortfolioList,
+  Indicator,
 } from "./ProfilePage.style.tsx";
 import {
   UserDetails,
@@ -34,9 +36,57 @@ import {
   ProfileImageInnerWrapper,
   ProfileImage,
 } from "./ProfileImage.style.tsx";
+import TabComponent from "./TabComponent";
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
+
+const tabs = ["나의 포레스트", "좋아요"];
+import phoneImg from "../../assets/profile_page_phone.svg";
+import emailImg from "../../assets/email.svg";
+import heartImg from "../../assets/active_heart.svg";
+import pencilImg from "../../assets/pencil.svg";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("나의 포레스트");
+  const [visibleData, setVisibleData] = useState(DummyData.slice(0, 6));
+  const [hasMore, setHasMore] = useState(true);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const loadMoreData = useCallback(() => {
+    const nextData = DummyData.slice(
+      visibleData.length,
+      visibleData.length + 3
+    );
+    if (nextData.length > 0) {
+      setVisibleData((prev) => [...prev, ...nextData]);
+    } else {
+      setHasMore(false);
+    }
+  }, [visibleData]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          loadMoreData();
+        }
+      });
+    });
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current);
+      }
+    };
+  }, [visibleData]);
+
+  useEffect(() => {
+    console.log(activeTab);
+  }, [activeTab]);
 
   const handleCardClick = (portfolio_id: number) => {
     console.log(`${portfolio_id}에 해당하는 페이지로 이동`);
@@ -46,6 +96,7 @@ const ProfilePage = () => {
     // 수정 버튼 클릭 시 프로필 수정 페이지로 이동
     navigate("/edit_profile");
   };
+
   return (
     <ProfilePageWrapper>
       <ProfileContainer>
@@ -59,19 +110,13 @@ const ProfilePage = () => {
               <Contact>
                 <TelWrapper>
                   <span>
-                    <img
-                      src="/src/assets/profile_page_phone.svg"
-                      alt="전화번호"
-                    />
+                    <img src={phoneImg} alt="전화번호" />
                   </span>
                   <p>010-1234-1234</p>
                 </TelWrapper>
                 <EmailWrpper>
                   <span>
-                    <img
-                      src="/src/assets/profile_page_email.svg"
-                      alt="이메일"
-                    />
+                    <img src={emailImg} alt="이메일" />
                   </span>
                   <p>email@gmail.com</p>
                 </EmailWrpper>
@@ -83,20 +128,17 @@ const ProfilePage = () => {
               </Intro>
             </UserDetails>
             <TechStackList>
-              <Swiper
-                slidesPerView="auto"
-                spaceBetween={10}
-                freeMode={true}
-                modules={[FreeMode]}
-              >
+              <Swiper slidesPerView="auto" spaceBetween={10}>
                 {dummyTechStacks.map((item, i) => (
                   <StyledSwiperSlide key={i}>
-                    <TechStack
-                      name={item.name}
-                      backgroundColor={item.backgroundColor}
-                      color={item.color}
-                      onClick={item.onClick}
-                    />
+                    <TechStackWrapper>
+                      <TechStack
+                        name={item.name}
+                        backgroundColor={item.backgroundColor}
+                        color={item.color}
+                        onClick={item.onClick}
+                      />
+                    </TechStackWrapper>
                   </StyledSwiperSlide>
                 ))}
               </Swiper>
@@ -105,7 +147,7 @@ const ProfilePage = () => {
           <UserInfoRight>
             <ProfileImageWrapper>
               <TotalLikes>
-                <img src="/src/assets/active_heart.svg" alt="TotalLikes" />
+                <img src={heartImg} alt="TotalLikes" />
                 <p>274</p>
               </TotalLikes>
               <ProfileImageInnerWrapper>
@@ -115,26 +157,35 @@ const ProfilePage = () => {
                 />
               </ProfileImageInnerWrapper>
               <EditProfile onClick={onClickEditProfile}>
-                <img src="/src/assets/pencil.svg" alt="프로필 수정" />
+                <img src={pencilImg} alt="프로필 수정" />
               </EditProfile>
             </ProfileImageWrapper>
             <ExternalLinkWrapper>
-              {/* 외부 링크 주소 */}
               <ExternalLink imgType={0} link="https://github.com/" />
               <ExternalLink imgType={1} link="https://instagram.com/username" />
               <ExternalLink imgType={2} link="https://velog.io/" />
             </ExternalLinkWrapper>
           </UserInfoRight>
         </UserInfo>
+        <TabComponent
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
         <UserPortfolioList>
-          {DummyData.map((item, index) => (
-            <PortfolioCard
-              key={index}
-              {...item}
-              onClick={() => handleCardClick(item.portfolio_id)}
-            />
-          ))}
+          {DummyData.length ? (
+            visibleData.map((item, index) => (
+              <PortfolioCard
+                key={index}
+                {...item}
+                onClick={() => handleCardClick(item.portfolio_id)}
+              />
+            ))
+          ) : (
+            <EmptyPortfolio text={"등록된 작업물이 없습니다"} />
+          )}
         </UserPortfolioList>
+        {hasMore && <Indicator ref={loadMoreRef} />}
       </ProfileContainer>
     </ProfilePageWrapper>
   );

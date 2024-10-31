@@ -5,6 +5,9 @@ export const ProfileImageWrapper = styled.div`
   height: 207px;
 
   position: relative;
+  @media (min-width: 768px) {
+    margin-bottom: 0.75rem;
+  }
 `;
 
 export const ProfileImageInnerWrapper = styled.div`
