@@ -7,6 +7,7 @@ import {
   DropdownItem,
   DropdownArrow,
 } from "./SortingDropdown.style";
+import dropDown from "../../assets/dropdown_arrow.svg";
 
 interface DropdownProps {
   options: string[];
@@ -58,7 +59,7 @@ const SortingDropdown: React.FC<DropdownProps> = ({ options, onSelect, selectedS
         </DropdownList>
       )}
       <DropdownArrow isOpen={isOpen}>
-        <img src="/dropdown_arrow.svg" alt="드롭다운" />
+        <img src={dropDown} alt="드롭다운" />
       </DropdownArrow>
     </DropdownContainer>
   );
