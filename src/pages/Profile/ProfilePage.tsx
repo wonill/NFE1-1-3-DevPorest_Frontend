@@ -36,14 +36,14 @@ import {
   ProfileImageInnerWrapper,
   ProfileImage,
 } from "./ProfileImage.style.tsx";
-import TabComponent from "./TabComponent";
-import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
-
-const tabs = ["나의 포레스트", "좋아요"];
 import phoneImg from "../../assets/profile_page_phone.svg";
 import emailImg from "../../assets/email.svg";
 import heartImg from "../../assets/active_heart.svg";
 import pencilImg from "../../assets/pencil.svg";
+import TabComponent from "./TabComponent";
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
+
+const tabs = ["나의 포레스트", "좋아요"];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -53,20 +53,17 @@ const ProfilePage = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const loadMoreData = useCallback(() => {
-    const nextData = DummyData.slice(
-      visibleData.length,
-      visibleData.length + 3
-    );
+    const nextData = DummyData.slice(visibleData.length, visibleData.length + 3);
     if (nextData.length > 0) {
-      setVisibleData((prev) => [...prev, ...nextData]);
+      setVisibleData(prev => [...prev, ...nextData]);
     } else {
       setHasMore(false);
     }
   }, [visibleData]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
           loadMoreData();
         }
@@ -122,9 +119,8 @@ const ProfilePage = () => {
                 </EmailWrpper>
               </Contact>
               <Intro>
-                안녕하세요, 주니어 프론트엔드 개발자 홍길동입니다. 저는 현재
-                포트폴리오 플랫폼에서 다양한 프로젝트를 진행하며 웹 개발의
-                기초부터 심화까지 폭넓은 경험을 쌓고 있습니다.
+                안녕하세요, 주니어 프론트엔드 개발자 홍길동입니다. 저는 현재 포트폴리오 플랫폼에서
+                다양한 프로젝트를 진행하며 웹 개발의 기초부터 심화까지 폭넓은 경험을 쌓고 있습니다.
               </Intro>
             </UserDetails>
             <TechStackList>
@@ -167,11 +163,7 @@ const ProfilePage = () => {
             </ExternalLinkWrapper>
           </UserInfoRight>
         </UserInfo>
-        <TabComponent
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <TabComponent tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
         <UserPortfolioList>
           {DummyData.length ? (
             visibleData.map((item, index) => (
