@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
-import { FreeMode } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { DummyData, dummyTechStacks } from "../../data/profilePageData.ts";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard.tsx";
@@ -20,6 +19,7 @@ import {
   TotalLikes,
   ExternalLinkWrapper,
   UserPortfolioList,
+  Indicator,
 } from "./ProfilePage.style.tsx";
 import {
   UserDetails,
@@ -44,6 +44,41 @@ const tabs = ["나의 포레스트", "좋아요"];
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("나의 포레스트");
+  const [visibleData, setVisibleData] = useState(DummyData.slice(0, 6));
+  const [hasMore, setHasMore] = useState(true);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const loadMoreData = useCallback(() => {
+    const nextData = DummyData.slice(
+      visibleData.length,
+      visibleData.length + 3
+    );
+    if (nextData.length > 0) {
+      setVisibleData((prev) => [...prev, ...nextData]);
+    } else {
+      setHasMore(false);
+    }
+  }, [visibleData]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          loadMoreData();
+        }
+      });
+    });
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current);
+      }
+    };
+  }, [visibleData]);
 
   useEffect(() => {
     console.log(activeTab);
@@ -95,13 +130,7 @@ const ProfilePage = () => {
               </Intro>
             </UserDetails>
             <TechStackList>
-              <Swiper
-                slidesPerView="auto"
-                spaceBetween={10}
-                freeMode={true}
-                modules={[FreeMode]}
-                touchEventsTarget="container"
-              >
+              <Swiper slidesPerView="auto" spaceBetween={10}>
                 {dummyTechStacks.map((item, i) => (
                   <StyledSwiperSlide key={i}>
                     <TechStackWrapper>
@@ -147,7 +176,7 @@ const ProfilePage = () => {
         />
         <UserPortfolioList>
           {DummyData.length ? (
-            DummyData.map((item, index) => (
+            visibleData.map((item, index) => (
               <PortfolioCard
                 key={index}
                 {...item}
@@ -158,6 +187,7 @@ const ProfilePage = () => {
             <EmptyPortfolio text={"등록된 작업물이 없습니다"} />
           )}
         </UserPortfolioList>
+        {hasMore && <Indicator ref={loadMoreRef} />}
       </ProfileContainer>
     </ProfilePageWrapper>
   );

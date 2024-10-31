@@ -20,19 +20,39 @@ export const ImgCon = styled.div`
 export const TitleBox = styled.div`
   position: absolute;
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
-  padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+  padding: 1.5rem 1rem;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  color: ${({ theme }) => theme.COLORS.MAIN_BG};
+  background: rgba(233, 233, 233, 0.2);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-end;
   visibility: hidden;
   font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+  font-size: 15px;
   cursor: pointer;
+
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: ${({ theme }) => theme.COLORS.MAIN_BG};
+    letter-spacing: -0.25px;
+    font-weight: 700;
+    z-index: 10;
+  }
+
+  ::after {
+    content: "";
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    height: 5rem;
+    background: linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+  }
 `;
 
 export const ThumbnailImg = styled.img`

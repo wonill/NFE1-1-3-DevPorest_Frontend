@@ -44,10 +44,6 @@ export const TechStackList = styled.div`
   overflow: hidden;
   cursor: grab;
 
-  > div {
-    pointer-events: auto;
-  }
-
   @media (max-width: calc(1100px + 2rem)) {
     max-width: 50dvw;
   }
@@ -114,4 +110,9 @@ export const UserPortfolioList = styled.div`
 export const StyledSwiperSlide = styled(SwiperSlide)`
   width: fit-content;
   display: flex;
+`;
+
+export const Indicator = styled.div`
+  height: 20px;
+  margin: 20px 0;
 `;
