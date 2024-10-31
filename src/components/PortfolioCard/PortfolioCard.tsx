@@ -21,7 +21,7 @@ interface PortfolioCardProps {
   onClick: (portfolio_id: number) => void;
 }
 
-const noImage = "/src/assets/no_image.svg";
+import noImage from "../../assets/no_image.svg";
 
 const PortfolioCard: React.FC<PortfolioCardProps> = ({
   portfolio_id,

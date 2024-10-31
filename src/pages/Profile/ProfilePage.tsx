@@ -34,6 +34,10 @@ import {
   ProfileImageInnerWrapper,
   ProfileImage,
 } from "./ProfileImage.style.tsx";
+import phoneImg from "../../assets/profile_page_phone.svg";
+import emailImg from "../../assets/email.svg";
+import heartImg from "../../assets/active_heart.svg";
+import pencilImg from "../../assets/pencil.svg";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -59,36 +63,24 @@ const ProfilePage = () => {
               <Contact>
                 <TelWrapper>
                   <span>
-                    <img
-                      src="/src/assets/profile_page_phone.svg"
-                      alt="전화번호"
-                    />
+                    <img src={phoneImg} alt="전화번호" />
                   </span>
                   <p>010-1234-1234</p>
                 </TelWrapper>
                 <EmailWrpper>
                   <span>
-                    <img
-                      src="/src/assets/profile_page_email.svg"
-                      alt="이메일"
-                    />
+                    <img src={emailImg} alt="이메일" />
                   </span>
                   <p>email@gmail.com</p>
                 </EmailWrpper>
               </Contact>
               <Intro>
-                안녕하세요, 주니어 프론트엔드 개발자 홍길동입니다. 저는 현재
-                포트폴리오 플랫폼에서 다양한 프로젝트를 진행하며 웹 개발의
-                기초부터 심화까지 폭넓은 경험을 쌓고 있습니다.
+                안녕하세요, 주니어 프론트엔드 개발자 홍길동입니다. 저는 현재 포트폴리오 플랫폼에서
+                다양한 프로젝트를 진행하며 웹 개발의 기초부터 심화까지 폭넓은 경험을 쌓고 있습니다.
               </Intro>
             </UserDetails>
             <TechStackList>
-              <Swiper
-                slidesPerView="auto"
-                spaceBetween={10}
-                freeMode={true}
-                modules={[FreeMode]}
-              >
+              <Swiper slidesPerView="auto" spaceBetween={10} freeMode={true} modules={[FreeMode]}>
                 {dummyTechStacks.map((item, i) => (
                   <StyledSwiperSlide key={i}>
                     <TechStack
@@ -105,7 +97,7 @@ const ProfilePage = () => {
           <UserInfoRight>
             <ProfileImageWrapper>
               <TotalLikes>
-                <img src="/src/assets/active_heart.svg" alt="TotalLikes" />
+                <img src={heartImg} alt="TotalLikes" />
                 <p>274</p>
               </TotalLikes>
               <ProfileImageInnerWrapper>
@@ -115,7 +107,7 @@ const ProfilePage = () => {
                 />
               </ProfileImageInnerWrapper>
               <EditProfile onClick={onClickEditProfile}>
-                <img src="/src/assets/pencil.svg" alt="프로필 수정" />
+                <img src={pencilImg} alt="프로필 수정" />
               </EditProfile>
             </ProfileImageWrapper>
             <ExternalLinkWrapper>

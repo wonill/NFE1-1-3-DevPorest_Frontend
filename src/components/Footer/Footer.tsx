@@ -1,4 +1,5 @@
 import { StyledFooter, FooterText, FooterLogo } from "./Footer.style";
+import footerLogo from "../../assets/footer_logo.svg";
 
 const Footer = () => {
   return (
@@ -8,7 +9,7 @@ const Footer = () => {
         ⓒ <strong>2024 STUNNING INC.</strong>
       </FooterText>
       <FooterLogo>
-        <img src="/src/assets/footer_logo.svg" alt="로고" />
+        <img src={footerLogo} alt="로고" />
         <p>DEV</p>
         <p>POREST</p>
       </FooterLogo>
