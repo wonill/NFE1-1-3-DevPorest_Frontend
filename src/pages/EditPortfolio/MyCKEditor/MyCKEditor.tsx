@@ -28,7 +28,6 @@ import {
   LinkImage,
   List,
   ListProperties,
-  Markdown,
   MediaEmbed,
   PasteFromOffice,
   Table,
@@ -103,7 +102,6 @@ const MyCKEditor = () => {
       LinkImage,
       List,
       ListProperties,
-      Markdown,
       MediaEmbed,
       PasteFromOffice,
       Table,
@@ -217,7 +215,14 @@ const MyCKEditor = () => {
           <div className="editor-container__editor">
             <div ref={editorRef}>
               {isLayoutReady && (
-                <CKEditor editor={ClassicEditor} config={editorConfig} />
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfig}
+                  onChange={(_, editor) => {
+                    const data = editor.getData(); // 포트폴리오 작성내용(html)
+                    console.log(data);
+                  }}
+                />
               )}
             </div>
           </div>
