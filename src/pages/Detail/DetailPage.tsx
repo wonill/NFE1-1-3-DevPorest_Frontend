@@ -74,7 +74,7 @@ const DetailPage: React.FC = () => {
         <StatsAndTags>
           <div>
             {techStacks.slice(0, 3).map(techStack => (
-              <TechStack key={techStack.name} {...techStack} />
+              <TechStack key={techStack.skill} content={{ ...techStack }} onClick={() => {}} />
             ))}
             {dummyTags2.map((tag, i) => (
               <Tag key={i} {...tag} />

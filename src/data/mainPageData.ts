@@ -1,3 +1,5 @@
+import { ITechStackType } from "../types/api-types/TechStackType";
+
 // 메인페이지 최상단 인기 포트폴리오 데이터
 interface PopularPortfolioType {
   id: string;
@@ -158,37 +160,30 @@ export const DummyData: PortfolioData[] = [
   },
 ];
 
-interface TechStackType {
-  name: string;
-  backgroundColor: string;
-  color: string;
-  onClick: () => void;
-}
-
-export const dummyTechStacks: Array<TechStackType> = [
+export const dummyTechStacks: Array<ITechStackType> = [
   {
-    name: "React",
-    backgroundColor: "#61dafb",
-    color: "#282c34",
-    onClick: () => console.log("TypeScript clicked"),
+    skill: "React",
+    bgColor: "#61dafb",
+    textColor: "#282c34",
+    jobCode: "frontend", // 임시
   },
   {
-    name: "TypeScript",
-    backgroundColor: "#007acc",
-    color: "#ffffff",
-    onClick: () => console.log("TypeScript clicked"),
+    skill: "TypeScript",
+    bgColor: "#007acc",
+    textColor: "#ffffff",
+    jobCode: "frontend", // 임시
   },
   {
-    name: "React",
-    backgroundColor: "#61dafb",
-    color: "#282c34",
-    onClick: () => console.log("TypeScript clicked"),
+    skill: "React",
+    bgColor: "#61dafb",
+    textColor: "#282c34",
+    jobCode: "frontend", // 임시
   },
   {
-    name: "TypeScript",
-    backgroundColor: "#007acc",
-    color: "#ffffff",
-    onClick: () => console.log("TypeScript clicked"),
+    skill: "TypeScript",
+    bgColor: "#007acc",
+    textColor: "#ffffff",
+    jobCode: "frontend", // 임시
   },
 ];
 

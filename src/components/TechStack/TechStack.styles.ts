@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import styled from '@emotion/styled';
-import { TechStackType } from './TechStack';
+import styled from "@emotion/styled";
 
-export const Button = styled.button<Pick<TechStackType, 'backgroundColor' | 'color'>>`
+export const Button = styled.button<{ backgroundColor: string; color: string }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
   color: ${({ color }) => color};
   padding: ${({ theme }) => theme.PADDINGS.X_SMALL} ${({ theme }) => theme.PADDINGS.SMALL};
