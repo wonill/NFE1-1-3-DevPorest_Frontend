@@ -39,9 +39,9 @@ export const CancelButton = styled.button`
   border: solid 2px ${({ theme }) => theme.COLORS.MAIN_GREEN};
   background-color: ${({ theme }) => theme.COLORS.MAIN_BG};
   color: ${({ theme }) => theme.COLORS.MAIN_GREEN};
-  width: 70px;
+  width: 90px;
   height: 50px;
-  border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+  border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
 `;
 
 export const ConfirmButton = styled.button`
@@ -50,7 +50,7 @@ export const ConfirmButton = styled.button`
   background-color: ${({ theme }) => theme.COLORS.MAIN_GREEN};
   color: white;
   color: white;
-  width: 70px;
+  width: 90px;
   height: 50px;
-  border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+  border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
 `;
