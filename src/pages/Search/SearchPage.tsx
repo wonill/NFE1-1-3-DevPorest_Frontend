@@ -6,17 +6,24 @@ import {
   SearchIconContainer,
   FilterSection,
   Category,
+  TechStackWrapper,
+  StyledSwiperSlide,
   Sorting,
   PortfolioSection,
   Indicator,
 } from "./SearchPage.styles";
 import { jobs } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
+import TechStack2 from "../../components/TechStack2/TechStack2";
 import { DummyData } from "../../data/profilePageData";
+import { techStacks } from "../../data/dummyData";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard";
+import { Swiper } from "swiper/react";
+import "swiper/swiper-bundle.css";
 
 const SearchPage: React.FC = () => {
   const [visibleData, setVisibleData] = useState(DummyData.slice(0, 10));
+  const [filteredTechStacks, setFilteredTechStacks] = useState(techStacks);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const loadMoreData = () => {
@@ -44,6 +51,15 @@ const SearchPage: React.FC = () => {
     };
   }, [visibleData]);
 
+  const handleTagClick = (jobName: string) => {
+    if (jobName === "전체") {
+      setFilteredTechStacks(techStacks);
+    } else {
+      const filteredStacks = techStacks.filter(stack => stack.jobCode === jobName);
+      setFilteredTechStacks(filteredStacks);
+    }
+  };
+
   return (
     <Main>
       <h2>'리액트'에 대한 검색 결과</h2>
@@ -61,11 +77,22 @@ const SearchPage: React.FC = () => {
       </SearchSection>
       <FilterSection>
         <Category>
-          <Tag key={0} content={"전체"} />
+          <Tag key={0} content={"전체"} onClick={() => handleTagClick("전체")} />
           {jobs.slice(0, 3).map(job => (
-            <Tag key={job.jobCode} content={job.name} />
+            <Tag key={job.jobCode} content={job.name} onClick={() => handleTagClick(job.name)} />
           ))}
         </Category>
+        <TechStackWrapper>
+          <Swiper slidesPerView="auto" spaceBetween={10}>
+            {filteredTechStacks.map((item, i) => (
+              <StyledSwiperSlide key={i}>
+                <TechStackWrapper>
+                  <TechStack2 content={{ ...item }} onClick={() => {}} />
+                </TechStackWrapper>
+              </StyledSwiperSlide>
+            ))}
+          </Swiper>
+        </TechStackWrapper>
         <Sorting>
           <span>정렬 방식</span>
           <Select>
