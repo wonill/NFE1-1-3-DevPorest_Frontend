@@ -1,18 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
-import { Button } from './TechStack.styles';
+import React from "react";
+import { Button } from "./TechStack.styles";
+import { ITechStackType } from "../../types/api-types/TechStackType";
 
-export interface TechStackType {
-  name: string;
-  backgroundColor: string;
-  color: string;
+export interface TechStackProps {
+  content: ITechStackType;
   onClick: () => void;
 }
 
-const TechStack: React.FC<TechStackType> = ({ name, backgroundColor, color, onClick }) => {
+const TechStack: React.FC<TechStackProps> = ({ content, onClick }) => {
   return (
-    <Button backgroundColor={backgroundColor} color={color} onClick={onClick}>
-      {name}
+    <Button backgroundColor={content.bgColor} color={content.textColor} onClick={onClick}>
+      {content.skill}
     </Button>
   );
 };

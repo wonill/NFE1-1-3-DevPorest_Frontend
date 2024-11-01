@@ -1,20 +1,16 @@
 import { useRef, useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import { DropBtn } from "./Dropdown.styles";
-import { TechStackType } from "../../data/profilePageData";
 import { Job } from "../../types/job";
+import { ITechStackType } from "../../types/api-types/TechStackType";
 
 interface DropDownWithBtnProps {
   name?: string;
-  items: TechStackType[] | Job[];
+  items: ITechStackType[] | Job[];
   placeholder: string;
 }
 
-const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
-  name,
-  items,
-  placeholder,
-}) => {
+const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({ name, items, placeholder }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [DropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
 
@@ -50,7 +46,7 @@ const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
       const rect = DropdownBtnRef.current.getBoundingClientRect();
       setDropdownPosition({ x: rect.left, y: rect.bottom });
     }
-    setIsDropdownOpen((prev) => !prev);
+    setIsDropdownOpen(prev => !prev);
   };
   return (
     <div>
@@ -65,8 +61,8 @@ const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
             items={items}
             position={{ x: DropdownPosition.x, y: DropdownPosition.y + 10 }}
             placeholder={placeholder}
-            onSelect={(item) => {
-              console.log(item.name);
+            onSelect={item => {
+              console.log(item);
               setIsDropdownOpen(false);
             }}
           />

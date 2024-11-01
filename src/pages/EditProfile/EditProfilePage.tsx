@@ -116,7 +116,11 @@ const EditProfilePage: React.FC = () => {
                 <div>
                   <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}></SelectBtn>
                   {dummyTechStacks.map(techStack => (
-                    <TechStack key={techStack.name} {...techStack} />
+                    <TechStack
+                      key={techStack.skill}
+                      content={{ ...techStack }}
+                      onClick={() => {}}
+                    />
                   ))}
                 </div>
               </SelectWrapper>
@@ -133,7 +137,7 @@ const EditProfilePage: React.FC = () => {
             items={techStacks}
             position={{ x: techStackPosition.x, y: techStackPosition.y + 10 }}
             placeholder="기술스택을 입력하세요"
-            onSelect={item => console.log(item.name)}
+            onSelect={item => console.log(item)}
           />
         )}
         {isJobOpen && (
@@ -142,7 +146,7 @@ const EditProfilePage: React.FC = () => {
             items={jobs}
             position={{ x: jobPosition.x, y: jobPosition.y + 10 }}
             placeholder="직군을 입력하세요"
-            onSelect={item => console.log(item.name)}
+            onSelect={item => console.log(item)}
           />
         )}
       </EditProfilePageContainer>

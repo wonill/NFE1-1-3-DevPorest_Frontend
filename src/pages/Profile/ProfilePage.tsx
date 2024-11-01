@@ -2,7 +2,8 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
 import "swiper/swiper-bundle.css";
-import { DummyData, dummyTechStacks } from "../../data/profilePageData.ts";
+import { DummyData } from "../../data/profilePageData.ts";
+import { techStacks } from "../../data/dummyData.ts";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard.tsx";
 import TechStack from "../../components/TechStack/TechStack.tsx";
 import ExternalLink from "../../components/ExternalLink/ExternalLink.tsx";
@@ -125,15 +126,10 @@ const ProfilePage = () => {
             </UserDetails>
             <TechStackList>
               <Swiper slidesPerView="auto" spaceBetween={10}>
-                {dummyTechStacks.map((item, i) => (
+                {techStacks.map((item, i) => (
                   <StyledSwiperSlide key={i}>
                     <TechStackWrapper>
-                      <TechStack
-                        name={item.name}
-                        backgroundColor={item.backgroundColor}
-                        color={item.color}
-                        onClick={item.onClick}
-                      />
+                      <TechStack content={{ ...item }} onClick={() => {}} />
                     </TechStackWrapper>
                   </StyledSwiperSlide>
                 ))}

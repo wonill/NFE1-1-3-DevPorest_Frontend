@@ -6,12 +6,7 @@ import TechStack from "../../components/TechStack/TechStack";
 import ThumbnailInput from "./ThumbnailInput/ThumbnailInput";
 import DropdownWithBtn from "../../components/Dropdown/DropdownWithBtn";
 import MyCKEditor from "./MyCKEditor/MyCKEditor";
-import {
-  techStacks,
-  jobs,
-  dummyTags,
-  dummyTechStacks,
-} from "../../data/dummyData";
+import { techStacks, jobs, dummyTags, dummyTechStacks } from "../../data/dummyData";
 import TagInput from "./TagInput/TagInput";
 
 const EditPortfolioPage = () => {
@@ -56,21 +51,13 @@ const EditPortfolioPage = () => {
           <ThumbnailInput setPreviewThumbnail={setPreviewThumbnail} />
         </div>
         {previewThumbnail ? (
-          <img
-            className="preview"
-            src={previewThumbnail}
-            alt="썸네일 미리보기"
-          />
+          <img className="preview" src={previewThumbnail} alt="썸네일 미리보기" />
         ) : (
           ""
         )}
         <div className="input">
           <img src="/link-icon.svg" alt="link" />
-          <input
-            type="link"
-            placeholder="https://example.com"
-            onChange={handleLinkChange}
-          />
+          <input type="link" placeholder="https://example.com" onChange={handleLinkChange} />
         </div>
 
         <div className="input big">
@@ -79,18 +66,14 @@ const EditPortfolioPage = () => {
             items={techStacks}
             placeholder="기술스텍을 입력해주세요."
           />
-          {dummyTechStacks.map((techStack) => (
-            <TechStack key={techStack.name} {...techStack} />
+          {dummyTechStacks.map(techStack => (
+            <TechStack key={techStack.skill} content={{ ...techStack }} onClick={() => {}} />
           ))}
           {/* <TechStackSwiper items={dummyTechStacks} /> */}
         </div>
         <div className="input big">
-          <DropdownWithBtn
-            name="직군"
-            items={jobs}
-            placeholder="직군을 입력해주세요."
-          />
-          {dummyTags.map((tag) => (
+          <DropdownWithBtn name="직군" items={jobs} placeholder="직군을 입력해주세요." />
+          {dummyTags.map(tag => (
             <Tag key={tag.content} {...tag} />
           ))}
         </div>
@@ -99,7 +82,7 @@ const EditPortfolioPage = () => {
         </div>
         <div className="input ">
           <TagInput tags={tags} setTags={setTags} />
-          {tags.map((tag) => (
+          {tags.map(tag => (
             <Tag content={tag} />
           ))}
         </div>
