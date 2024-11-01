@@ -52,6 +52,7 @@ export const TitleBox = styled.div`
     width: 100%;
     height: 5rem;
     background: linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+    border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
   }
 `;
 
@@ -80,13 +81,13 @@ export const Profile = styled.div`
 
 export const ProfileImg = styled.div`
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
+  width: 1.7rem;
   height: 100%;
 
   > img {
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
     width: 100%;
     height: 100%;
-    overflow: hidden;
     object-fit: cover;
   }
 `;
