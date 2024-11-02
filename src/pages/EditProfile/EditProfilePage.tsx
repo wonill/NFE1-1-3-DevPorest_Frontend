@@ -26,6 +26,12 @@ import { JobGroupType } from "../../types/api-types/JobGroup";
 import { uploadSingleImg } from "../../api/upload-single-img";
 import { createProfile } from "../../api/create-profile";
 
+/**
+ * todo
+ * - 로그인 페이지에서 로그인이 되면 유저 상태가 전역 상태로 저장
+ * - useEffect 훅을 통해 유저정보가 있다면 미리 채워넣음
+ */
+
 const EditProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewProfileImg, setPreviewProfileImg] = useState<string | null>(null);
@@ -48,6 +54,18 @@ const EditProfilePage: React.FC = () => {
   const techStackBtnRef = useRef<HTMLButtonElement>(null);
   const jobBtnRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   const handleTechStackClick = () => {
     if (techStackBtnRef.current) {
@@ -87,18 +105,6 @@ const EditProfilePage: React.FC = () => {
       setIsModalOpen(false);
     }
   };
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isModalOpen]);
 
   const handleJobSelect = (job: JobGroupType) => {
     setSelectedJob(job);
