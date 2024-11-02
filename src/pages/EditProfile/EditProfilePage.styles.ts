@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { SwiperSlide } from "swiper/react";
 
 export const CenteredContainer = styled.div`
   display: flex;
