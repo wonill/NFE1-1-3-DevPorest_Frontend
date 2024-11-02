@@ -11,6 +11,11 @@ export const CenteredContainer = styled.div`
 export const EditProfilePageContainer = styled.div`
   width: 1100px;
   margin: auto;
+
+  span {
+    display: inline-block;
+    text-align: center;
+  }
 `;
 
 export const H2 = styled.h2`
@@ -56,7 +61,9 @@ export const RightUserInfo = styled.div`
   flex: 6;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: ${({ theme }) => theme.PADDINGS.X_LARGE};
+  width: 60%;
 `;
 
 export const SelectContainer = styled.div`
@@ -64,33 +71,25 @@ export const SelectContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: ${({ theme }) => theme.PADDINGS.X_LARGE};
+  gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
 `;
 
 export const SelectWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.PADDINGS.SMALL};
-
-  p {
-    font-size: ${({ theme }) => theme.FONT_SIZE.HEADING3};
-    font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
-    color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
-  }
-
-  button.select-btn {
-  }
+  justify-content: flex-start;
+  gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
+  height: 40%;
 
   div {
     display: flex;
-    gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
-    max-width: 700px;
-    overflow: hidden;
+    flex-wrap: wrap;
+    gap: ${({ theme }) => `calc(${theme.PADDINGS.X_SMALL} / 3)`};
   }
 `;
 
 export const SelectBtn = styled.button`
-  width: 90px;
+  width: 140px;
   height: 42px;
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
   background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
@@ -98,36 +97,31 @@ export const SelectBtn = styled.button`
   padding: ${({ theme }) => theme.PADDINGS.X_SMALL} ${({ theme }) => theme.PADDINGS.SMALL};
   cursor: pointer;
   position: relative;
+  font-size: ${({ theme }) => theme.FONT_SIZE.CONTENT};
+  font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
 
   &::after {
     content: "";
     position: absolute;
-    top: 50%;
-    right: 10px;
+    top: 40%;
+    left: 8px;
     transform: translateY(-50%);
+    transform: rotate(90deg);
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     border-top: 10px solid ${({ theme }) => theme.COLORS.MAIN_BLACK};
   }
 `;
 
-export const StyledSwiperSlide = styled(SwiperSlide)`
-  width: fit-content;
-  display: flex;
-`;
-
-export const TechStackWrapper = styled.div`
-  pointer-events: none;
-`;
-
 export const Intro = styled.textarea`
-  height: 40%;
+  height: 35%;
   width: 100%;
   padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
   border: 1px solid ${({ theme }) => theme.COLORS.MAIN_GRAY};
   color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
   font-size: ${({ theme }) => theme.FONT_SIZE.CONTENT};
+  resize: none;
 
   &:focus {
     outline: 1px solid ${({ theme }) => theme.COLORS.MAIN_GREEN};
