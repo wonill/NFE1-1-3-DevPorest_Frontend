@@ -23,14 +23,12 @@ import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
 import { UserProfileType } from "../../types/api-types/UserType";
 import { JobGroupType } from "../../types/api-types/JobGroup";
-
-/**
- * todo
- * 직무, 기술스택 선택 박스
- */
+import { uploadSingleImg } from "../../api/upload-single-img";
+import { createProfile } from "../../api/create-profile";
 
 const EditProfilePage: React.FC = () => {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewProfileImg, setPreviewProfileImg] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState({
     email: "",
     mobile: "",
@@ -70,9 +68,10 @@ const EditProfilePage: React.FC = () => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setProfileImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result as string);
+        setPreviewProfileImg(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -80,6 +79,7 @@ const EditProfilePage: React.FC = () => {
 
   const handleSetDefaultProfile = () => {
     setProfileImage(null);
+    setPreviewProfileImg(null);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -115,9 +115,25 @@ const EditProfilePage: React.FC = () => {
     });
   };
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    if (!profileImage) {
+      return;
+    }
 
-  console.log(selectedTechStacks);
+    const profileImgUrl = await uploadSingleImg(profileImage);
+    const userProfileData: UserProfileType = {
+      email: userInfo.email,
+      intro: intro,
+      phoneNumber: userInfo.mobile,
+      links: [userInfo.github, userInfo.instagram, userInfo.blog],
+      techStack: selectedTechStacks,
+      jobGroup: selectedJob?.job!,
+      profileImage: profileImgUrl!,
+    };
+
+    const response = await createProfile(userProfileData);
+    console.log(response);
+  };
 
   return (
     <CenteredContainer>
@@ -126,7 +142,7 @@ const EditProfilePage: React.FC = () => {
         <EditProfileWrapper>
           <LeftUserInfo>
             <ProfileImage
-              imageUrl={profileImage}
+              imageUrl={previewProfileImg}
               onImageChange={handleImageChange}
               onSetDefaultProfile={handleSetDefaultProfile}
               isModalOpen={isModalOpen}
