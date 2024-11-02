@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { SwiperSlide } from "swiper/react";
 
 export const CenteredContainer = styled.div`
   display: flex;
@@ -83,6 +84,8 @@ export const SelectWrapper = styled.div`
   div {
     display: flex;
     gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
+    max-width: 700px;
+    overflow: hidden;
   }
 `;
 
@@ -106,6 +109,15 @@ export const SelectBtn = styled.button`
     border-right: 8px solid transparent;
     border-top: 10px solid ${({ theme }) => theme.COLORS.MAIN_BLACK};
   }
+`;
+
+export const StyledSwiperSlide = styled(SwiperSlide)`
+  width: fit-content;
+  display: flex;
+`;
+
+export const TechStackWrapper = styled.div`
+  pointer-events: none;
 `;
 
 export const Intro = styled.textarea`
