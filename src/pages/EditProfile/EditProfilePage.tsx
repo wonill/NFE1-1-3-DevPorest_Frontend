@@ -10,6 +10,8 @@ import {
   SelectContainer,
   SelectWrapper,
   SelectBtn,
+  StyledSwiperSlide,
+  TechStackWrapper,
   Intro,
   SubmitBtn,
 } from "./EditProfilePage.styles";
@@ -23,6 +25,8 @@ import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
 import { UserProfileType } from "../../types/api-types/UserType";
 import { JobGroupType } from "../../types/api-types/JobGroup";
+import { Swiper } from "swiper/react";
+import "swiper/swiper-bundle.css";
 
 /**
  * todo
@@ -150,13 +154,19 @@ const EditProfilePage: React.FC = () => {
                 <p>기술스택 선택</p>
                 <div>
                   <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}></SelectBtn>
-                  {selectedTechStacks.map(stack => (
-                    <TechStack
-                      key={stack.skill}
-                      content={stack}
-                      onClick={() => handleTechStackSelect(stack)}
-                    />
-                  ))}
+                  <Swiper slidesPerView="auto" spaceBetween={10}>
+                    <StyledSwiperSlide>
+                      {selectedTechStacks.map(stack => (
+                        <TechStackWrapper>
+                          <TechStack
+                            key={stack.skill}
+                            content={stack}
+                            onClick={() => handleTechStackSelect(stack)}
+                          />
+                        </TechStackWrapper>
+                      ))}
+                    </StyledSwiperSlide>
+                  </Swiper>
                 </div>
               </SelectWrapper>
             </SelectContainer>
