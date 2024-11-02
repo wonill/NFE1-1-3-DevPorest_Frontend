@@ -10,8 +10,6 @@ import {
   SelectContainer,
   SelectWrapper,
   SelectBtn,
-  StyledSwiperSlide,
-  TechStackWrapper,
   Intro,
   SubmitBtn,
 } from "./EditProfilePage.styles";
@@ -25,12 +23,10 @@ import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
 import { UserProfileType } from "../../types/api-types/UserType";
 import { JobGroupType } from "../../types/api-types/JobGroup";
-import { Swiper } from "swiper/react";
-import "swiper/swiper-bundle.css";
 
 /**
  * todo
- * 기술스택 스와이퍼
+ * 직무, 기술스택 선택 박스
  */
 
 const EditProfilePage: React.FC = () => {
@@ -121,6 +117,8 @@ const EditProfilePage: React.FC = () => {
 
   const handleSubmit = async () => {};
 
+  console.log(selectedTechStacks);
+
   return (
     <CenteredContainer>
       <EditProfilePageContainer>
@@ -142,31 +140,27 @@ const EditProfilePage: React.FC = () => {
           <RightUserInfo>
             <SelectContainer>
               <SelectWrapper>
-                <p>직무 선택</p>
+                <SelectBtn ref={jobBtnRef} onClick={handleJobClick}>
+                  직무
+                </SelectBtn>
                 <div>
-                  <SelectBtn ref={jobBtnRef} onClick={handleJobClick}></SelectBtn>
                   {selectedJob && (
                     <Tag content={selectedJob.job} onClick={() => setSelectedJob(null)} />
                   )}
                 </div>
               </SelectWrapper>
               <SelectWrapper>
-                <p>기술스택 선택</p>
+                <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}>
+                  기술스택
+                </SelectBtn>
                 <div>
-                  <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}></SelectBtn>
-                  <Swiper slidesPerView="auto" spaceBetween={10}>
-                    <StyledSwiperSlide>
-                      {selectedTechStacks.map(stack => (
-                        <TechStackWrapper>
-                          <TechStack
-                            key={stack.skill}
-                            content={stack}
-                            onClick={() => handleTechStackSelect(stack)}
-                          />
-                        </TechStackWrapper>
-                      ))}
-                    </StyledSwiperSlide>
-                  </Swiper>
+                  {selectedTechStacks.map(stack => (
+                    <TechStack
+                      key={stack.skill}
+                      content={stack}
+                      onClick={() => handleTechStackSelect(stack)}
+                    />
+                  ))}
                 </div>
               </SelectWrapper>
             </SelectContainer>
@@ -184,7 +178,7 @@ const EditProfilePage: React.FC = () => {
           <Dropdown
             isOpen={isTechStackOpen}
             items={techStacks}
-            position={{ x: techStackPosition.x, y: techStackPosition.y + 10 }}
+            position={{ x: techStackPosition.x - 250, y: techStackPosition.y - 40 }}
             placeholder="기술스택을 입력하세요"
             onSelect={item => {
               if ("skill" in item) handleTechStackSelect(item);
@@ -195,7 +189,7 @@ const EditProfilePage: React.FC = () => {
           <Dropdown
             isOpen={isJobOpen}
             items={jobGroups}
-            position={{ x: jobPosition.x, y: jobPosition.y + 10 }}
+            position={{ x: jobPosition.x - 250, y: jobPosition.y - 40 }}
             placeholder="직군을 입력하세요"
             onSelect={item => {
               if ("job" in item) handleJobSelect(item);
