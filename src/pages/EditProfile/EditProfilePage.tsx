@@ -17,12 +17,30 @@ import Button from "../../components/Button/Button";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import ProfileImage from "./ProfileImage";
 import UserInfoInputs from "./UserInfoInputs";
-import { techStacks, jobs, dummyTags, dummyTechStacks } from "../../data/dummyData";
+import { techStacks, jobGroups } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
 import TechStack from "../../components/TechStack/TechStack";
+import { ITechStackType } from "../../types/api-types/TechStackType";
+import { UserProfileType } from "../../types/api-types/UserType";
+import { JobGroupType } from "../../types/api-types/JobGroup";
+
+/**
+ * todo
+ * 기술스택 스와이퍼
+ */
 
 const EditProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    mobile: "",
+    github: "",
+    instagram: "",
+    blog: "",
+  });
+  const [intro, setIntro] = useState("");
+  const [selectedJob, setSelectedJob] = useState<JobGroupType | null>(null);
+  const [selectedTechStacks, setSelectedTechStacks] = useState<ITechStackType[]>([]);
   const [isTechStackOpen, setIsTechStackOpen] = useState(false);
   const [isJobOpen, setIsJobOpen] = useState(false);
   const [techStackPosition, setTechStackPosition] = useState({ x: 0, y: 0 });
@@ -82,6 +100,23 @@ const EditProfilePage: React.FC = () => {
     };
   }, [isModalOpen]);
 
+  const handleJobSelect = (job: JobGroupType) => {
+    setSelectedJob(job);
+    setIsJobOpen(false);
+  };
+
+  const handleTechStackSelect = (techStack: ITechStackType) => {
+    setSelectedTechStacks(prev => {
+      if (prev.includes(techStack)) {
+        return prev.filter(stack => stack !== techStack);
+      } else {
+        return [...prev, techStack];
+      }
+    });
+  };
+
+  const handleSubmit = async () => {};
+
   return (
     <CenteredContainer>
       <EditProfilePageContainer>
@@ -97,7 +132,7 @@ const EditProfilePage: React.FC = () => {
               ref={modalRef}
             />
             <UserInfoInputWrapper>
-              <UserInfoInputs />
+              <UserInfoInputs onChange={setUserInfo} />
             </UserInfoInputWrapper>
           </LeftUserInfo>
           <RightUserInfo>
@@ -106,29 +141,33 @@ const EditProfilePage: React.FC = () => {
                 <p>직무 선택</p>
                 <div>
                   <SelectBtn ref={jobBtnRef} onClick={handleJobClick}></SelectBtn>
-                  {dummyTags.map(tag => (
-                    <Tag key={tag.content} {...tag} />
-                  ))}
+                  {selectedJob && (
+                    <Tag content={selectedJob.job} onClick={() => setSelectedJob(null)} />
+                  )}
                 </div>
               </SelectWrapper>
               <SelectWrapper>
                 <p>기술스택 선택</p>
                 <div>
                   <SelectBtn ref={techStackBtnRef} onClick={handleTechStackClick}></SelectBtn>
-                  {dummyTechStacks.map(techStack => (
+                  {selectedTechStacks.map(stack => (
                     <TechStack
-                      key={techStack.skill}
-                      content={{ ...techStack }}
-                      onClick={() => {}}
+                      key={stack.skill}
+                      content={stack}
+                      onClick={() => handleTechStackSelect(stack)}
                     />
                   ))}
                 </div>
               </SelectWrapper>
             </SelectContainer>
-            <Intro placeholder="자기소개를 입력해주세요"></Intro>
+            <Intro
+              placeholder="자기소개를 입력해주세요"
+              value={intro}
+              onChange={e => setIntro(e.target.value)}
+            />
           </RightUserInfo>
         </EditProfileWrapper>
-        <SubmitBtn>
+        <SubmitBtn onClick={handleSubmit}>
           <Button text="등록" colorType={3} />
         </SubmitBtn>
         {isTechStackOpen && (
@@ -137,16 +176,20 @@ const EditProfilePage: React.FC = () => {
             items={techStacks}
             position={{ x: techStackPosition.x, y: techStackPosition.y + 10 }}
             placeholder="기술스택을 입력하세요"
-            onSelect={item => console.log(item)}
+            onSelect={item => {
+              if ("skill" in item) handleTechStackSelect(item);
+            }}
           />
         )}
         {isJobOpen && (
           <Dropdown
             isOpen={isJobOpen}
-            items={jobs}
+            items={jobGroups}
             position={{ x: jobPosition.x, y: jobPosition.y + 10 }}
             placeholder="직군을 입력하세요"
-            onSelect={item => console.log(item)}
+            onSelect={item => {
+              if ("job" in item) handleJobSelect(item);
+            }}
           />
         )}
       </EditProfilePageContainer>
