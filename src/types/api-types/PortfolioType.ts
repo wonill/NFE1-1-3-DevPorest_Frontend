@@ -1,5 +1,6 @@
 import { ITechStackType } from "./TechStackType";
 import { JobGroupType } from "./JobGroup";
+import { UserProfileResType } from "./UserType";
 
 export interface PortfolioType {
   title: string; // 제목
@@ -8,7 +9,7 @@ export interface PortfolioType {
   tags: string[]; // 태그들
   techStack?: ITechStackType[]; // 기술스택
   thumbnailImage: string; // 썸네일 이미지
-  userID: string; // 유저 ID
+  userInfo: Pick<UserProfileResType, "userID" | "name" | "profileImage">;
   jobGroup?: JobGroupType; // 직군
 }
 
