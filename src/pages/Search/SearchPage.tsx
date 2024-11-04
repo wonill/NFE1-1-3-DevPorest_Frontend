@@ -45,6 +45,7 @@ const SearchPage: React.FC = () => {
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | null>(null);
   const [pagination, setPagination] = useState<pagination | null>(null);
   const [pageTitle, setPageTitle] = useState<string>("");
+  const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { searchParams, setSearchParams } = useStoreSearchPage();
@@ -77,7 +78,7 @@ const SearchPage: React.FC = () => {
 
   useEffect(() => {
     fetchPortfolio();
-  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.page]);
+  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.page, searchParams.sort]);
 
   useEffect(() => {
     const fetchJobGroup = async () => {
@@ -106,8 +107,12 @@ const SearchPage: React.FC = () => {
   };
 
   const handleTagClick = (job: JobGroupType) => {
+    if (job.job === searchParams.jobGroup) return;
+
     const updatedJobGroup = job.job === "All" ? "all" : job.job;
     setSearchParams({ jobGroup: updatedJobGroup });
+    setSearchParams({ techStacks: "" });
+    setSelectedTechStack([]);
 
     if (job.job === "All") {
       setFilteredTechStacks(techStacks2!);
@@ -127,10 +132,12 @@ const SearchPage: React.FC = () => {
         .join(", ")
         .trim();
       setSearchParams({ techStacks: updatedTechStacks });
+      setSelectedTechStack(selectedTechStack!.filter(stack => stack !== techStack));
     } else {
       // 기술 스택이 선택되지 않은 경우 추가
       const updatedTechStacks = [...currentTechStacks, techStack].filter(Boolean).join(",").trim();
       setSearchParams({ techStacks: updatedTechStacks });
+      setSelectedTechStack([...selectedTechStack!, techStack]);
     }
   };
 
@@ -147,6 +154,11 @@ const SearchPage: React.FC = () => {
 
   const handlePortfolioClick = (portfolioId: string) => {
     navigate(`/detail?portfolio_id=${portfolioId}`);
+  };
+
+  const handleActive = (skill: string) => {
+    if (selectedTechStack?.includes(skill)) return true;
+    return false;
   };
 
   return (
@@ -192,6 +204,7 @@ const SearchPage: React.FC = () => {
                 <TechStackWrapper>
                   <TechStack2
                     content={{ ...item }}
+                    isActive={handleActive(item.skill)}
                     onClick={() => handleTechStackClick(item.skill)}
                   />
                 </TechStackWrapper>
