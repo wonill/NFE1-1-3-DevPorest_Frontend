@@ -5,7 +5,7 @@ import mobile from "../../assets/mobile.svg";
 import blog from "../../assets/blog.svg";
 import gitHub from "../../assets/github.svg";
 import instagram from "../../assets/instagram.svg";
-import { validateInput } from "../../utils/validInput";
+import { validateInput } from "../../utils/valid-input";
 
 interface UserInfoInputsProps {
   onChange: (data: {

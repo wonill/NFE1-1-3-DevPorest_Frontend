@@ -1,6 +1,6 @@
 import ky from "ky";
 import { ITechStackType, TechStackApiResType } from "../types/api-types/TechStackType";
-const apiUrl = import.meta.env.SERVER_URL;
+const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const getTechStacks = async () => {
   try {

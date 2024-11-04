@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Main,
   SearchSection,
@@ -12,23 +13,47 @@ import {
   PortfolioSection,
   Indicator,
 } from "./SearchPage.styles";
-import { jobGroups } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
 import TechStack2 from "../../components/TechStack2/TechStack2";
-import { DummyData } from "../../data/profilePageData";
-import { techStacks } from "../../data/dummyData";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard";
 import { Swiper } from "swiper/react";
 import "swiper/swiper-bundle.css";
+import { getJobGroup } from "../../api/get-job-group";
+import { JobGroupType } from "../../types/api-types/JobGroup";
+import { getTechStacks } from "../../api/get-tech-stacks";
+import { ITechStackType } from "./../../types/api-types/TechStackType";
+import useStoreSearchPage from "../../store/store-search-page";
+import { buildSearchQuery } from "../../utils/build-search-query";
+import { DetailPortfolioType } from "../../types/api-types/PortfolioType";
+import { getPortfolios } from "../../api/get-portfolios";
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
+
+interface pagination {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  limit: number;
+}
 
 const SearchPage: React.FC = () => {
-  const [visibleData, setVisibleData] = useState(DummyData.slice(0, 10));
-  const [filteredTechStacks, setFilteredTechStacks] = useState(techStacks);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
+  const [jobGroups2, setJobGroups] = useState<JobGroupType[] | null>(null);
+  const [techStacks2, setTechStacks] = useState<ITechStackType[] | null>(null);
+  const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
+  const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | null>(null);
+  const [pagination, setPagination] = useState<pagination | null>(null);
+  const [pageTitle, setPageTitle] = useState<string>("");
+  const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
 
-  const loadMoreData = () => {
-    const nextData = DummyData.slice(visibleData.length, visibleData.length + 5);
-    setVisibleData(prev => [...prev, ...nextData]);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const { searchParams, setSearchParams } = useStoreSearchPage();
+
+  const loadMoreData = async () => {
+    if (pagination?.hasNextPage) {
+      setSearchParams({ page: searchParams.page + 1 });
+    }
   };
 
   useEffect(() => {
@@ -49,45 +74,139 @@ const SearchPage: React.FC = () => {
         observer.unobserve(loadMoreRef.current);
       }
     };
-  }, [visibleData]);
+  }, [portfolioList]);
 
-  const handleTagClick = (jobName: string) => {
-    if (jobName === "전체") {
-      setFilteredTechStacks(techStacks);
+  useEffect(() => {
+    fetchPortfolio();
+  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.page, searchParams.sort]);
+
+  useEffect(() => {
+    const fetchJobGroup = async () => {
+      const jobGroupData = await getJobGroup();
+      if (Array.isArray(jobGroupData)) setJobGroups(jobGroupData);
+    };
+
+    const fetchTechStacks = async () => {
+      const techStackData = await getTechStacks();
+      if (Array.isArray(techStackData)) {
+        setTechStacks(techStackData);
+        setFilteredTechStacks(techStackData);
+      }
+    };
+
+    fetchJobGroup();
+    fetchTechStacks();
+    fetchPortfolio();
+    setSearchParams({ page: 1 });
+  }, []);
+
+  const fetchPortfolio = async () => {
+    const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
+    if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
+  };
+
+  const handleTagClick = (job: JobGroupType) => {
+    if (job.job === searchParams.jobGroup) return;
+
+    const updatedJobGroup = job.job === "All" ? "all" : job.job;
+    setSearchParams({ jobGroup: updatedJobGroup });
+    setSearchParams({ techStacks: "" });
+    setSelectedTechStack([]);
+
+    if (job.job === "All") {
+      setFilteredTechStacks(techStacks2!);
     } else {
-      const filteredStacks = techStacks.filter(stack => stack.jobCode === jobName);
+      const filteredStacks = techStacks2!.filter(stack => stack.jobCode === job._id);
       setFilteredTechStacks(filteredStacks);
     }
   };
 
+  const handleTechStackClick = (techStack: string) => {
+    const currentTechStacks = searchParams.techStacks.split(",").map(stack => stack.trim());
+
+    if (currentTechStacks.includes(techStack)) {
+      // 기술 스택이 이미 선택된 경우 삭제
+      const updatedTechStacks = currentTechStacks
+        .filter(stack => stack !== techStack)
+        .join(", ")
+        .trim();
+      setSearchParams({ techStacks: updatedTechStacks });
+      setSelectedTechStack(selectedTechStack!.filter(stack => stack !== techStack));
+    } else {
+      // 기술 스택이 선택되지 않은 경우 추가
+      const updatedTechStacks = [...currentTechStacks, techStack].filter(Boolean).join(",").trim();
+      setSearchParams({ techStacks: updatedTechStacks });
+      setSelectedTechStack([...selectedTechStack!, techStack]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
+  const handleSearch = async () => {
+    const portfolios = await getPortfolios(buildSearchQuery(searchParams));
+    setPortfolioList(portfolios?.data!);
+    setPagination(portfolios?.pagination!);
+    setPageTitle(searchParams.keyword);
+  };
+
+  const handlePortfolioClick = (portfolioId: string) => {
+    navigate(`/detail?portfolio_id=${portfolioId}`);
+  };
+
+  const handleActive = (skill: string) => {
+    if (selectedTechStack?.includes(skill)) return true;
+    return false;
+  };
+
   return (
     <Main>
-      <h2>'리액트'에 대한 검색 결과</h2>
-      <p>{DummyData.length}개의 포트폴리오를 발견하였습니다.</p>
+      <h2>{pageTitle && `${pageTitle}에 대한 검색 결과`}</h2>
+      <p>{pagination?.totalCount}개의 포트폴리오를 발견하였습니다.</p>
       <SearchSection>
-        <Select>
-          <option value="filter1">검색 필터</option>
-          <option value="filter1">개발자</option>
-          <option value="filter2">태그</option>
+        <Select
+          onChange={e => {
+            const searchValue = e.target.value;
+            setSearchParams({ searchType: searchValue });
+          }}
+        >
+          <option value="title">제목</option>
+          <option value="user">개발자</option>
+          <option value="tag">태그</option>
         </Select>
-        <input type="text" placeholder="검색어를 입력하세요" />
-        <SearchIconContainer>
+        <input
+          type="text"
+          placeholder="검색어를 입력하세요"
+          onChange={e => setSearchParams({ keyword: e.target.value })}
+          onKeyDown={handleKeyDown}
+        />
+        <SearchIconContainer onClick={handleSearch}>
           <img src="/search-icon.svg" alt="검색 아이콘" />
         </SearchIconContainer>
       </SearchSection>
+
       <FilterSection>
-        <Category>
-          <Tag key={0} content={"전체"} onClick={() => handleTagClick("전체")} />
-          {jobGroups.slice(0, 3).map(job => (
-            <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job.job)} />
-          ))}
-        </Category>
+        <Swiper slidesPerView="auto" spaceBetween={10}>
+          <Category>
+            {jobGroups2?.map(job => (
+              <StyledSwiperSlide key={job._id}>
+                <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job)} />
+              </StyledSwiperSlide>
+            ))}
+          </Category>
+        </Swiper>
         <TechStackWrapper>
           <Swiper slidesPerView="auto" spaceBetween={10}>
-            {filteredTechStacks.map((item, i) => (
+            {filteredTechStacks?.map((item, i) => (
               <StyledSwiperSlide key={i}>
                 <TechStackWrapper>
-                  <TechStack2 content={{ ...item }} onClick={() => {}} />
+                  <TechStack2
+                    content={{ ...item }}
+                    isActive={handleActive(item.skill)}
+                    onClick={() => handleTechStackClick(item.skill)}
+                  />
                 </TechStackWrapper>
               </StyledSwiperSlide>
             ))}
@@ -95,17 +214,36 @@ const SearchPage: React.FC = () => {
         </TechStackWrapper>
         <Sorting>
           <span>정렬 방식</span>
-          <Select>
-            <option value="filter1">인기순</option>
-            <option value="filter1">최신순</option>
+          <Select
+            onChange={e => {
+              const sortValue = e.target.value;
+              setSearchParams({ sort: sortValue });
+            }}
+          >
+            <option value="latest">최신순</option>
+            <option value="views">조회수순</option>
+            <option value="likes">좋아요순</option>
           </Select>
         </Sorting>
       </FilterSection>
+
       <PortfolioSection>
-        {visibleData.map(data => (
-          <PortfolioCard key={data.portfolio_id} {...data} onClick={() => console.log("clicked")} />
+        {portfolioList?.map(data => (
+          <PortfolioCard
+            key={data._id}
+            portfolio_id={data._id}
+            title={data.title}
+            thumbnailImg={data.thumbnailImage}
+            profileImg={data.userInfo.profileImage}
+            userName={data.userInfo.name}
+            views={data.view}
+            likes={data.likeCount}
+            onClick={() => handlePortfolioClick(data._id)}
+          />
         ))}
       </PortfolioSection>
+      {portfolioList?.length === 0 && <EmptyPortfolio text="검색 결과가 없습니다." />}
+
       <Indicator ref={loadMoreRef} />
     </Main>
   );
