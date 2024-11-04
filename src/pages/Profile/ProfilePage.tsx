@@ -68,40 +68,40 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("나의 포레스트");
   const [userPortfolioData, setUserPortfolioData] = useState<DetailPortfolioType[] | undefined>(undefined);
   const [likePortfolioData, setLikePortfolioData] = useState<DetailPortfolioType[] | undefined>(undefined);
-  const [pagination, setpagination] = useState<pagination | undefined>(undefined);
-  const [visibleCount, setVisibleCount] = useState(6);
-  const [visibleData, setVisibleData] = useState<DetailPortfolioType[] | undefined>(undefined);
-  const [hasMore, setHasMore] = useState(true);
+  const [pagination, setPagination] = useState<pagination | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const fetchUserProfile = async () => {
     const userProfile = await getUserProfile(userId!);
     console.log('유저 프로필', userProfile);
-    if (typeof userProfile != 'string')setProfileData(userProfile)
+    if (typeof userProfile != 'string')setProfileData(userProfile);
   };
 
   const fetchUserPortfolio = async () => {
     const userPortfolio = await getUserPortfolio(userId!);
     console.log('유저 포트폴리오', userPortfolio);
-    if ('data' in userPortfolio) setUserPortfolioData(userPortfolio.data);
-    if ('pagination' in userPortfolio) setpagination(userPortfolio?.pagination);
+    if ('data' in userPortfolio) setUserPortfolioData(prev => prev ? [...prev, ...userPortfolio.data] : userPortfolio.data);
+    if ('pagination' in userPortfolio) setPagination(userPortfolio?.pagination);
   }
 
   const fetchUserLikePortfolio = async () => {
     const likePortfolio = await getLikePortfolio(userId!);
-    console.log('유저가 좋아요 누른 포트폴리오', likePortfolio);
-    if ('data' in likePortfolio) setLikePortfolioData(likePortfolio.data);
-    if ('pagination' in likePortfolio) setpagination(likePortfolio?.pagination);
-  }
+    console.log('유저가 좋아하는포트폴리오', likePortfolio);
+    if ('data' in likePortfolio) setLikePortfolioData(prev => prev? [...prev, ...likePortfolio.data] : likePortfolio.data);
+    if ('pagination' in likePortfolio) setPagination(likePortfolio.pagination);
+  };
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
   
   useEffect(() => {
-    setVisibleCount(6);
     console.log(activeTab);
+    setUserPortfolioData([]);
+    setLikePortfolioData([]);
+    setPagination(undefined);
     if (activeTab === '나의 포레스트') {
       fetchUserPortfolio();
     } else {
@@ -109,26 +109,29 @@ const ProfilePage = () => {
     }
   }, [activeTab]);
 
-  const loadMoreData = useCallback(() => {
-    const currentData = activeTab === '나의 포레스트' ? userPortfolioData : likePortfolioData;
-    if (!currentData) return;
-
-    const nextCount = visibleCount + 6;
-    if (nextCount >= currentData.length) {
-      setHasMore(false);
+  const loadMoreData = useCallback(async() => {
+    if (isLoading || !pagination?.hasNextPage) return;
+    try {
+      setIsLoading(true);
+      if (activeTab === '나의 포레스트') {
+        await fetchUserPortfolio();
+      } else {
+        await fetchUserLikePortfolio();
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setVisibleCount(nextCount);
-  }, [visibleData]);
+  }, [activeTab, pagination?.hasNextPage, isLoading]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && pagination?.hasNextPage) {
           loadMoreData();
         }
-      });
-    });
+      },
+      { threshold: 0.1 }
+    );
 
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
@@ -139,7 +142,7 @@ const ProfilePage = () => {
         observer.unobserve(loadMoreRef.current);
       }
     };
-  }, [visibleData]);
+  }, [loadMoreData]);
 
   
 
@@ -160,7 +163,7 @@ const ProfilePage = () => {
   };
 
   const renderPortfolioCards = (data: DetailPortfolioType[]) => {
-    return data.slice(0, visibleCount).map((item, index) => (
+    return data.map((item, index) => (
       <PortfolioCard 
         key={index} 
         portfolio_id={item._id}
@@ -250,16 +253,15 @@ const ProfilePage = () => {
         <UserPortfolioList>
           {(() => {
             const currentData = getCurrentData();
-            if (currentData === undefined) {
-              return <div>Loading...</div>;
-            }
-            if (currentData.length === 0) {
+            if (!currentData) return;
+            if (currentData.length === 0 && !isLoading) {
               return <EmptyPortfolio text={activeTab === '나의 포레스트' ? '등록된 작업물이 없습니다.' : '좋아요를 누른 게시물이 없습니다.'} />;
             }
             return renderPortfolioCards(currentData);
           })()}
         </UserPortfolioList>
-        {hasMore && <Indicator ref={loadMoreRef} />}
+        {pagination?.hasNextPage && <Indicator ref={loadMoreRef} />}
+        {isLoading && <div>Loading...</div>}
       </ProfileContainer>
     </ProfilePageWrapper>
   );
