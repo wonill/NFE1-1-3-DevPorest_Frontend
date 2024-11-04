@@ -23,15 +23,8 @@ const PopularPortfolioSection = () => {
 
   useEffect(() => {
     const fetchPortfolios = async () => {
-      try {
         const result = await getPortfolios(searchParams);
-        if (result) {
-          console.log(result.data);
-          setPopularPortfolioList(result.data);
-        }
-      } catch (error) {
-        console.error('포트폴리오 불러오기 실패:', error);
-      }
+        if (result) setPopularPortfolioList(result.data);
     };
     fetchPortfolios();
   }, []);
