@@ -1,5 +1,4 @@
 import { ITechStackType } from "./TechStackType";
-import { JobGroupType } from "./JobGroup";
 import { UserProfileResType } from "./UserType";
 
 export interface PortfolioType {
@@ -10,7 +9,7 @@ export interface PortfolioType {
   techStack?: ITechStackType[]; // 기술스택
   thumbnailImage: string; // 썸네일 이미지
   userInfo: Pick<UserProfileResType, "userID" | "name" | "profileImage">;
-  jobGroup?: JobGroupType; // 직군
+  jobGroup?: string; // 직군
   links?: string[];
 }
 
