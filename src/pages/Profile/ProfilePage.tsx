@@ -1,3 +1,5 @@
+import ky from 'ky';
+import { UserProfileResType } from '../../types/api-types/UserType.ts';
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
@@ -44,14 +46,39 @@ import pencilImg from "../../assets/pencil.svg";
 import TabComponent from "./TabComponent";
 import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
 
+interface ApiResponse {
+  success : boolean;
+  data: UserProfileResType;
+}
+
+
 const tabs = ["나의 포레스트", "좋아요"];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const [profileData, setProfileData] = useState<UserProfileResType | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("나의 포레스트");
   const [visibleData, setVisibleData] = useState(DummyData.slice(0, 6));
   const [hasMore, setHasMore] = useState(true);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchUserProfile = async () => {
+    try {
+      // const response2 = await ky.get('http://140.245.78.132:8080/api/users/popular').json<UserProfile>();
+      // console.log(response2);
+      const response = await ky.get('http://140.245.78.132:8080/api/users/user/user555').json<ApiResponse>();
+      console.log('유저 1명',response.data);
+      setProfileData(response.data);
+    } catch (e) {
+      setError('유저 정보 불러오는 중 오류 발생');
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   const loadMoreData = useCallback(() => {
     const nextData = DummyData.slice(visibleData.length, visibleData.length + 3);
@@ -95,6 +122,9 @@ const ProfilePage = () => {
     navigate("/edit_profile");
   };
 
+  if (error) return <div>{error}</div>
+  if (!profileData) return <div>Loading...</div>;
+
   return (
     <ProfilePageWrapper>
       <ProfileContainer>
@@ -102,26 +132,25 @@ const ProfilePage = () => {
           <UserInfoLeft>
             <UserDetails>
               <NameAndJob>
-                <UserName>홍길동</UserName>
-                <Job>Frontend Developer</Job>
+                <UserName>{profileData.name}</UserName>
+                <Job>{profileData.jobGroup}</Job>
               </NameAndJob>
               <Contact>
                 <TelWrapper>
                   <span>
                     <img src={phoneImg} alt="전화번호" />
                   </span>
-                  <p>010-1234-1234</p>
+                  <p>{profileData.phoneNumber || '등록된 전화번호가 없습니다.'} </p>
                 </TelWrapper>
                 <EmailWrpper>
                   <span>
                     <img src={emailImg} alt="이메일" />
                   </span>
-                  <p>email@gmail.com</p>
+                  <p>{profileData.email || '등록된 이메일이 없습니다.'}</p>
                 </EmailWrpper>
               </Contact>
               <Intro>
-                안녕하세요, 주니어 프론트엔드 개발자 홍길동입니다. 저는 현재 포트폴리오 플랫폼에서
-                다양한 프로젝트를 진행하며 웹 개발의 기초부터 심화까지 폭넓은 경험을 쌓고 있습니다.
+                {profileData.intro || '등록된 소개가 없습니다.'}
               </Intro>
             </UserDetails>
             <TechStackList>
@@ -140,7 +169,7 @@ const ProfilePage = () => {
             <ProfileImageWrapper>
               <TotalLikes>
                 <img src={heartImg} alt="TotalLikes" />
-                <p>274</p>
+                <p>{profileData.total_likes}</p>
               </TotalLikes>
               <ProfileImageInnerWrapper>
                 <ProfileImage
