@@ -7,6 +7,7 @@ export const COLORS = {
   MAIN_GRAY: "#ABABAB",
   MAIN_BLACK: "#201E50",
   MAIN_BG: "#FFFFFF",
+  RED: "#FE5F55",
 };
 
 export const PADDINGS = {

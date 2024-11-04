@@ -12,7 +12,7 @@ import {
   PortfolioSection,
   Indicator,
 } from "./SearchPage.styles";
-import { jobs } from "../../data/dummyData";
+import { jobGroups } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
 import TechStack2 from "../../components/TechStack2/TechStack2";
 import { DummyData } from "../../data/profilePageData";
@@ -78,8 +78,8 @@ const SearchPage: React.FC = () => {
       <FilterSection>
         <Category>
           <Tag key={0} content={"전체"} onClick={() => handleTagClick("전체")} />
-          {jobs.slice(0, 3).map(job => (
-            <Tag key={job.jobCode} content={job.name} onClick={() => handleTagClick(job.name)} />
+          {jobGroups.slice(0, 3).map(job => (
+            <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job.job)} />
           ))}
         </Category>
         <TechStackWrapper>

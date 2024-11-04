@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Job } from "../../types/job";
 import { DropdownContainer, Input, Ul, Li, InputWrapper } from "./Dropdown.styles";
 import { ITechStackType } from "../../types/api-types/TechStackType";
+import { JobGroupType } from "../../types/api-types/JobGroup";
 
 export interface DropdownType {
   isOpen: boolean;
-  items: ITechStackType[] | Job[];
+  items: ITechStackType[] | JobGroupType[];
   position: { x: number; y: number };
   placeholder: string;
-  onSelect: (item: ITechStackType | Job) => void;
+  onSelect: (item: ITechStackType | JobGroupType) => void;
 }
 
 const Dropdown: React.FC<DropdownType> = ({ isOpen, items, position, placeholder, onSelect }) => {
@@ -23,8 +23,8 @@ const Dropdown: React.FC<DropdownType> = ({ isOpen, items, position, placeholder
     if ("skill" in item) {
       return item.skill.toLowerCase().includes(inputValue.toLowerCase());
     }
-    if ("name" in item) {
-      return item.name.toLowerCase().includes(inputValue.toLowerCase());
+    if ("job" in item) {
+      return item.job.toLowerCase().includes(inputValue.toLowerCase());
     }
   });
 
@@ -41,8 +41,8 @@ const Dropdown: React.FC<DropdownType> = ({ isOpen, items, position, placeholder
       </InputWrapper>
       <Ul>
         {filteredItems.map(item => (
-          <Li key={"skill" in item ? item.skill : item.name} onClick={() => onSelect(item)}>
-            {"skill" in item ? item.skill : item.name}
+          <Li key={"skill" in item ? item.skill : item.job} onClick={() => onSelect(item)}>
+            {"skill" in item ? item.skill : item.job}
           </Li>
         ))}
       </Ul>

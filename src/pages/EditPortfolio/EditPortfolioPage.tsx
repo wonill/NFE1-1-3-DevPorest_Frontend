@@ -6,7 +6,7 @@ import TechStack from "../../components/TechStack/TechStack";
 import ThumbnailInput from "./ThumbnailInput/ThumbnailInput";
 import DropdownWithBtn from "../../components/Dropdown/DropdownWithBtn";
 import MyCKEditor from "./MyCKEditor/MyCKEditor";
-import { techStacks, jobs, dummyTags, dummyTechStacks } from "../../data/dummyData";
+import { techStacks, jobGroups, dummyTags, dummyTechStacks } from "../../data/dummyData";
 import TagInput from "./TagInput/TagInput";
 
 const EditPortfolioPage = () => {
@@ -72,7 +72,7 @@ const EditPortfolioPage = () => {
           {/* <TechStackSwiper items={dummyTechStacks} /> */}
         </div>
         <div className="input big">
-          <DropdownWithBtn name="직군" items={jobs} placeholder="직군을 입력해주세요." />
+          <DropdownWithBtn name="직군" items={jobGroups} placeholder="직군을 입력해주세요." />
           {dummyTags.map(tag => (
             <Tag key={tag.content} {...tag} />
           ))}

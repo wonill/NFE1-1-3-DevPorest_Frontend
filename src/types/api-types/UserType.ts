@@ -13,7 +13,7 @@ export interface UserProfileType {
   phoneNumber: string; // 전화번호
   links: string[]; // 관련 링크
   techStack: ITechStackType[]; // 기술 스택
-  jobGroup: number; // 직군 코드
+  jobGroup: string; // 직군
   profileImage: string; // 프로필 이미지 URL
 }
 

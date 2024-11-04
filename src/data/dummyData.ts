@@ -1,5 +1,5 @@
-import { Job } from "../types/job";
 import { ITechStackType } from "../types/api-types/TechStackType";
+import { JobGroupType } from "../types/api-types/JobGroup";
 
 export const dummyTags = [
   {
@@ -199,25 +199,24 @@ export const techStacks: ITechStackType[] = [
   },
 ];
 
-export const jobs: Job[] = [
-  { jobCode: -1, name: "Frontend Developer" },
-  { jobCode: 0, name: "Backend Developer" },
-  { jobCode: 1, name: "Software Engineer" },
-  { jobCode: 1, name: "Software Engineer" },
-  { jobCode: 2, name: "Data Scientist" },
-  { jobCode: 3, name: "Product Manager" },
-  { jobCode: 4, name: "UX/UI Designer" },
-  { jobCode: 5, name: "QA Engineer" },
-  { jobCode: 6, name: "DevOps Engineer" },
-  { jobCode: 7, name: "System Administrator" },
-  { jobCode: 8, name: "Database Administrator" },
-  { jobCode: 9, name: "Network Engineer" },
-  { jobCode: 10, name: "Business Analyst" },
-  { jobCode: 11, name: "Sales Representative" },
-  { jobCode: 12, name: "Content Writer" },
-  { jobCode: 13, name: "Marketing Specialist" },
-  { jobCode: 14, name: "SEO Specialist" },
-  { jobCode: 15, name: "Technical Support Specialist" },
+export const jobGroups: JobGroupType[] = [
+  { _id: "job-1", job: "Frontend Developer" },
+  { _id: "job-2", job: "Backend Developer" },
+  { _id: "job-3", job: "Software Engineer" },
+  { _id: "job-4", job: "Data Scientist" },
+  { _id: "job-5", job: "Product Manager" },
+  { _id: "job-6", job: "UX/UI Designer" },
+  { _id: "job-7", job: "QA Engineer" },
+  { _id: "job-8", job: "DevOps Engineer" },
+  { _id: "job-9", job: "System Administrator" },
+  { _id: "job-10", job: "Database Administrator" },
+  { _id: "job-11", job: "Network Engineer" },
+  { _id: "job-12", job: "Business Analyst" },
+  { _id: "job-13", job: "Sales Representative" },
+  { _id: "job-14", job: "Content Writer" },
+  { _id: "job-15", job: "Marketing Specialist" },
+  { _id: "job-16", job: "SEO Specialist" },
+  { _id: "job-17", job: "Technical Support Specialist" },
 ];
 
 export const dummyTags2 = [

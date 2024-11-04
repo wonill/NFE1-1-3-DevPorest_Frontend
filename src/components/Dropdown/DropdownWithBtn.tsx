@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import { DropBtn } from "./Dropdown.styles";
-import { Job } from "../../types/job";
 import { ITechStackType } from "../../types/api-types/TechStackType";
+import { JobGroupType } from "../../types/api-types/JobGroup";
 
 interface DropDownWithBtnProps {
   name?: string;
-  items: ITechStackType[] | Job[];
+  items: ITechStackType[] | JobGroupType[];
   placeholder: string;
 }
 
