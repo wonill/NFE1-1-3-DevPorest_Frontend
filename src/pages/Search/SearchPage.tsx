@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Main,
   SearchSection,
@@ -25,11 +26,7 @@ import useStoreSearchPage from "../../store/store-search-page";
 import { buildSearchQuery } from "../../utils/build-search-query";
 import { DetailPortfolioType } from "../../types/api-types/PortfolioType";
 import { getPortfolios } from "../../api/get-portfolios";
-
-/**
- * todo
- * 페이지네이션 저장해놓고 hasNextpage 없으면 더이상 페이지 증가하지 않게
- */
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
 
 interface pagination {
   currentPage: number;
@@ -41,6 +38,7 @@ interface pagination {
 }
 
 const SearchPage: React.FC = () => {
+  const navigate = useNavigate();
   const [jobGroups2, setJobGroups] = useState<JobGroupType[] | null>(null);
   const [techStacks2, setTechStacks] = useState<ITechStackType[] | null>(null);
   const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
@@ -53,9 +51,7 @@ const SearchPage: React.FC = () => {
 
   const loadMoreData = async () => {
     if (pagination?.hasNextPage) {
-      const newPortfolios = await getPortfolios(buildSearchQuery(searchParams));
-      setPortfolioList(newPortfolios?.data!);
-      // setSearchParams({ page: searchParams.page + 1 });
+      setSearchParams({ page: searchParams.page + 1 });
     }
   };
 
@@ -81,7 +77,7 @@ const SearchPage: React.FC = () => {
 
   useEffect(() => {
     fetchPortfolio();
-  }, [searchParams.techStacks, searchParams.jobGroup]);
+  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.page]);
 
   useEffect(() => {
     const fetchJobGroup = async () => {
@@ -138,6 +134,10 @@ const SearchPage: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
   const handleSearch = async () => {
     const portfolios = await getPortfolios(buildSearchQuery(searchParams));
     setPortfolioList(portfolios?.data!);
@@ -145,8 +145,9 @@ const SearchPage: React.FC = () => {
     setPageTitle(searchParams.keyword);
   };
 
-  console.log(buildSearchQuery(searchParams));
-  console.log(portfolioList);
+  const handlePortfolioClick = (portfolioId: string) => {
+    navigate(`/detail?portfolio_id=${portfolioId}`);
+  };
 
   return (
     <Main>
@@ -167,11 +168,13 @@ const SearchPage: React.FC = () => {
           type="text"
           placeholder="검색어를 입력하세요"
           onChange={e => setSearchParams({ keyword: e.target.value })}
+          onKeyDown={handleKeyDown}
         />
         <SearchIconContainer onClick={handleSearch}>
           <img src="/search-icon.svg" alt="검색 아이콘" />
         </SearchIconContainer>
       </SearchSection>
+
       <FilterSection>
         <Swiper slidesPerView="auto" spaceBetween={10}>
           <Category>
@@ -182,7 +185,6 @@ const SearchPage: React.FC = () => {
             ))}
           </Category>
         </Swiper>
-
         <TechStackWrapper>
           <Swiper slidesPerView="auto" spaceBetween={10}>
             {filteredTechStacks?.map((item, i) => (
@@ -211,6 +213,7 @@ const SearchPage: React.FC = () => {
           </Select>
         </Sorting>
       </FilterSection>
+
       <PortfolioSection>
         {portfolioList?.map(data => (
           <PortfolioCard
@@ -222,10 +225,12 @@ const SearchPage: React.FC = () => {
             userName={data.userInfo.name}
             views={data.view}
             likes={data.likeCount}
-            onClick={() => console.log("clicked")} // detail 페이지로 라우팅 id 넣어서
+            onClick={() => handlePortfolioClick(data._id)}
           />
         ))}
       </PortfolioSection>
+      {portfolioList?.length === 0 && <EmptyPortfolio text="검색 결과가 없습니다." />}
+
       <Indicator ref={loadMoreRef} />
     </Main>
   );
