@@ -11,6 +11,7 @@ export interface PortfolioType {
   thumbnailImage: string; // 썸네일 이미지
   userInfo: Pick<UserProfileResType, "userID" | "name" | "profileImage">;
   jobGroup?: JobGroupType; // 직군
+  links?: string[];
 }
 
 export interface DetailPortfolioType extends PortfolioType {
