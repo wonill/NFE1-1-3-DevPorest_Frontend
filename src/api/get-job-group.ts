@@ -1,10 +1,10 @@
 import ky from "ky";
 import { JobGroupApiResType } from "../types/api-types/JobGroup";
-const apiUrl = import.meta.env.SERVER_URL;
+const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const getJobGroup = async () => {
   try {
-    const response = await ky.get(`${apiUrl}/job-group`, { credentials: "include" });
+    const response = await ky.get(`${apiUrl}/api/job-group`, { credentials: "include" });
     const result: JobGroupApiResType = await response.json();
 
     if (result.success) return result.data;
