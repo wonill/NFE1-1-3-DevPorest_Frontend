@@ -1,6 +1,6 @@
 import ky from "ky";
 import { UserProfileResType, UserApiResType } from "../types/api-types/UserType";
-const apiUrl = import.meta.env.SERVER_URL;
+const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const getUserProfile = async (userId: string) => {
   try {

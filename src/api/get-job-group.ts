@@ -1,6 +1,6 @@
 import ky from "ky";
 import { JobGroupApiResType } from "../types/api-types/JobGroup";
-const apiUrl = import.meta.env.SERVER_URL;
+const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const getJobGroup = async () => {
   try {

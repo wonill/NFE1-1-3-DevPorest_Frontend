@@ -80,6 +80,10 @@ export const FilterSection = styled.section`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  > div {
+    margin: 0;
+  }
 `;
 
 export const Category = styled.div`
