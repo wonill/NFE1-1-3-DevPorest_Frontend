@@ -106,11 +106,15 @@ export const ExternalLinkWrapper = styled.div`
 
 export const UserPortfolioList = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap : 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  
+  @media (max-width: 940px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
   }
 `;
 

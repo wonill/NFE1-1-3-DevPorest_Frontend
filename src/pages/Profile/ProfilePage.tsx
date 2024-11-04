@@ -40,7 +40,7 @@ import {
   ProfileImage,
 } from "./ProfileImage.style.tsx";
 import phoneImg from "../../assets/profile_page_phone.svg";
-import emailImg from "../../assets/email.svg";
+import emailImg from "../../assets/profile_page_email.svg";
 import heartImg from "../../assets/active_heart.svg";
 import pencilImg from "../../assets/pencil.svg";
 import TabComponent from "./TabComponent";
@@ -163,7 +163,7 @@ const ProfilePage = () => {
   };
 
   const renderPortfolioCards = (data: DetailPortfolioType[]) => {
-    return data.map((item, index) => (
+    return <UserPortfolioList>{data.map((item, index) => (
       <PortfolioCard 
         key={index} 
         portfolio_id={item._id}
@@ -175,7 +175,8 @@ const ProfilePage = () => {
         likes={item.likeCount}
         onClick={() => handleCardClick(item._id)} 
       />
-    ));
+    ))};
+    </UserPortfolioList>
   };
 
   return (
@@ -250,7 +251,6 @@ const ProfilePage = () => {
           </UserInfoRight>
         </UserInfo>
         <TabComponent tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-        <UserPortfolioList>
           {(() => {
             const currentData = getCurrentData();
             if (!currentData) return;
@@ -259,7 +259,6 @@ const ProfilePage = () => {
             }
             return renderPortfolioCards(currentData);
           })()}
-        </UserPortfolioList>
         {pagination?.hasNextPage && <Indicator ref={loadMoreRef} />}
         {isLoading && <div>Loading...</div>}
       </ProfileContainer>
