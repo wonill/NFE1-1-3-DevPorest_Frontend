@@ -44,6 +44,7 @@ export const TechStackList = styled.div`
   justify-content: flex-start;
   max-width: 700px;
   overflow: hidden;
+  cursor: grab;
 
   > div {
     display: flex;
