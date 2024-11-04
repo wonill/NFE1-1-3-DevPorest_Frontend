@@ -26,7 +26,7 @@ export interface UserProfileType {
 export interface UserProfileResType extends UserProfileType {
   userID: string; // 사용자 ID
   name: string; // 이름
-  total_likes?: number; // 좋아요 수
+  totalLikes?: number; // 좋아요 수
   createdAt?: string; // 생성날짜
 }
 
@@ -48,7 +48,7 @@ export interface UpdateUserProfileType extends Partial<UserProfileType> {}
 export interface PopularUserProfileResType
   extends Pick<
     UserProfileResType,
-    "userID" | "name" | "jobGroup" | "profileImage" | "intro" | "techStack" | "total_likes"
+    "userID" | "name" | "jobGroup" | "profileImage" | "intro" | "techStack" | "totalLikes"
   > {}
 
 /**

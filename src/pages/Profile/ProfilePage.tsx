@@ -1,11 +1,11 @@
 import ky from 'ky';
-import { UserProfileResType } from '../../types/api-types/UserType.ts';
+import { UserProfileResType, UserApiResType } from '../../types/api-types/UserType.ts';
+import { PortfolioApiResType, DetailPortfolioType } from '../../types/api-types/PortfolioType.ts';
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper } from "swiper/react";
 import "swiper/swiper-bundle.css";
 import { DummyData } from "../../data/profilePageData.ts";
-import { techStacks } from "../../data/dummyData.ts";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard.tsx";
 import TechStack from "../../components/TechStack/TechStack.tsx";
 import ExternalLink from "../../components/ExternalLink/ExternalLink.tsx";
@@ -21,8 +21,8 @@ import {
   EditProfile,
   TotalLikes,
   ExternalLinkWrapper,
-  UserPortfolioList,
   Indicator,
+  UserPortfolioList,
 } from "./ProfilePage.style.tsx";
 import {
   UserDetails,
@@ -46,9 +46,14 @@ import pencilImg from "../../assets/pencil.svg";
 import TabComponent from "./TabComponent";
 import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio.tsx";
 
-interface ApiResponse {
-  success : boolean;
-  data: UserProfileResType;
+const userId = 'csk6314';
+interface UserInfo {
+  userID: string;
+  name: string;
+  profileImage: string;
+}
+interface PortfolioType extends DetailPortfolioType {
+  userInfo : UserInfo;
 }
 
 
@@ -56,19 +61,26 @@ const tabs = ["나의 포레스트", "좋아요"];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState<UserProfileResType | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [profileData, setProfileData] = useState<UserProfileResType | undefined>(undefined);
+
   const [activeTab, setActiveTab] = useState("나의 포레스트");
-  const [visibleData, setVisibleData] = useState(DummyData.slice(0, 6));
+  const [userPortfolioData, setUserPortfolioData] = useState<DetailPortfolioType[] | undefined>(undefined);
+  const [likePortfolioData, setLikePortfolioData] = useState<DetailPortfolioType[] | undefined>(undefined);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleData, setVisibleData] = useState<DetailPortfolioType[] | undefined>(undefined);
   const [hasMore, setHasMore] = useState(true);
+
+  const [error, setError] = useState<string | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  
 
   const fetchUserProfile = async () => {
     try {
-      // const response2 = await ky.get('http://140.245.78.132:8080/api/users/popular').json<UserProfile>();
+      // const response2 = await ky.get('http://140.245.78.132:8080/api/users/popular').json<UserApiResType<UserProfileResType>>();
       // console.log(response2);
-      const response = await ky.get('http://140.245.78.132:8080/api/users/user/user555').json<ApiResponse>();
-      console.log('유저 1명',response.data);
+      const response = await ky.get(`http://140.245.78.132:8080/api/users/user/${userId}`).json<UserApiResType<UserProfileResType>>();
+      // console.log('유저 1명',response);
       setProfileData(response.data);
     } catch (e) {
       setError('유저 정보 불러오는 중 오류 발생');
@@ -76,17 +88,54 @@ const ProfilePage = () => {
     }
   };
 
+  const fetchUserPortfolio = async () => {
+    try {
+      const response = await ky.get(`http://140.245.78.132:8080/api/portfolios/user/${userId}`).json<PortfolioApiResType>();
+      console.log('유저의 포트폴리오 목록', response);
+      setUserPortfolioData(response.data);
+      setVisibleData(response.data);
+    } catch (e) {
+      setError('유저의 포트폴리오 목록을 불러오는 중 오류 발생');
+      console.log(e);
+    }
+  }
+
+  const fetchUserLikePortfolio = async () => {
+    try {
+      const response = await ky.get(`http://140.245.78.132:8080/api/portfolios/like/${userId}`).json<PortfolioApiResType>();
+      console.log('유저가 좋아요 누른 포트폴리오 목록', response);
+      setLikePortfolioData(response.data);
+      setVisibleData(response.data);
+    } catch (e) {
+      setError('유저가 좋아요를 누른 포트폴리오 목록을 불러오는 중 오류 발생');
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
     fetchUserProfile();
   }, []);
+  
+  useEffect(() => {
+    setVisibleCount(6);
+    console.log(activeTab);
+    if (activeTab === '나의 포레스트') {
+      fetchUserPortfolio();
+    } else {
+      fetchUserLikePortfolio();
+    }
+  }, [activeTab]);
 
   const loadMoreData = useCallback(() => {
-    const nextData = DummyData.slice(visibleData.length, visibleData.length + 3);
-    if (nextData.length > 0) {
-      setVisibleData(prev => [...prev, ...nextData]);
-    } else {
+    const currentData = activeTab === '나의 포레스트' ? userPortfolioData : likePortfolioData;
+    if (!currentData) return;
+
+    const nextCount = visibleCount + 6;
+    if (nextCount >= currentData.length) {
       setHasMore(false);
     }
+
+    setVisibleCount(nextCount);
   }, [visibleData]);
 
   useEffect(() => {
@@ -109,12 +158,11 @@ const ProfilePage = () => {
     };
   }, [visibleData]);
 
-  useEffect(() => {
-    console.log(activeTab);
-  }, [activeTab]);
+  
 
-  const handleCardClick = (portfolio_id: number) => {
+  const handleCardClick = (portfolio_id: string) => {
     console.log(`${portfolio_id}에 해당하는 페이지로 이동`);
+    navigate('detail?portfolio_id=672444a647da2aed5646b135');
   };
 
   const onClickEditProfile = () => {
@@ -122,8 +170,29 @@ const ProfilePage = () => {
     navigate("/edit_profile");
   };
 
+
   if (error) return <div>{error}</div>
   if (!profileData) return <div>Loading...</div>;
+
+  const getCurrentData = () => {
+    return activeTab === "나의 포레스트" ? userPortfolioData : likePortfolioData;
+  };
+
+  const renderPortfolioCards = (data: DetailPortfolioType[]) => {
+    return data.slice(0, visibleCount).map((item, index) => (
+      <PortfolioCard 
+        key={index} 
+        portfolio_id={item._id}
+        title={item.title}
+        thumbnailImg={item.thumbnailImage}
+        profileImg={profileData.profileImage}
+        userName={item.userID}
+        views={item.view}
+        likes={item.likeCount}
+        onClick={() => handleCardClick(item._id)} 
+      />
+    ));
+  };
 
   return (
     <ProfilePageWrapper>
@@ -152,28 +221,38 @@ const ProfilePage = () => {
               <Intro>
                 {profileData.intro || '등록된 소개가 없습니다.'}
               </Intro>
-            </UserDetails>
-            <TechStackList>
-              <Swiper slidesPerView="auto" spaceBetween={10}>
-                {techStacks.map((item, i) => (
-                  <StyledSwiperSlide key={i}>
-                    <TechStackWrapper>
-                      <TechStack content={{ ...item }} onClick={() => {}} />
-                    </TechStackWrapper>
-                  </StyledSwiperSlide>
-                ))}
-              </Swiper>
-            </TechStackList>
+            </UserDetails>       
+              <TechStackList>
+                {profileData.techStack.length >= 4 ? (
+                  <Swiper slidesPerView="auto" spaceBetween={10}>
+                    {profileData.techStack.map((item, i) => (
+                      <StyledSwiperSlide key={i}>
+                        <TechStackWrapper>
+                          <TechStack content={{ ...item }} onClick={() => {}} />
+                        </TechStackWrapper>
+                      </StyledSwiperSlide>
+                    ))}
+                  </Swiper>
+                ) : (
+                  <div>
+                    {profileData.techStack.map((item, i) => (
+                      <TechStackWrapper key={i}>
+                        <TechStack content={{ ...item }} onClick={() => {}} />
+                      </TechStackWrapper>
+                    ))}
+                  </div>
+                )}
+              </TechStackList>
           </UserInfoLeft>
           <UserInfoRight>
             <ProfileImageWrapper>
               <TotalLikes>
                 <img src={heartImg} alt="TotalLikes" />
-                <p>{profileData.total_likes}</p>
+                <p>{profileData.totalLikes}</p>
               </TotalLikes>
               <ProfileImageInnerWrapper>
                 <ProfileImage
-                  src="https://cdn-bastani.stunning.kr/prod/users/9b7d25c3-41e6-4da0-91d6-1ade3e3e68c6/avatar/youandiii_face.jpg.small?q=80&t=crop&s=300x300"
+                  src={profileData.profileImage}
                   alt="프로필 사진"
                 />
               </ProfileImageInnerWrapper>
@@ -182,25 +261,22 @@ const ProfilePage = () => {
               </EditProfile>
             </ProfileImageWrapper>
             <ExternalLinkWrapper>
-              <ExternalLink imgType={0} link="https://github.com/" />
-              <ExternalLink imgType={1} link="https://instagram.com/username" />
-              <ExternalLink imgType={2} link="https://velog.io/" />
+              {profileData.links.map((link, i) => <ExternalLink key={i} imgType={i} link={link}/>)}
             </ExternalLinkWrapper>
           </UserInfoRight>
         </UserInfo>
         <TabComponent tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
         <UserPortfolioList>
-          {DummyData.length ? (
-            visibleData.map((item, index) => (
-              <PortfolioCard
-                key={index}
-                {...item}
-                onClick={() => handleCardClick(item.portfolio_id)}
-              />
-            ))
-          ) : (
-            <EmptyPortfolio text={"등록된 작업물이 없습니다"} />
-          )}
+          {(() => {
+            const currentData = getCurrentData();
+            if (currentData === undefined) {
+              return <div>로딩중...</div>;
+            }
+            if (currentData.length === 0) {
+              return <EmptyPortfolio text={'등록된 작업물이 없습니다.'} />;
+            }
+            return renderPortfolioCards(currentData);
+          })()}
         </UserPortfolioList>
         {hasMore && <Indicator ref={loadMoreRef} />}
       </ProfileContainer>
