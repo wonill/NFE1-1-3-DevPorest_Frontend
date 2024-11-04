@@ -7,7 +7,7 @@ export const uploadSingleImg = async (img: File) => {
   formData.append("image", img);
 
   try {
-    const response = await ky.post(`${apiUrl}/api/portfolios/upload`, {
+    const response = await ky.post(`${apiUrl}/portfolios/upload`, {
       body: formData,
       credentials: "include",
     });

@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const getUserProfile = async (userId: string) => {
   try {
-    const response = await ky.get(`${apiUrl}/api/users/user/${userId}`, { credentials: "include" });
+    const response = await ky.get(`${apiUrl}/users/user/${userId}`, { credentials: "include" });
     const result: UserApiResType<UserProfileResType> = await response.json();
 
     if (result.success) return result.data;

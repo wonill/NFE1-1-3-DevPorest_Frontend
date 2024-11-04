@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const getTechStacks = async () => {
   try {
-    const response = await ky.get(`${apiUrl}/api/techstacks`, { credentials: "include" });
+    const response = await ky.get(`${apiUrl}/techstacks`, { credentials: "include" });
     const result: TechStackApiResType<ITechStackType> = await response.json();
 
     if (result.success) return result.data;

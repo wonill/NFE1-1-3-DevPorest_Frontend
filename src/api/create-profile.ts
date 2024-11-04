@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_SERVER_URL;
 
 export const createProfile = async (userData: UserProfileType) => {
   try {
-    const response = await ky.post(`${apiUrl}/api/users`, {
+    const response = await ky.post(`${apiUrl}/users`, {
       json: userData,
       credentials: "include",
     });
