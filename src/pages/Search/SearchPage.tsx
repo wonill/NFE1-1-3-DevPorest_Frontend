@@ -78,7 +78,25 @@ const SearchPage: React.FC = () => {
 
   useEffect(() => {
     fetchPortfolio();
-  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.page, searchParams.sort]);
+
+    console.log(searchParams.techStacks);
+    if (jobGroups2) {
+      const selectedJobGroup = jobGroups2?.find(job => job.job === searchParams.jobGroup);
+
+      if (selectedJobGroup) {
+        const filteredStacks = techStacks2?.filter(stack => stack.jobCode === selectedJobGroup._id);
+        setFilteredTechStacks(filteredStacks!);
+        setSelectedTechStack([searchParams.techStacks]);
+      }
+    }
+  }, [
+    searchParams.techStacks,
+    searchParams.jobGroup,
+    searchParams.page,
+    searchParams.sort,
+    jobGroups2,
+    techStacks2,
+  ]);
 
   useEffect(() => {
     const fetchJobGroup = async () => {
@@ -160,6 +178,8 @@ const SearchPage: React.FC = () => {
     if (selectedTechStack?.includes(skill)) return true;
     return false;
   };
+
+  // console.log(searchParams);
 
   return (
     <Main>
