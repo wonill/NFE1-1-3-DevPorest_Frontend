@@ -25,3 +25,14 @@ export const getPopularUserProfile = async () => {
     throw error;
   }
 };
+
+export const getMyProfile = async () => {
+  try {
+    const response = await api.get<UserApiResType<UserProfileResType>>(`users/user`).json();
+
+    return response.data;
+  } catch (error) {
+    console.error("내 프로필 정보 조회 중 오류 발생", error);
+    throw error;
+  }
+};
