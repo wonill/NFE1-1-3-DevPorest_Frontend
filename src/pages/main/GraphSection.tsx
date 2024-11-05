@@ -1,7 +1,5 @@
-import Graph from "../../components/Graph/Graph";
+import Graph, { GraphDataType } from "../../components/Graph/Graph";
 import { SectionTitle } from "./MainPage.style";
-
-import { graphData } from "../../data/mainPageData";
 import {
   StyledGraphSection,
   GraphSectionSubTitele,
@@ -10,8 +8,51 @@ import {
   BackendGraph,
   GraphTitle,
 } from "./GraphSection.style";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { TechStackStatType } from "../../types/api-types/TechStackType";
+import { getTechStackStatistic } from "../../api/get-tech-stacks";
+import useStoreSearchPage from "../../store/store-search-page";
+
+const frontendJobGroup = '671f9d162a296054c7477856';
+const backendJobGroup = '672616239a64f518f7c8d530';
 
 const GraphSection = () => {
+  const navigate = useNavigate();
+  const { setSearchParams } = useStoreSearchPage();
+  const [techStacks, setTechStacks] = useState<TechStackStatType[]>([]);
+  const [frontStats, setfrontStats] = useState<GraphDataType[]>([]);
+  const [backendStats, setBackendStats] = useState<GraphDataType[]>([]);
+
+  useEffect(() => {
+    const fetchTechStackList = async () => {
+      const result = await getTechStackStatistic();
+      console.log(result);
+      if (Array.isArray(result)) setTechStacks(result);
+    }
+    fetchTechStackList();
+  }, [])
+
+  useEffect(() => {
+    if (techStacks.length > 0) {
+      const front = techStacks.filter(techStack => techStack.jobCode === frontendJobGroup && techStack.totalCount > 0).map((v) => ({
+        id: v.skill,
+        value: v.totalCount,
+        color: v.bgColor,
+      }));
+      setfrontStats(front);
+      console.log('프론트', front);
+
+      const back = techStacks.filter(techStack => techStack.jobCode === backendJobGroup && techStack.totalCount > 0).map((v) => ({
+        id: v.skill,
+        value: v.totalCount,
+        color: v.bgColor,
+      }));
+      setBackendStats(back);
+      console.log('백엔드', back);
+    }
+  }, [techStacks]);
+
   return (
     <StyledGraphSection>
       <SectionTitle>기술 스택별 점유율</SectionTitle>
@@ -21,16 +62,24 @@ const GraphSection = () => {
       <GraphWrapper>
         <FrontendGraph>
           <Graph
-            data={graphData}
-            onClick={(data) => console.log(data.id, data.value)}
-          />
+            data={frontStats}
+            onClick={(frontStats) => {
+              setSearchParams({jobGroup: 'Frontend Developer'});
+              setSearchParams({techStacks: String(frontStats.id)});
+              navigate('/search');
+            }}
+            />
           <GraphTitle>Frontend</GraphTitle>
         </FrontendGraph>
         <BackendGraph>
           <Graph
-            data={graphData}
-            onClick={(data) => console.log(data.id, data.value)}
-          />
+            data={backendStats}
+            onClick={(backendStats) => {
+              setSearchParams({jobGroup: 'Backend Developer'});
+              setSearchParams({techStacks: String(backendStats.id)});
+              navigate('/search');
+            }}
+            />
           <GraphTitle>Backend</GraphTitle>
         </BackendGraph>
       </GraphWrapper>

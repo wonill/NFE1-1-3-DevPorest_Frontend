@@ -82,7 +82,7 @@ export const Profile = styled.div`
 export const ProfileImg = styled.div`
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};
   width: 1.7rem;
-  height: 100%;
+  height: 1.7rem;
 
   > img {
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.CIRCLE};

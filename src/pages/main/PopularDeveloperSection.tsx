@@ -8,23 +8,37 @@ import {
 
 import DevProfile from "../../components/DevProfile/DevProfile";
 
-import { dummyDevProfiles } from "../../data/mainPageData";
+import { getPopularUserProfile } from "../../api/get-user-profile";
+import { useEffect, useState } from "react";
+import { UserProfileResType } from "../../types/api-types/UserType";
+import { useNavigate } from "react-router-dom";
 
 const PopularDeveloperSection = () => {
+  const navigate = useNavigate();
+  const [popluarUserList, setPopularUserList] = useState<UserProfileResType[]>([]);
+
+  useEffect(() => {
+    const fetchPopularUserList = async () => {
+      const result = await getPopularUserProfile();
+      console.log(result);
+      if (Array.isArray(result)) setPopularUserList(result);
+    }
+    fetchPopularUserList();
+  }, [])
   return (
     <StyledPorpularDeveloperSection>
       <PorpularDeveloperSectionWrapper>
         <SectionTitle>데브포레스트 추천, HOT 개발자</SectionTitle>
         <PorpularDeveloperInnerWrapper>
-          {dummyDevProfiles.map((dummyDevProfile, i) => (
+          {popluarUserList.map((dummyDevProfile, i) => (
             <DevProfile
               key={i}
               profileImage={dummyDevProfile.profileImage}
               name={dummyDevProfile.name}
-              category={dummyDevProfile.category}
+              category={dummyDevProfile.jobGroup}
               intro={dummyDevProfile.intro}
-              techStacks={dummyDevProfile.techStacks}
-              onClick={dummyDevProfile.onClick}
+              techStacks={dummyDevProfile.techStack}
+              onClick={() => navigate(`/profile/${dummyDevProfile.userID}`)}
             />
           ))}
         </PorpularDeveloperInnerWrapper>
