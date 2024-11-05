@@ -31,8 +31,10 @@ import { getUserProfile } from "../../api/get-user-profile";
 
 /**
  * todo
- * - 로그인 페이지에서 로그인이 되면 유저 상태가 전역 상태로 저장
- * - useEffect 훅을 통해 유저정보가 있다면 미리 채워넣음
+ * - 로그인 페이지에 진입하면 로컬스토리지에 저장되어 있는 토큰을 서버에 보냄
+ * - 유저 정보를 받아와서 미리 화면에 매핑
+ * - 유저 타입에 타입을 하나 새로 만들어서 타입 좁히기로 타입 분류 후 매핑
+ * - useParams는 사용할 필요 없음
  * - 서버로 보낼 때 로컬 스토리지의 토큰을 같이 보내기
  */
 
@@ -211,7 +213,7 @@ const EditProfilePage: React.FC = () => {
               ref={modalRef}
             />
             <UserInfoInputWrapper>
-              <UserInfoInputs name={name} onChange={setUserInfo} />
+              <UserInfoInputs name={name} userInfo={userInfo} onChange={setUserInfo} />
             </UserInfoInputWrapper>
           </LeftUserInfo>
           <RightUserInfo>
