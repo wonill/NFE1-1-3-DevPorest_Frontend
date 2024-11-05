@@ -18,15 +18,14 @@ import TechStack2 from "../../components/TechStack2/TechStack2";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard";
 import { Swiper } from "swiper/react";
 import "swiper/swiper-bundle.css";
-import { getJobGroup } from "../../api/get-job-group";
 import { JobGroupType } from "../../types/api-types/JobGroup";
-import { getTechStacks } from "../../api/get-tech-stacks";
 import { ITechStackType } from "./../../types/api-types/TechStackType";
 import useStoreSearchPage from "../../store/store-search-page";
 import { buildSearchQuery } from "../../utils/build-search-query";
 import { DetailPortfolioType } from "../../types/api-types/PortfolioType";
 import { getPortfolios } from "../../api/get-portfolios";
 import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
+import { useTechStacksAndJobGroups } from "../../hooks/useTechStacksAndJobGroups";
 
 interface pagination {
   currentPage: number;
@@ -39,9 +38,8 @@ interface pagination {
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
-  const [jobGroups2, setJobGroups] = useState<JobGroupType[] | null>(null);
-  const [techStacks2, setTechStacks] = useState<ITechStackType[] | null>(null);
-  const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
+  const { jobGroupList, techStackList } = useTechStacksAndJobGroups();
+  const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[]>(techStackList);
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | null>(null);
   const [pagination, setPagination] = useState<pagination | null>(null);
   const [inputTerm, setInputTerm] = useState<string>("");
@@ -51,7 +49,8 @@ const SearchPage: React.FC = () => {
   const { searchParams, setSearchParams } = useStoreSearchPage();
 
   const loadMoreData = async () => {
-    if (pagination?.hasNextPage) setSearchParams({ page: searchParams.page + 1 });
+    if (pagination?.hasNextPage && pagination.totalCount > 5)
+      setSearchParams({ page: searchParams.page + 1 });
   };
 
   useEffect(() => {
@@ -69,13 +68,15 @@ const SearchPage: React.FC = () => {
   }, [portfolioList]);
 
   useEffect(() => {
-    fetchPortfolio();
+    if (searchParams.page === 1) fetchPortfolio();
 
-    if (jobGroups2) {
-      const selectedJobGroup = jobGroups2?.find(job => job.job === searchParams.jobGroup);
+    if (jobGroupList) {
+      const selectedJobGroup = jobGroupList.find(job => job.job === searchParams.jobGroup);
 
       if (selectedJobGroup) {
-        const filteredStacks = techStacks2?.filter(stack => stack.jobCode === selectedJobGroup._id);
+        const filteredStacks = techStackList.filter(
+          stack => stack.jobCode === selectedJobGroup._id,
+        );
         setFilteredTechStacks(filteredStacks!);
         setSelectedTechStack([searchParams.techStacks]);
       }
@@ -85,7 +86,7 @@ const SearchPage: React.FC = () => {
     searchParams.jobGroup,
     searchParams.sort,
     searchParams.keyword,
-    jobGroups2,
+    searchParams.page,
   ]);
 
   useEffect(() => {
@@ -93,6 +94,7 @@ const SearchPage: React.FC = () => {
 
     const fetchNextPortfolio = async () => {
       const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+      // console.log(portfolioData);
 
       if ("data" in portfolioData!)
         setPortfolioList(prev => [...(prev || []), ...portfolioData.data]);
@@ -104,28 +106,16 @@ const SearchPage: React.FC = () => {
   }, [searchParams.page]);
 
   useEffect(() => {
-    const fetchJobGroup = async () => {
-      const jobGroupData = await getJobGroup();
+    if (techStackList) setFilteredTechStacks(techStackList);
+  }, [techStackList]);
 
-      if (Array.isArray(jobGroupData)) setJobGroups(jobGroupData);
-    };
-
-    const fetchTechStacks = async () => {
-      const techStackData = await getTechStacks();
-
-      if (Array.isArray(techStackData)) {
-        setTechStacks(techStackData);
-        setFilteredTechStacks(techStackData);
-      }
-    };
-
-    fetchJobGroup();
-    fetchTechStacks();
-    fetchPortfolio();
+  useEffect(() => {
+    setSearchParams({ page: 1 });
   }, []);
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+    // console.log(portfolioData);
 
     if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
     if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
@@ -138,9 +128,9 @@ const SearchPage: React.FC = () => {
     setSearchParams({ jobGroup: updatedJobGroup, techStacks: "", page: 1 });
     setSelectedTechStack([]);
 
-    if (job.job === "All") setFilteredTechStacks(techStacks2!);
+    if (job.job === "All") setFilteredTechStacks(techStackList);
     else {
-      const filteredStacks = techStacks2!.filter(stack => stack.jobCode === job._id);
+      const filteredStacks = techStackList.filter(stack => stack.jobCode === job._id);
       setFilteredTechStacks(filteredStacks);
     }
   };
@@ -181,6 +171,9 @@ const SearchPage: React.FC = () => {
     return false;
   };
 
+  // console.log(searchParams);
+  // console.log(pagination);
+
   return (
     <Main>
       <h2>{searchParams.keyword && `${searchParams.keyword}에 대한 검색 결과`}</h2>
@@ -210,7 +203,7 @@ const SearchPage: React.FC = () => {
       <FilterSection>
         <Swiper slidesPerView="auto" spaceBetween={10}>
           <Category>
-            {jobGroups2?.map(job => (
+            {jobGroupList.map(job => (
               <StyledSwiperSlide key={job._id}>
                 <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job)} />
               </StyledSwiperSlide>
@@ -219,7 +212,7 @@ const SearchPage: React.FC = () => {
         </Swiper>
         <TechStackWrapper>
           <Swiper slidesPerView="auto" spaceBetween={10}>
-            {filteredTechStacks?.map((item, i) => (
+            {filteredTechStacks.map((item, i) => (
               <StyledSwiperSlide key={i}>
                 <TechStackWrapper>
                   <TechStack2
