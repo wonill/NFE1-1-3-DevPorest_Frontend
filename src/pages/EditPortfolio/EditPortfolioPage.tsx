@@ -18,7 +18,7 @@ const EditPortfolioPage = () => {
   const navigate = useNavigate();
   const { techStackList, jobGroupList } = useTechStacksAndJobGroups();
 
-  const [formData, setFormData] = useState<Partial<PortfolioType>>({
+  const [formData, setFormData] = useState<Omit<PortfolioType, "userInfo">>({
     title: "",
     contents: "",
     images: [],

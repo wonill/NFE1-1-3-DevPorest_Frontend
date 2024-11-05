@@ -4,12 +4,12 @@ import { UserProfileResType } from "./UserType";
 export interface PortfolioType {
   title: string; // 제목
   contents: string; // 내용
-  images: string[]; // 이미지들
-  tags: string[]; // 태그들
-  techStack?: ITechStackType[]; // 기술스택
+  images?: string[]; // 이미지들
+  tags?: string[]; // 태그들
+  techStack: ITechStackType[]; // 기술스택
   thumbnailImage: string; // 썸네일 이미지
   userInfo: Pick<UserProfileResType, "userID" | "name" | "profileImage">;
-  jobGroup?: string; // 직군
+  jobGroup: string; // 직군
   links?: string[];
 }
 
