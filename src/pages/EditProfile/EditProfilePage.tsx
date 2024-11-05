@@ -17,7 +17,7 @@ import Button from "../../components/Button/Button";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import ProfileImage from "./ProfileImage";
 import UserInfoInputs from "./UserInfoInputs";
-import { techStacks, jobGroups } from "../../data/dummyData";
+import { techStacks } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
 import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
@@ -25,11 +25,14 @@ import { UserProfileType } from "../../types/api-types/UserType";
 import { JobGroupType } from "../../types/api-types/JobGroup";
 import { uploadSingleImg } from "../../api/upload-single-img";
 import { createProfile } from "../../api/create-profile";
+import { getJobGroup } from "../../api/get-job-group";
 
 /**
  * todo
  * - 로그인 페이지에서 로그인이 되면 유저 상태가 전역 상태로 저장
  * - useEffect 훅을 통해 유저정보가 있다면 미리 채워넣음
+ * - 기술스택 가져오기
+ * - 서버로 보낼 때 로컬 스토리지의 토큰을 같이 보내기
  */
 
 const EditProfilePage: React.FC = () => {
@@ -50,6 +53,7 @@ const EditProfilePage: React.FC = () => {
   const [techStackPosition, setTechStackPosition] = useState({ x: 0, y: 0 });
   const [jobPosition, setJobPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [jobGroups, setJobGroups] = useState<JobGroupType[] | null>(null);
 
   const techStackBtnRef = useRef<HTMLButtonElement>(null);
   const jobBtnRef = useRef<HTMLButtonElement>(null);
@@ -66,6 +70,10 @@ const EditProfilePage: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    fetchJobGroup();
+  }, []);
 
   const handleTechStackClick = () => {
     if (techStackBtnRef.current) {
@@ -141,6 +149,13 @@ const EditProfilePage: React.FC = () => {
     console.log(response);
   };
 
+  const fetchJobGroup = async () => {
+    const jobGroupData = await getJobGroup();
+    if (jobGroupData && Array.isArray(jobGroupData)) {
+      setJobGroups(jobGroupData.slice(1, jobGroupData.length));
+    }
+  };
+
   return (
     <CenteredContainer>
       <EditProfilePageContainer>
@@ -210,7 +225,7 @@ const EditProfilePage: React.FC = () => {
         {isJobOpen && (
           <Dropdown
             isOpen={isJobOpen}
-            items={jobGroups}
+            items={jobGroups!}
             position={{ x: jobPosition.x - 250, y: jobPosition.y - 40 }}
             placeholder="직군을 입력하세요"
             onSelect={item => {
