@@ -51,9 +51,7 @@ const SearchPage: React.FC = () => {
   const { searchParams, setSearchParams } = useStoreSearchPage();
 
   const loadMoreData = async () => {
-    if (pagination?.hasNextPage) {
-      setSearchParams({ page: searchParams.page + 1 });
-    }
+    if (pagination?.hasNextPage) setSearchParams({ page: searchParams.page + 1 });
   };
 
   useEffect(() => {
@@ -120,7 +118,8 @@ const SearchPage: React.FC = () => {
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
-    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
+    if ("data" in portfolioData!)
+      setPortfolioList(prevList => [...(prevList || []), ...portfolioData.data]);
     if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
   };
 
@@ -179,7 +178,7 @@ const SearchPage: React.FC = () => {
     return false;
   };
 
-  // console.log(searchParams);
+  console.log(portfolioList);
 
   return (
     <Main>
