@@ -24,7 +24,7 @@ export interface AddTechStackType extends ITechStackType {
  * --------------------------------------------------
  */
 export interface TechStackStatType extends ITechStackType {
-  total_count: number; // 사용횟수
+  totalCount: number; // 사용횟수
 }
 
 /**

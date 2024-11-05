@@ -14,3 +14,15 @@ export const getUserProfile = async (userId: string) => {
     return undefined;
   }
 };
+
+export const getPopularUserProfile = async () => {
+  try {
+    const response = await ky.get(`${apiUrl}/users/popular`, {credentials:'include'});
+    const result: UserApiResType<UserProfileResType> = await response.json();
+    return result.data;
+
+  } catch (error) {
+    console.error('인기 개발자 프로필을 가져오던 중 오류 발생', error);
+    throw error;
+  }
+}
