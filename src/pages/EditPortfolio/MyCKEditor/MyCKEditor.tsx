@@ -42,7 +42,11 @@ import {
 
 import translations from "ckeditor5/translations/ko.js";
 
-const MyCKEditor = () => {
+interface MyCKEditorProps {
+  onChange?: (content: string) => void;
+}
+
+const MyCKEditor = ({ onChange }: MyCKEditorProps) => {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -220,7 +224,10 @@ const MyCKEditor = () => {
                   config={editorConfig}
                   onChange={(_, editor) => {
                     const data = editor.getData(); // 포트폴리오 작성내용(html)
-                    console.log(data);
+                    if (onChange) {
+                      onChange(data);
+                    }
+                    // console.log(data);
                   }}
                 />
               )}
