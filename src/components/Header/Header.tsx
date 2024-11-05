@@ -174,7 +174,14 @@ const SearchBar = ({
   const handleSearch = (ev: React.KeyboardEvent<HTMLInputElement>) => {
     if (ev.key !== "Enter") return;
     if (searchWord.trim()) {
-      setSearchParams({ keyword: searchWord });
+      setSearchParams({
+        keyword: searchWord,
+        page: 1,
+        jobGroup: "all",
+        techStacks: "",
+        sort: "latest",
+        searchType: "title",
+      });
       navigate(`/search`);
 
       console.log(`/search로 리디랙트(keyword:${searchWord})`);
