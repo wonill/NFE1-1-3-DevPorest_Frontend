@@ -47,11 +47,16 @@ export const Contact = styled.div`
 export const TelWrapper = styled.div`
   display: flex;
   gap: 5px;
+
 `;
 
 export const EmailWrpper = styled.div`
   display: flex;
   gap: 5px;
+
+  > span {
+    transform: translateY(1px);
+  }
 `;
 
 export const Intro = styled.p`
