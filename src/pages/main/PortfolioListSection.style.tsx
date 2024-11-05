@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { SwiperSlide } from "swiper/react";
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
 
 export const StyledPortfolioListSection = styled.div`
   padding: ${({ theme }) => theme.PADDINGS.SMALL} 0
@@ -56,3 +57,9 @@ export const PortfolioList = styled.div`
     grid-template-columns: 1fr;
   }
 `;
+
+export const StyledEmptyPortfolio = styled.div`
+  > div {
+    height: 500px;
+  }
+`

@@ -6,6 +6,7 @@ import {
   JobFilterContainer,
   SortSelect,
   PortfolioList,
+  StyledEmptyPortfolio,
 } from "./PortfolioListSection.style";
 import Tag from "../../components/Tag/Tag";
 import SortingDropdown from "./SortingDropdown";
@@ -21,6 +22,7 @@ import { getJobGroup } from "../../api/get-job-group";
 import { JobGroupType } from "../../types/api-types/JobGroup";
 import { getTechStacks } from "../../api/get-tech-stacks";
 import { useNavigate } from "react-router-dom";
+import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
 
 type SortMapType = {
   [key: string] : string;
@@ -43,7 +45,28 @@ const PortfolioListSection = () => {
   const [techStacks2, setTechStacks] = useState<ITechStackType[] | null>(null);
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[]>();
   const { searchParams, setSearchParams } = useStoreSearchPage();
-
+  
+  const fetchInitialPortfolio = async () => {
+    const portfolioData = await getPortfolios(buildSearchQuery({
+      jobGroup: "all",
+      techStacks: "",
+      searchType: "title",
+      keyword: "",
+      sort: "latest",
+      page: 1,
+      limit: 10,
+    },));
+    setSearchParams({
+      jobGroup: "all",
+      techStacks: "",
+      searchType: "title",
+      keyword: "",
+      sort: "latest",
+      page: 1,
+      limit: 10,
+    });
+    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
+  }
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
@@ -51,6 +74,7 @@ const PortfolioListSection = () => {
   };
 
   useEffect(() => {
+    console.log('searchParams', searchParams);
   }, [searchParams])
 
     useEffect(() => {
@@ -73,7 +97,7 @@ const PortfolioListSection = () => {
   
       fetchJobGroup();
       fetchTechStacks();
-      fetchPortfolio();
+      fetchInitialPortfolio();
     }, []);
 
 
@@ -173,6 +197,10 @@ const PortfolioListSection = () => {
           />
         ))}
       </PortfolioList>
+      {portfolioList?.length === 0 && 
+      <StyledEmptyPortfolio>
+        <EmptyPortfolio text="등록된 작업물이 없습니다." />
+      </StyledEmptyPortfolio>}
     </StyledPortfolioListSection>
   );
 };
