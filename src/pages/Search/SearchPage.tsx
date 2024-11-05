@@ -239,7 +239,7 @@ const SearchPage: React.FC = () => {
           <Select
             onChange={e => {
               const sortValue = e.target.value;
-              setSearchParams({ sort: sortValue });
+              setSearchParams({ sort: sortValue, page: 1 });
             }}
           >
             <option value="latest">최신순</option>
