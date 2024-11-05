@@ -20,7 +20,7 @@ import { buildSearchQuery } from "../../utils/build-search-query";
 import { getJobGroup } from "../../api/get-job-group";
 import { JobGroupType } from "../../types/api-types/JobGroup";
 import { getTechStacks } from "../../api/get-tech-stacks";
-import { DummyData } from "../../data/mainPageData";
+import { useNavigate } from "react-router-dom";
 
 type SortMapType = {
   [key: string] : string;
@@ -34,6 +34,7 @@ const sortMap:SortMapType = {
 
 
 const PortfolioListSection = () => {
+  const navigate = useNavigate();
   const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
   const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
   const [selectedSortOption, setSelectedSortOption] =
@@ -77,7 +78,7 @@ const PortfolioListSection = () => {
 
 
   const handleCardClick = (portfolio_id: string) => {
-    console.log(`${portfolio_id}에 해당하는 디테일 페이지로 이동`);
+    navigate(`/detail/${portfolio_id}`);
   };
 
   const handleActive = (skill: string) => {
