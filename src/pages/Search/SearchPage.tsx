@@ -45,7 +45,7 @@ const SearchPage: React.FC = () => {
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | null>(null);
   const [pagination, setPagination] = useState<pagination | null>(null);
   const [inputTerm, setInputTerm] = useState<string>("");
-  const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
+  const [selectedTechStack, setSelectedTechStack] = useState<string[]>([]);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { searchParams, setSearchParams } = useStoreSearchPage();
@@ -57,20 +57,14 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          loadMoreData();
-        }
+        if (entry.isIntersecting) loadMoreData();
       });
     });
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
+    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
 
     return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
-      }
+      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
     };
   }, [portfolioList]);
 
@@ -97,24 +91,28 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     if (searchParams.page === 1) return;
 
-    const fetchPortfolio = async () => {
+    const fetchNextPortfolio = async () => {
       const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+
       if ("data" in portfolioData!)
         setPortfolioList(prev => [...(prev || []), ...portfolioData.data]);
+
       if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
     };
 
-    fetchPortfolio();
+    fetchNextPortfolio();
   }, [searchParams.page]);
 
   useEffect(() => {
     const fetchJobGroup = async () => {
       const jobGroupData = await getJobGroup();
+
       if (Array.isArray(jobGroupData)) setJobGroups(jobGroupData);
     };
 
     const fetchTechStacks = async () => {
       const techStackData = await getTechStacks();
+
       if (Array.isArray(techStackData)) {
         setTechStacks(techStackData);
         setFilteredTechStacks(techStackData);
@@ -128,6 +126,7 @@ const SearchPage: React.FC = () => {
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+
     if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
     if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
   };
@@ -139,9 +138,8 @@ const SearchPage: React.FC = () => {
     setSearchParams({ jobGroup: updatedJobGroup, techStacks: "", page: 1 });
     setSelectedTechStack([]);
 
-    if (job.job === "All") {
-      setFilteredTechStacks(techStacks2!);
-    } else {
+    if (job.job === "All") setFilteredTechStacks(techStacks2!);
+    else {
       const filteredStacks = techStacks2!.filter(stack => stack.jobCode === job._id);
       setFilteredTechStacks(filteredStacks);
     }
