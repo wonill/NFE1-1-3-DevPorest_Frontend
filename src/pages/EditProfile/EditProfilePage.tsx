@@ -17,7 +17,7 @@ import Button from "../../components/Button/Button";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import ProfileImage from "./ProfileImage";
 import UserInfoInputs from "./UserInfoInputs";
-import { techStacks } from "../../data/dummyData";
+// import { techStacks } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
 import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
@@ -26,12 +26,12 @@ import { JobGroupType } from "../../types/api-types/JobGroup";
 import { uploadSingleImg } from "../../api/upload-single-img";
 import { createProfile } from "../../api/create-profile";
 import { getJobGroup } from "../../api/get-job-group";
+import { getTechStacks } from "../../api/get-tech-stacks";
 
 /**
  * todo
  * - 로그인 페이지에서 로그인이 되면 유저 상태가 전역 상태로 저장
  * - useEffect 훅을 통해 유저정보가 있다면 미리 채워넣음
- * - 기술스택 가져오기
  * - 서버로 보낼 때 로컬 스토리지의 토큰을 같이 보내기
  */
 
@@ -54,6 +54,7 @@ const EditProfilePage: React.FC = () => {
   const [jobPosition, setJobPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobGroups, setJobGroups] = useState<JobGroupType[] | null>(null);
+  const [techStacks, setTechStacks] = useState<ITechStackType[] | null>(null);
 
   const techStackBtnRef = useRef<HTMLButtonElement>(null);
   const jobBtnRef = useRef<HTMLButtonElement>(null);
@@ -73,6 +74,7 @@ const EditProfilePage: React.FC = () => {
 
   useEffect(() => {
     fetchJobGroup();
+    fetchTechStack();
   }, []);
 
   const handleTechStackClick = () => {
@@ -156,6 +158,13 @@ const EditProfilePage: React.FC = () => {
     }
   };
 
+  const fetchTechStack = async () => {
+    const techStackData = await getTechStacks();
+    if (techStackData && Array.isArray(techStackData)) {
+      setTechStacks(techStackData);
+    }
+  };
+
   return (
     <CenteredContainer>
       <EditProfilePageContainer>
@@ -214,7 +223,7 @@ const EditProfilePage: React.FC = () => {
         {isTechStackOpen && (
           <Dropdown
             isOpen={isTechStackOpen}
-            items={techStacks}
+            items={techStacks!}
             position={{ x: techStackPosition.x - 250, y: techStackPosition.y - 40 }}
             placeholder="기술스택을 입력하세요"
             onSelect={item => {
