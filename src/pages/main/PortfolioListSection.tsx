@@ -50,7 +50,6 @@ const PortfolioListSection = () => {
   };
 
   useEffect(() => {
-    console.log('서치파람', searchParams);
   }, [searchParams])
 
     useEffect(() => {
@@ -120,7 +119,6 @@ const PortfolioListSection = () => {
   };
 
   useEffect(() => {
-    console.log(`선택된 정렬 방식: ${selectedSortOption}`);
   }, [selectedSortOption]);
 
   const handleSortChange = (option: string) => {
