@@ -165,14 +165,11 @@ const SearchPage: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") setSearchParams({ keyword: inputTerm });
+    if (e.key === "Enter") setSearchParams({ keyword: inputTerm, page: 1 });
   };
 
-  const handleSearch = async () => {
-    const portfolios = await getPortfolios(buildSearchQuery(searchParams));
-    setPortfolioList(portfolios?.data!);
-    setPagination(portfolios?.pagination!);
-    setSearchParams({ page: 1 });
+  const handleSearch = () => {
+    setSearchParams({ keyword: inputTerm, page: 1 });
   };
 
   const handlePortfolioClick = (portfolioId: string) => {
