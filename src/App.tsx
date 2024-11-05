@@ -30,7 +30,7 @@ const App: React.FC = () => {
           <Route path="/register" element={<Register />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/edit_profile/:userId" element={<EditProfilePage />} />
+        <Route path="/edit_profile" element={<EditProfilePage />} />
       </Routes>
     </BrowserRouter>
   );
