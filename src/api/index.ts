@@ -15,6 +15,23 @@ const api = ky.create({
         }
       },
     ],
+    afterResponse: [
+      /**
+       * 401 에러시 토큰 삭제
+       * @param request -
+       * @param options -
+       * @param response HTTP Response
+       */
+      async (request, options, response) => {
+        if (response.status === 401) {
+          const token = localStorage.getItem("token");
+          if (token) {
+            localStorage.removeItem("token");
+            alert("만료되거나 잘못된 토큰입니다.");
+          }
+        }
+      },
+    ],
   },
 });
 
