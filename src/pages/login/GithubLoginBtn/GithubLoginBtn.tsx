@@ -1,4 +1,9 @@
+import ky from "ky";
 import { GithubLoginBtnStylesWrapper } from "./GithubLoginBtn.styles";
+
+interface loginResponse {
+  redirect: string;
+}
 
 const GithubLoginBtn = () => {
   return (
@@ -6,11 +11,7 @@ const GithubLoginBtn = () => {
       <img src="/github-icon.svg" alt="" />
       <i
         onClick={async () => {
-          const response = await fetch("http://140.245.78.132:8080/api/auth/github", {
-            credentials: "include",
-          });
-          const data = await response.json();
-          console.log(data);
+          const data = await ky("http://140.245.78.132:8080/api/auth/github").json<loginResponse>();
           window.location.href = data.redirect;
         }}
       >
