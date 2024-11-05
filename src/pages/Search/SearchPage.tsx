@@ -68,7 +68,7 @@ const SearchPage: React.FC = () => {
   }, [portfolioList]);
 
   useEffect(() => {
-    fetchPortfolio();
+    if (searchParams.page === 1) fetchPortfolio();
 
     if (jobGroupList) {
       const selectedJobGroup = jobGroupList.find(job => job.job === searchParams.jobGroup);
@@ -81,7 +81,13 @@ const SearchPage: React.FC = () => {
         setSelectedTechStack([searchParams.techStacks]);
       }
     }
-  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.sort, searchParams.keyword]);
+  }, [
+    searchParams.techStacks,
+    searchParams.jobGroup,
+    searchParams.sort,
+    searchParams.keyword,
+    searchParams.page,
+  ]);
 
   useEffect(() => {
     if (searchParams.page === 1) return;
@@ -105,7 +111,6 @@ const SearchPage: React.FC = () => {
 
   useEffect(() => {
     setSearchParams({ page: 1 });
-    fetchPortfolio();
   }, []);
 
   const fetchPortfolio = async () => {
