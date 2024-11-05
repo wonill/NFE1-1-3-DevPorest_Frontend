@@ -44,50 +44,75 @@ const SearchPage: React.FC = () => {
   const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | null>(null);
   const [pagination, setPagination] = useState<pagination | null>(null);
-  const [pageTitle, setPageTitle] = useState<string>("");
-  const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
+  const [inputTerm, setInputTerm] = useState<string>("");
+  const [selectedTechStack, setSelectedTechStack] = useState<string[]>([]);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { searchParams, setSearchParams } = useStoreSearchPage();
 
   const loadMoreData = async () => {
-    if (pagination?.hasNextPage) {
-      setSearchParams({ page: searchParams.page + 1 });
-    }
+    if (pagination?.hasNextPage) setSearchParams({ page: searchParams.page + 1 });
   };
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          loadMoreData();
-        }
+        if (entry.isIntersecting) loadMoreData();
       });
     });
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
+    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
 
     return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
-      }
+      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
     };
   }, [portfolioList]);
 
   useEffect(() => {
     fetchPortfolio();
-  }, [searchParams.techStacks, searchParams.jobGroup, searchParams.page, searchParams.sort]);
+
+    if (jobGroups2) {
+      const selectedJobGroup = jobGroups2?.find(job => job.job === searchParams.jobGroup);
+
+      if (selectedJobGroup) {
+        const filteredStacks = techStacks2?.filter(stack => stack.jobCode === selectedJobGroup._id);
+        setFilteredTechStacks(filteredStacks!);
+        setSelectedTechStack([searchParams.techStacks]);
+      }
+    }
+  }, [
+    searchParams.techStacks,
+    searchParams.jobGroup,
+    searchParams.sort,
+    searchParams.keyword,
+    jobGroups2,
+  ]);
+
+  useEffect(() => {
+    if (searchParams.page === 1) return;
+
+    const fetchNextPortfolio = async () => {
+      const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+
+      if ("data" in portfolioData!)
+        setPortfolioList(prev => [...(prev || []), ...portfolioData.data]);
+
+      if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
+    };
+
+    fetchNextPortfolio();
+  }, [searchParams.page]);
 
   useEffect(() => {
     const fetchJobGroup = async () => {
       const jobGroupData = await getJobGroup();
+
       if (Array.isArray(jobGroupData)) setJobGroups(jobGroupData);
     };
 
     const fetchTechStacks = async () => {
       const techStackData = await getTechStacks();
+
       if (Array.isArray(techStackData)) {
         setTechStacks(techStackData);
         setFilteredTechStacks(techStackData);
@@ -97,11 +122,11 @@ const SearchPage: React.FC = () => {
     fetchJobGroup();
     fetchTechStacks();
     fetchPortfolio();
-    setSearchParams({ page: 1 });
   }, []);
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+
     if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
     if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
   };
@@ -110,13 +135,11 @@ const SearchPage: React.FC = () => {
     if (job.job === searchParams.jobGroup) return;
 
     const updatedJobGroup = job.job === "All" ? "all" : job.job;
-    setSearchParams({ jobGroup: updatedJobGroup });
-    setSearchParams({ techStacks: "" });
+    setSearchParams({ jobGroup: updatedJobGroup, techStacks: "", page: 1 });
     setSelectedTechStack([]);
 
-    if (job.job === "All") {
-      setFilteredTechStacks(techStacks2!);
-    } else {
+    if (job.job === "All") setFilteredTechStacks(techStacks2!);
+    else {
       const filteredStacks = techStacks2!.filter(stack => stack.jobCode === job._id);
       setFilteredTechStacks(filteredStacks);
     }
@@ -131,29 +154,28 @@ const SearchPage: React.FC = () => {
         .filter(stack => stack !== techStack)
         .join(", ")
         .trim();
-      setSearchParams({ techStacks: updatedTechStacks });
+      setSearchParams({ techStacks: updatedTechStacks, page: 1 });
       setSelectedTechStack(selectedTechStack!.filter(stack => stack !== techStack));
     } else {
       // 기술 스택이 선택되지 않은 경우 추가
       const updatedTechStacks = [...currentTechStacks, techStack].filter(Boolean).join(",").trim();
-      setSearchParams({ techStacks: updatedTechStacks });
+      setSearchParams({ techStacks: updatedTechStacks, page: 1 });
       setSelectedTechStack([...selectedTechStack!, techStack]);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSearch();
+    if (e.key === "Enter") setSearchParams({ keyword: inputTerm });
   };
 
   const handleSearch = async () => {
     const portfolios = await getPortfolios(buildSearchQuery(searchParams));
     setPortfolioList(portfolios?.data!);
     setPagination(portfolios?.pagination!);
-    setPageTitle(searchParams.keyword);
   };
 
   const handlePortfolioClick = (portfolioId: string) => {
-    navigate(`/detail?portfolio_id=${portfolioId}`);
+    navigate(`/detail/${portfolioId}`);
   };
 
   const handleActive = (skill: string) => {
@@ -163,7 +185,7 @@ const SearchPage: React.FC = () => {
 
   return (
     <Main>
-      <h2>{pageTitle && `${pageTitle}에 대한 검색 결과`}</h2>
+      <h2>{searchParams.keyword && `${searchParams.keyword}에 대한 검색 결과`}</h2>
       <p>{pagination?.totalCount}개의 포트폴리오를 발견하였습니다.</p>
       <SearchSection>
         <Select
@@ -179,7 +201,7 @@ const SearchPage: React.FC = () => {
         <input
           type="text"
           placeholder="검색어를 입력하세요"
-          onChange={e => setSearchParams({ keyword: e.target.value })}
+          onChange={e => setInputTerm(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <SearchIconContainer onClick={handleSearch}>
@@ -217,7 +239,7 @@ const SearchPage: React.FC = () => {
           <Select
             onChange={e => {
               const sortValue = e.target.value;
-              setSearchParams({ sort: sortValue });
+              setSearchParams({ sort: sortValue, page: 1 });
             }}
           >
             <option value="latest">최신순</option>
