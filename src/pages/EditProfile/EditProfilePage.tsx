@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   CenteredContainer,
   EditProfilePageContainer,
@@ -17,7 +18,6 @@ import Button from "../../components/Button/Button";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import ProfileImage from "./ProfileImage";
 import UserInfoInputs from "./UserInfoInputs";
-// import { techStacks } from "../../data/dummyData";
 import Tag from "../../components/Tag/Tag";
 import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
@@ -27,6 +27,7 @@ import { uploadSingleImg } from "../../api/upload-single-img";
 import { createProfile } from "../../api/create-profile";
 import { getJobGroup } from "../../api/get-job-group";
 import { getTechStacks } from "../../api/get-tech-stacks";
+import { getUserProfile } from "../../api/get-user-profile";
 
 /**
  * todo
@@ -38,6 +39,7 @@ import { getTechStacks } from "../../api/get-tech-stacks";
 const EditProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewProfileImg, setPreviewProfileImg] = useState<string | null>(null);
+  const [name, setName] = useState("");
   const [userInfo, setUserInfo] = useState({
     email: "",
     mobile: "",
@@ -60,6 +62,8 @@ const EditProfilePage: React.FC = () => {
   const jobBtnRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const { userId } = useParams<{ userId: string }>();
+
   useEffect(() => {
     if (isModalOpen) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -76,6 +80,33 @@ const EditProfilePage: React.FC = () => {
     fetchJobGroup();
     fetchTechStack();
   }, []);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const userData = await getUserProfile(userId!);
+      console.log(userData);
+      if (!userData) {
+        console.log("유저 정보 없음");
+      } else if (typeof userData === "string") {
+        console.log(userData);
+      } else {
+        setPreviewProfileImg(userData.profileImage);
+        setName(userData.name);
+        setUserInfo({
+          ...userInfo,
+          email: userData.email,
+          mobile: userData.phoneNumber,
+        });
+        setSelectedTechStacks(userData.techStack);
+        setSelectedJob(jobGroups?.find(jobGroup => jobGroup.job === userData.jobGroup)!);
+        setIntro(userData.intro);
+      }
+    };
+
+    if (userId && jobGroups) {
+      fetchUserProfile();
+    }
+  }, [userId, jobGroups]);
 
   const handleTechStackClick = () => {
     if (techStackBtnRef.current) {
@@ -123,8 +154,8 @@ const EditProfilePage: React.FC = () => {
 
   const handleTechStackSelect = (techStack: ITechStackType) => {
     setSelectedTechStacks(prev => {
-      if (prev.includes(techStack)) {
-        return prev.filter(stack => stack !== techStack);
+      if (prev.some(stack => stack.skill === techStack.skill)) {
+        return prev.filter(stack => stack.skill !== techStack.skill);
       } else {
         return [...prev, techStack];
       }
@@ -180,7 +211,7 @@ const EditProfilePage: React.FC = () => {
               ref={modalRef}
             />
             <UserInfoInputWrapper>
-              <UserInfoInputs onChange={setUserInfo} />
+              <UserInfoInputs name={name} onChange={setUserInfo} />
             </UserInfoInputWrapper>
           </LeftUserInfo>
           <RightUserInfo>
