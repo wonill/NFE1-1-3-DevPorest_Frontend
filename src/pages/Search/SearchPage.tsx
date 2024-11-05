@@ -44,7 +44,7 @@ const SearchPage: React.FC = () => {
   const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | null>(null);
   const [pagination, setPagination] = useState<pagination | null>(null);
-  const [pageTitle, setPageTitle] = useState<string>("");
+  const [inputTerm, setInputTerm] = useState<string>("");
   const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -77,7 +77,6 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     fetchPortfolio();
 
-    console.log(searchParams.techStacks);
     if (jobGroups2) {
       const selectedJobGroup = jobGroups2?.find(job => job.job === searchParams.jobGroup);
 
@@ -90,11 +89,23 @@ const SearchPage: React.FC = () => {
   }, [
     searchParams.techStacks,
     searchParams.jobGroup,
-    searchParams.page,
     searchParams.sort,
+    searchParams.keyword,
     jobGroups2,
-    techStacks2,
   ]);
+
+  useEffect(() => {
+    if (searchParams.page === 1) return;
+
+    const fetchPortfolio = async () => {
+      const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+      if ("data" in portfolioData!)
+        setPortfolioList(prev => [...(prev || []), ...portfolioData.data]);
+      if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
+    };
+
+    fetchPortfolio();
+  }, [searchParams.page]);
 
   useEffect(() => {
     const fetchJobGroup = async () => {
@@ -113,13 +124,11 @@ const SearchPage: React.FC = () => {
     fetchJobGroup();
     fetchTechStacks();
     fetchPortfolio();
-    setSearchParams({ page: 1 });
   }, []);
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
-    if ("data" in portfolioData!)
-      setPortfolioList(prevList => [...(prevList || []), ...portfolioData.data]);
+    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
     if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
   };
 
@@ -127,8 +136,7 @@ const SearchPage: React.FC = () => {
     if (job.job === searchParams.jobGroup) return;
 
     const updatedJobGroup = job.job === "All" ? "all" : job.job;
-    setSearchParams({ jobGroup: updatedJobGroup });
-    setSearchParams({ techStacks: "" });
+    setSearchParams({ jobGroup: updatedJobGroup, techStacks: "", page: 1 });
     setSelectedTechStack([]);
 
     if (job.job === "All") {
@@ -148,25 +156,24 @@ const SearchPage: React.FC = () => {
         .filter(stack => stack !== techStack)
         .join(", ")
         .trim();
-      setSearchParams({ techStacks: updatedTechStacks });
+      setSearchParams({ techStacks: updatedTechStacks, page: 1 });
       setSelectedTechStack(selectedTechStack!.filter(stack => stack !== techStack));
     } else {
       // 기술 스택이 선택되지 않은 경우 추가
       const updatedTechStacks = [...currentTechStacks, techStack].filter(Boolean).join(",").trim();
-      setSearchParams({ techStacks: updatedTechStacks });
+      setSearchParams({ techStacks: updatedTechStacks, page: 1 });
       setSelectedTechStack([...selectedTechStack!, techStack]);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSearch();
+    if (e.key === "Enter") setSearchParams({ keyword: inputTerm });
   };
 
   const handleSearch = async () => {
     const portfolios = await getPortfolios(buildSearchQuery(searchParams));
     setPortfolioList(portfolios?.data!);
     setPagination(portfolios?.pagination!);
-    setPageTitle(searchParams.keyword);
   };
 
   const handlePortfolioClick = (portfolioId: string) => {
@@ -178,11 +185,9 @@ const SearchPage: React.FC = () => {
     return false;
   };
 
-  console.log(portfolioList);
-
   return (
     <Main>
-      <h2>{pageTitle && `${pageTitle}에 대한 검색 결과`}</h2>
+      <h2>{searchParams.keyword && `${searchParams.keyword}에 대한 검색 결과`}</h2>
       <p>{pagination?.totalCount}개의 포트폴리오를 발견하였습니다.</p>
       <SearchSection>
         <Select
@@ -198,7 +203,7 @@ const SearchPage: React.FC = () => {
         <input
           type="text"
           placeholder="검색어를 입력하세요"
-          onChange={e => setSearchParams({ keyword: e.target.value })}
+          onChange={e => setInputTerm(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <SearchIconContainer onClick={handleSearch}>
