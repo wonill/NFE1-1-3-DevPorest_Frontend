@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { SwiperSlide } from "swiper/react";
+import {SwiperSlide } from "swiper/react";
 
 export const ProfilePageWrapper = styled.div`
   display: flex;
@@ -39,10 +39,17 @@ export const UserInfoLeft = styled.div`
 export const UserInfoRight = styled.div``;
 
 export const TechStackList = styled.div`
+  width: fit-content;
   display: flex;
+  justify-content: flex-start;
   max-width: 700px;
   overflow: hidden;
   cursor: grab;
+
+  > div {
+    display: flex;
+    gap: 10px;
+  }
 
   @media (max-width: calc(1100px + 2rem)) {
     max-width: 50dvw;
@@ -99,13 +106,18 @@ export const ExternalLinkWrapper = styled.div`
 
 export const UserPortfolioList = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap : 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  
+  @media (max-width: 940px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
   }
 `;
+
 
 export const StyledSwiperSlide = styled(SwiperSlide)`
   width: fit-content;
