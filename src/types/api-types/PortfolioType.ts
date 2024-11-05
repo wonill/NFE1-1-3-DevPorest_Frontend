@@ -33,7 +33,6 @@ export interface PostPortfolioType
   extends Omit<PortfolioType, "techStack" | "jobGroup"> {
   techStack: string[]; // ITechStackType[]에서 skill만 추출한 string 배열
   jobGroup: string; // optional에서 required로 변경
-  // images: string[]; // 업로드된 이미지 URL 배열
 }
 
 // ResBody
