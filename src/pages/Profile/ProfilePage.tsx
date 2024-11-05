@@ -1,11 +1,9 @@
-import ky from 'ky';
-import { UserProfileResType, UserApiResType } from '../../types/api-types/UserType.ts';
-import { PortfolioApiResType, DetailPortfolioType } from '../../types/api-types/PortfolioType.ts';
+import { UserProfileResType} from '../../types/api-types/UserType.ts';
+import {DetailPortfolioType } from '../../types/api-types/PortfolioType.ts';
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Swiper } from "swiper/react";
 import "swiper/swiper-bundle.css";
-import { DummyData } from "../../data/profilePageData.ts";
 import PortfolioCard from "../../components/PortfolioCard/PortfolioCard.tsx";
 import TechStack from "../../components/TechStack/TechStack.tsx";
 import ExternalLink from "../../components/ExternalLink/ExternalLink.tsx";
@@ -148,7 +146,7 @@ const ProfilePage = () => {
 
   const handleCardClick = (portfolio_id: string) => {
     console.log(`${portfolio_id}에 해당하는 페이지로 이동`);
-    navigate(`detail?portfolio_id=${portfolio_id}`);
+    navigate(`/detail?portfolio_id=${portfolio_id}`);
   };
 
   const onClickEditProfile = () => {
