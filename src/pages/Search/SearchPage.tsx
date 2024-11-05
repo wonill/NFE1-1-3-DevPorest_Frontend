@@ -172,6 +172,7 @@ const SearchPage: React.FC = () => {
     const portfolios = await getPortfolios(buildSearchQuery(searchParams));
     setPortfolioList(portfolios?.data!);
     setPagination(portfolios?.pagination!);
+    setSearchParams({ page: 1 });
   };
 
   const handlePortfolioClick = (portfolioId: string) => {
