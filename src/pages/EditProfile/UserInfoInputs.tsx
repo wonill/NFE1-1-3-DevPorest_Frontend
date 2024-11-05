@@ -9,6 +9,13 @@ import { validateInput } from "../../utils/valid-input";
 
 interface UserInfoInputsProps {
   name: string;
+  userInfo?: {
+    email: string;
+    mobile: string;
+    github: string;
+    instagram: string;
+    blog: string;
+  };
   onChange: (data: {
     email: string;
     mobile: string;
@@ -18,7 +25,7 @@ interface UserInfoInputsProps {
   }) => void;
 }
 
-const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, onChange }) => {
+const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, userInfo, onChange }) => {
   const [emailValue, setEmailValue] = useState("");
   const [mobileValue, setMobileValue] = useState("");
   const [githubValue, setGithubValue] = useState("");
@@ -59,7 +66,7 @@ const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, onChange }) => {
       <InfoInput
         icon={email}
         placeholder="이메일을 입력해주세요."
-        value={emailValue}
+        value={userInfo?.email!}
         onChange={e => setEmailValue(e.target.value)}
         error={errors.email}
       />
@@ -67,7 +74,7 @@ const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, onChange }) => {
       <InfoInput
         icon={mobile}
         placeholder="010-XXXX-XXXX의 형식을 지켜주세요"
-        value={mobileValue}
+        value={userInfo?.mobile!}
         onChange={e => setMobileValue(e.target.value)}
         error={errors.mobile}
       />
@@ -75,7 +82,7 @@ const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, onChange }) => {
       <InfoInput
         icon={gitHub}
         placeholder="GitHub 링크를 입력해주세요."
-        value={githubValue}
+        value={userInfo?.github!}
         onChange={e => setGithubValue(e.target.value)}
         error={errors.github}
       />
@@ -83,14 +90,14 @@ const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, onChange }) => {
       <InfoInput
         icon={instagram}
         placeholder="Instagram 링크를 입력해주세요."
-        value={instagramValue}
+        value={userInfo?.instagram!}
         onChange={e => setInstagramValue(e.target.value)}
       />
 
       <InfoInput
         icon={blog}
         placeholder="Blog 링크를 입력해주세요."
-        value={blogValue}
+        value={userInfo?.blog!}
         onChange={e => setBlogValue(e.target.value)}
       />
     </>
