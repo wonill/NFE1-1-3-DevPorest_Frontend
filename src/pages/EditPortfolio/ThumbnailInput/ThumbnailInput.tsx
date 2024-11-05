@@ -4,10 +4,12 @@ import { ThumbnailInputWrapper } from "./ThumbnailInput.styles";
 // useState의 set함수를 props로 전달받음
 interface ThumbnailInputProps {
   setPreviewThumbnail: (tags: string) => void;
+  previewThumbnail: string;
 }
 
 const ThumbnailInput: React.FC<ThumbnailInputProps> = ({
   setPreviewThumbnail,
+  previewThumbnail,
 }) => {
   const [thumbnailFileName, setThumbnailFileName] =
     useState<string>("대표사진 선택");
@@ -65,9 +67,11 @@ const ThumbnailInput: React.FC<ThumbnailInputProps> = ({
         id="file"
         onChange={getThumbnail}
       />
-      <button className="deleteBtn" onClick={deleteFile}>
-        x
-      </button>
+      {previewThumbnail && ( // previewThumbnail이 있는 경우에만 삭제 버튼 표시
+        <button className="deleteBtn" onClick={deleteFile}>
+          x
+        </button>
+      )}
     </ThumbnailInputWrapper>
   );
 };

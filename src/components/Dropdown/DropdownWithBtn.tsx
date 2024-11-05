@@ -8,9 +8,17 @@ interface DropDownWithBtnProps {
   name?: string;
   items: ITechStackType[] | JobGroupType[];
   placeholder: string;
+  onChange?: (selected: any) => void;
 }
 
-const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({ name, items, placeholder }) => {
+interface DropdownClickEvent extends React.MouseEvent<HTMLButtonElement> {}
+
+const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
+  name,
+  items,
+  placeholder,
+  onChange,
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [DropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
 
@@ -41,13 +49,21 @@ const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({ name, items, placehol
     };
   }, [isDropdownOpen]);
 
-  const handleDropdownClick = () => {
+  const handleDropdownClick = (e: DropdownClickEvent) => {
+    e.preventDefault();
     if (DropdownBtnRef.current) {
       const rect = DropdownBtnRef.current.getBoundingClientRect();
       setDropdownPosition({ x: rect.left, y: rect.bottom });
     }
-    setIsDropdownOpen(prev => !prev);
+    setIsDropdownOpen((prev) => !prev);
   };
+
+  const handleItemSelect = (item: ITechStackType | JobGroupType) => {
+    if (onChange) {
+      onChange(item);
+    }
+  };
+
   return (
     <div>
       <DropBtn ref={DropdownBtnRef} onClick={handleDropdownClick}>
@@ -61,8 +77,8 @@ const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({ name, items, placehol
             items={items}
             position={{ x: DropdownPosition.x, y: DropdownPosition.y + 10 }}
             placeholder={placeholder}
-            onSelect={item => {
-              console.log(item);
+            onSelect={(item) => {
+              handleItemSelect(item);
               setIsDropdownOpen(false);
             }}
           />
