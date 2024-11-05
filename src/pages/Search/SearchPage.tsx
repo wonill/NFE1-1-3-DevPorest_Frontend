@@ -177,7 +177,7 @@ const SearchPage: React.FC = () => {
   };
 
   const handlePortfolioClick = (portfolioId: string) => {
-    navigate(`/detail?portfolio_id=${portfolioId}`);
+    navigate(`/detail/${portfolioId}`);
   };
 
   const handleActive = (skill: string) => {
