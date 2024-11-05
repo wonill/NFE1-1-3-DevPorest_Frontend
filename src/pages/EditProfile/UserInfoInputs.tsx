@@ -8,6 +8,7 @@ import instagram from "../../assets/instagram.svg";
 import { validateInput } from "../../utils/valid-input";
 
 interface UserInfoInputsProps {
+  name: string;
   onChange: (data: {
     email: string;
     mobile: string;
@@ -17,7 +18,7 @@ interface UserInfoInputsProps {
   }) => void;
 }
 
-const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ onChange }) => {
+const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ name, onChange }) => {
   const [emailValue, setEmailValue] = useState("");
   const [mobileValue, setMobileValue] = useState("");
   const [githubValue, setGithubValue] = useState("");
@@ -54,7 +55,7 @@ const UserInfoInputs: React.FC<UserInfoInputsProps> = ({ onChange }) => {
 
   return (
     <>
-      <p>홍길동</p>
+      <p>{name}</p>
       <InfoInput
         icon={email}
         placeholder="이메일을 입력해주세요."
