@@ -1,4 +1,4 @@
-import ky from "ky";
+import api from "../../../api";
 import { GithubLoginBtnStylesWrapper } from "./GithubLoginBtn.styles";
 
 interface loginResponse {
@@ -11,7 +11,7 @@ const GithubLoginBtn = () => {
       <img src="/github-icon.svg" alt="" />
       <i
         onClick={async () => {
-          const data = await ky("http://140.245.78.132:8080/api/auth/github").json<loginResponse>();
+          const data = await api("auth/github").json<loginResponse>();
           window.location.href = data.redirect;
         }}
       >
