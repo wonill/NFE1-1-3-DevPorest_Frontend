@@ -114,6 +114,7 @@ export const ContentSection = styled.section`
     max-width: 100%;
     border: 1px solid ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+    object-fit: contain;
   }
 `;
 
