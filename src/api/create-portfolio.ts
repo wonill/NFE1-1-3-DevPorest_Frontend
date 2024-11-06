@@ -1,11 +1,11 @@
 import api from "./index";
-import { uploadSingleImg } from "./upload-single-img";
+import { uploadTumbnailImg } from "./upload-single-img";
 import {
   PortfolioType,
   PortfolioResType,
   PortfolioImagesResType,
   PostPortfolioType,
-  PortfolioDetailResType,
+  PortfolioEditResType,
 } from "../types/api-types/PortfolioType";
 
 /**
@@ -50,7 +50,7 @@ const extractImagesFromContent = (
 /**
  * 다중 이미지 업로드 처리
  */
-const uploadMultipleImages = async (files: File[]): Promise<string[]> => {
+const uploadMultipleImages = async (files: File[], portfolioId: string): Promise<string[]> => {
   const formData = new FormData();
   files.forEach(file => {
     formData.append("images", file);
@@ -58,7 +58,7 @@ const uploadMultipleImages = async (files: File[]): Promise<string[]> => {
 
   try {
     const response = await api
-      .post("portfolios/uploads", {
+      .post(`portfolios/uploads/${portfolioId}?usage=content`, {
         body: formData,
       })
       .json<PortfolioImagesResType>();
@@ -79,6 +79,7 @@ const uploadMultipleImages = async (files: File[]): Promise<string[]> => {
  */
 const processEditorContent = async (
   content: string,
+  portfolioId: string,
 ): Promise<{
   updatedContent: string;
   uploadedUrls: string[];
@@ -98,7 +99,7 @@ const processEditorContent = async (
   );
 
   // 다중 이미지 업로드
-  const uploadedUrls = await uploadMultipleImages(imageFiles);
+  const uploadedUrls = await uploadMultipleImages(imageFiles, portfolioId);
 
   // 컨텐츠 내 이미지 URL 교체
   let updatedContent = content;
@@ -117,68 +118,88 @@ const processEditorContent = async (
  */
 const transformToServerFormat = (
   clientData: PortfolioType,
-  uploadedImages: string[],
+  uploadedImages?: string[],
 ): PostPortfolioType => {
   return {
     ...clientData,
     techStack: clientData.techStack?.map(tech => tech.skill) || [],
     jobGroup: clientData.jobGroup || "",
-    images: uploadedImages,
+    images: uploadedImages || [],
   };
 };
 
 // 포트폴리오 데이터 처리 및 변환 공통 함수
-const processPortfolioData = async (portfolioData: PortfolioType): Promise<PostPortfolioType> => {
-  // 1. 썸네일 이미지 처리
-  let thumbnailUrl = portfolioData.thumbnailImage;
-  if (thumbnailUrl?.startsWith("data:image")) {
-    const thumbnailFile = await base64ToFile(thumbnailUrl, "thumbnail.png");
-    const uploadedThumbnailUrl = await uploadSingleImg(thumbnailFile);
-    if (!uploadedThumbnailUrl) {
-      throw new Error("썸네일 이미지 업로드 실패");
-    }
-    thumbnailUrl = uploadedThumbnailUrl;
+const processPortfolioData = async (
+  portfolioData: PortfolioType,
+  portfolioId?: string,
+): Promise<PortfolioEditResType> => {
+  // 0. 생성 api 호출
+  console.log("포트폴리오 데이터:", portfolioData);
+  let _id = portfolioId;
+  console.log("포트폴리오 아이디:", _id);
+  if (!_id) {
+    const response = await api
+      .post("portfolios", {
+        json: transformToServerFormat({ ...portfolioData, thumbnailImage: " ", contents: " " }), // base64 제외 하고 보냄
+      })
+      .json<PortfolioResType>();
+    _id = response.data?._id;
   }
 
-  // 2. 에디터 컨텐츠 내 이미지 처리
-  const { updatedContent, uploadedUrls } = await processEditorContent(portfolioData.contents);
+  // _id가 있는 상태
 
-  // 3. 서버 형식으로 데이터 변환
-  return transformToServerFormat(
-    {
-      ...portfolioData,
-      thumbnailImage: thumbnailUrl,
-      contents: updatedContent,
-    },
-    uploadedUrls,
-  );
+  if (_id) {
+    console.log("있어야 하는 포트폴리오 아이디:", _id);
+    console.log("포트폴리오 데이터:", portfolioData);
+    // 1. 썸네일 이미지 처리
+    let thumbnailUrl = portfolioData.thumbnailImage; // base64 이미지
+    if (thumbnailUrl?.startsWith("data:image")) {
+      const thumbnailFile = await base64ToFile(thumbnailUrl, "thumbnail.png");
+      const uploadedThumbnailUrl = await uploadTumbnailImg(thumbnailFile, _id);
+      if (!uploadedThumbnailUrl) {
+        throw new Error("썸네일 이미지 업로드 실패");
+      }
+      thumbnailUrl = uploadedThumbnailUrl;
+    }
+
+    // 2. 에디터 컨텐츠 내 이미지 처리
+    const { updatedContent, uploadedUrls } = await processEditorContent(
+      portfolioData.contents,
+      _id,
+    );
+
+    // 3. 서버 형식으로 데이터 변환
+    const serverData = transformToServerFormat(
+      {
+        ...portfolioData,
+        thumbnailImage: thumbnailUrl,
+        contents: updatedContent,
+      },
+      uploadedUrls,
+    );
+    console.log("서버형식으로 변환된 데이터:", serverData);
+    // 수정 api 이용하여 변환된 이미지 src 집어넣기
+    const response = await api
+      .put(`portfolios/${_id}`, {
+        json: serverData,
+      })
+      .json<PortfolioEditResType>();
+    return response;
+  }
+  return {} as PortfolioEditResType;
 };
 
 // 포트폴리오 생성/수정 통합 함수
 export const handlePortfolio = async (
   portfolioData: PortfolioType,
   portfolioId?: string,
-): Promise<PortfolioResType | PortfolioDetailResType> => {
+): Promise<PortfolioEditResType> => {
   try {
-    const processedData = await processPortfolioData(portfolioData);
+    const processedData = await processPortfolioData(portfolioData, portfolioId);
 
-    if (portfolioId) {
-      // 수정
-      const response = await api
-        .put(`portfolios/${portfolioId}`, {
-          json: processedData,
-        })
-        .json<PortfolioDetailResType>();
-      return response;
-    } else {
-      // 생성
-      const response = await api
-        .post("portfolios", {
-          json: processedData,
-        })
-        .json<PortfolioResType>();
-      return response;
-    }
+    console.log("포트폴리오 처리 데이터:", processedData);
+
+    return { success: true, message: "포트폴리오 처리 성공", _id: processedData._id };
   } catch (error) {
     console.error("포트폴리오 처리 오류:", error);
     throw error;

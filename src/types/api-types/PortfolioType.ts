@@ -7,7 +7,7 @@ export interface PortfolioType {
   images?: string[]; // 이미지들
   tags?: string[]; // 태그들
   techStack: ITechStackType[]; // 기술스택
-  thumbnailImage: string; // 썸네일 이미지
+  thumbnailImage?: string; // 썸네일 이미지
   userInfo: Pick<UserProfileResType, "userID" | "name" | "profileImage">;
   jobGroup: string; // 직군
   links?: string[];
@@ -42,7 +42,7 @@ export interface PortfolioResType {
 }
 
 // ResBody
-export interface PortfolioDetailResType {
+export interface PortfolioEditResType {
   success: boolean;
   message: string;
   _id: string;
