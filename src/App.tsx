@@ -26,6 +26,10 @@ const App: React.FC = () => {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/detail" element={<DetailPage />} />
           <Route path="/edit_portfolio" element={<EditPortfolioPage />} />
+          <Route
+            path="/edit_portfolio/:portfolioId"
+            element={<EditPortfolioPage />}
+          />
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/register" element={<Register />} />
         </Route>
