@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { EditPortfolioPageWrapper } from "./EditPortfolioPage.styles";
 import Tag from "../../components/Tag/Tag";
 import Button from "../../components/Button/Button";
@@ -12,11 +12,13 @@ import { PortfolioType } from "../../types/api-types/PortfolioType";
 import { ITechStackType } from "../../types/api-types/TechStackType";
 import { JobGroupType } from "../../types/api-types/JobGroup";
 import { useTechStacksAndJobGroups } from "../../hooks/useTechStacksAndJobGroups";
-import { createPortfolio } from "../../api/create-portfolio";
+import { handlePortfolio } from "../../api/create-portfolio";
+import { getPortfolio } from "../../api/get-portfolio-detail";
 
 const EditPortfolioPage = () => {
   const navigate = useNavigate();
   const { techStackList, jobGroupList } = useTechStacksAndJobGroups();
+  const { portfolioId } = useParams<{ portfolioId: string }>();
 
   const [formData, setFormData] = useState<Omit<PortfolioType, "userInfo">>({
     title: "",
@@ -31,6 +33,42 @@ const EditPortfolioPage = () => {
   // 화면에 표시할 jobGroup.job을 위한 별도의 상태 -> post 요청 시에는 jobGroup._id를 사용
   const [displayJobGroup, setDisplayJobGroup] = useState<string>("");
   const [newLink, setNewLink] = useState<string>("");
+
+  // 포트폴리오 데이터 불러오기
+  useEffect(() => {
+    const fetchPortfolioData = async () => {
+      if (!portfolioId) return;
+
+      try {
+        const response = await getPortfolio(portfolioId);
+        const portfolioData = response.data;
+        //console.log("portfolioData:", portfolioData);
+        if (portfolioData) {
+          setFormData({
+            title: portfolioData.title,
+            contents: portfolioData.contents,
+            images: portfolioData.images,
+            tags: portfolioData.tags,
+            techStack: portfolioData.techStack,
+            thumbnailImage: portfolioData.thumbnailImage,
+            jobGroup: portfolioData.jobGroup,
+            links: portfolioData.links || [],
+          });
+        }
+
+        // jobGroup 표시 이름 설정
+        const selectedJobGroup = jobGroupList.find(job => job.job === portfolioData?.jobGroup);
+        if (selectedJobGroup) {
+          setDisplayJobGroup(selectedJobGroup.job);
+        }
+      } catch (error) {
+        alert("포트폴리오 데이터를 불러오는데 실패했습니다.");
+        navigate("/");
+      }
+    };
+
+    fetchPortfolioData();
+  }, [portfolioId, jobGroupList, navigate]);
 
   const handleInputChange = (field: keyof PortfolioType, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -99,8 +137,8 @@ const EditPortfolioPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.contents) {
-      alert("제목, 내용은 필수 입력 항목입니다.");
+    if (!formData.title || !formData.contents || !formData.thumbnailImage) {
+      alert("제목, 내용, 대표사진은 필수 입력 항목입니다.");
       return;
     }
 
@@ -115,15 +153,26 @@ const EditPortfolioPage = () => {
     }
 
     try {
-      console.log("포트폴리오 데이터:", formData);
-      const response = await createPortfolio(formData as PortfolioType);
-      if (response.data) {
-        alert("포트폴리오가 성공적으로 등록되었습니다.");
-        console.log(response.data);
-        navigate(`/detail/${response.data._id}`);
+      const response = await handlePortfolio(formData as PortfolioType, portfolioId);
+      alert(
+        portfolioId
+          ? "포트폴리오가 성공적으로 수정되었습니다."
+          : "포트폴리오가 성공적으로 등록되었습니다.",
+      );
+      // PortfolioResType은 생성 응답, PortfolioDetailResType은 수정 응답
+      if ("data" in response) {
+        // 생성 응답
+        navigate(`/detail/${response.data?._id}`);
+      } else {
+        // 수정 응답
+        navigate(`/detail/${portfolioId}`);
       }
     } catch (error) {
-      alert("포트폴리오 등록 중 오류가 발생했습니다.");
+      alert(
+        portfolioId
+          ? "포트폴리오 수정 중 오류가 발생했습니다."
+          : "포트폴리오 등록 중 오류가 발생했습니다.",
+      );
     }
   };
 
@@ -216,7 +265,10 @@ const EditPortfolioPage = () => {
         </div>
 
         <div className="editor">
-          <MyCKEditor onChange={(content: string) => handleInputChange("contents", content)} />
+          <MyCKEditor
+            onChange={(content: string) => handleInputChange("contents", content)}
+            initialContent={formData.contents}
+          />
         </div>
 
         <div className="input">
@@ -236,7 +288,7 @@ const EditPortfolioPage = () => {
         </div>
 
         <div className="submitBtn">
-          <Button text="등록" colorType={3} />
+          <Button text={portfolioId ? "수정" : "등록"} colorType={3} />
         </div>
       </form>
     </EditPortfolioPageWrapper>
