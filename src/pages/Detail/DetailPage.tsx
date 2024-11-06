@@ -31,22 +31,27 @@ import CommentInput from "../../components/CommentInput/CommentInput";
 import CommentBox from "../../components/CommentBox/CommentBox";
 import Modal from "../../components/Modal/Modal";
 import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
-import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
+import { CommentApiResType } from "../../types/api-types/CommentType";
 import userApi from "../../api/index";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useStoreSearchPage from "../../store/store-search-page";
+import { ITechStackType } from "./../../types/api-types/TechStackType";
+import { useTechStacksAndJobGroups } from "../../hooks/useTechStacksAndJobGroups";
 
 const DetailPage: React.FC = () => {
   const { portfolio_id } = useParams(); // useParams로 id 받아오기
   const [portfolioId, setPortfolioId] = useState<string>(portfolio_id || "");
   const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
   const [portfolioUserId, setPortfolioUserId] = useState<string>();
-  const [commentPage, setCommentPage] = useState(1);
+  const [commentPage] = useState(1);
   const [comments, setComments] = useState<CommentApiResType>();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
+  const { setSearchParams } = useStoreSearchPage();
+  const { jobGroupList } = useTechStacksAndJobGroups();
 
   const [loggedInID, setLoggedInID] = useState<string | undefined>("");
   const navigate = useNavigate();
@@ -185,6 +190,21 @@ const DetailPage: React.FC = () => {
     deleteComment();
   };
 
+  const handleTechStackClick = (item: ITechStackType) => {
+    const selectedJobGroup = jobGroupList.filter(jobGroup => jobGroup._id === item.jobCode);
+    setSearchParams({
+      techStacks: item.skill,
+      jobGroup: selectedJobGroup[0].job,
+      keyword: "",
+      searchType: "title",
+    });
+    navigate("/search");
+  };
+
+  const handleTagClick = (tag: string) => {
+    setSearchParams({ searchType: "tag", keyword: tag, techStacks: "", jobGroup: "all" });
+    navigate("/search");
+  };
   return (
     <Main>
       <UserProfileSection>
@@ -210,11 +230,13 @@ const DetailPage: React.FC = () => {
                     <TechStack
                       key={techStack.skill}
                       content={{ ...techStack }}
-                      onClick={() => {}}
+                      onClick={() => handleTechStackClick(techStack)}
                     />
                   ))
               : ""}
-            {portfolioData?.tags?.map((tag, i) => <Tag key={i} content={tag} />)}
+            {portfolioData?.tags?.map((tag, i) => (
+              <Tag key={i} content={tag} onClick={() => handleTagClick(tag)} />
+            ))}
           </div>
           <div>
             {portfolioData ? (
