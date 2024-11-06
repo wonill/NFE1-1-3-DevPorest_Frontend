@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import GithubLoginBtn from "./GithubLoginBtn/GithubLoginBtn";
 import { useEffect } from "react";
-import api from "../../api";
-import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
 import { getMyProfile } from "../../api/get-user-profile";
 
 const LoginPage = () => {

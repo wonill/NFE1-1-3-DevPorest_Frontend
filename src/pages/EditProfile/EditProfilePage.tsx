@@ -225,13 +225,13 @@ const EditProfilePage: React.FC = () => {
 
     console.log(userProfileData);
     if (githubInfo.newUser) {
-      const response = await createProfile(userProfileData);
+      await createProfile(userProfileData);
       alert("프로필 등록이 완료되었습니다.");
       navigate("/");
       return;
     }
 
-    const response = await modifyProfile(userProfileData);
+    await modifyProfile(userProfileData);
     alert("프로필 수정이 완료되었습니다.");
     navigate("/");
   };
