@@ -31,10 +31,7 @@ import CommentInput from "../../components/CommentInput/CommentInput";
 import CommentBox from "../../components/CommentBox/CommentBox";
 import Modal from "../../components/Modal/Modal";
 import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
-// import ky from "ky";
-// import { useSearchParams } from "react-router-dom";
 import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
-// const apiUrl = import.meta.env.VITE_SERVER_URL;
 import userApi from "../../api/index";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
@@ -42,8 +39,6 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 const DetailPage: React.FC = () => {
   const { portfolio_id } = useParams(); // useParams로 id 받아오기
   const [portfolioId, setPortfolioId] = useState<string>(portfolio_id || "");
-  console.log(portfolio_id, portfolioId);
-
   const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
   const [portfolioUserId, setPortfolioUserId] = useState<string>();
   const [commentPage, setCommentPage] = useState(1);
@@ -109,10 +104,18 @@ const DetailPage: React.FC = () => {
     }
   };
 
-  // const linkToProfile = () => {
-  //   console.log("clicked");
-  //   if (userID) navigate(`/profile/${userID}`);
-  // };
+  const linkToProfile = () => {
+    console.log("pid", portfolioUserId);
+    if (portfolioUserId) navigate(`/profile/${portfolioUserId}`);
+  };
+
+  const addLike = async () => {
+    try {
+      await userApi.post(`portfolios/${portfolio_id}/like`);
+    } catch (err) {
+      console.error("상세 에러 정보:", err);
+    }
+  };
 
   useEffect(() => {
     if (!!localStorage.getItem("token")) fetchLoggedInUser(); // 로그인 토큰 존재시 불러오기
@@ -187,13 +190,15 @@ const DetailPage: React.FC = () => {
       <UserProfileSection>
         <TitleWrapper>
           <UserImage>
-            <img src={portfolioData?.userInfo.profileImage || noImg} alt="noImg" />
+            <img
+              src={portfolioData?.userInfo.profileImage || noImg}
+              alt="noImg"
+              onClick={linkToProfile}
+            />
           </UserImage>
           <Title>
             <h2>{portfolioData?.title}</h2>
-            <p style={{ overflow: "none" }}>
-              {/* {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}{" "} */}
-            </p>
+            <p style={{ overflow: "none" }}></p>
           </Title>
         </TitleWrapper>
         <StatsAndTags>
@@ -240,7 +245,7 @@ const DetailPage: React.FC = () => {
         {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}
       </ContentSection>
       <ActionBtnSection>
-        <DetailPageButton text="좋아요" onClick={() => console.log("clicked!")} />
+        <DetailPageButton text="좋아요" onClick={addLike} />
         <DetailPageButton text="공유하기" onClick={() => console.log("clicked!")} />
         <DetailPageButton text="PDF로 내보내기" onClick={() => console.log("clicked!")} />
       </ActionBtnSection>
@@ -250,7 +255,7 @@ const DetailPage: React.FC = () => {
             text="수정"
             colorType={1}
             onClick={() => {
-              navigate(`/edit_portfolio`);
+              navigate(`/edit_portfolio/${portfolioId}`);
             }}
           />
           <Button text="삭제" colorType={1} onClick={() => setIsPortfolioModalOpen(true)} />
