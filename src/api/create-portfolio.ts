@@ -1,5 +1,6 @@
 import api from "./index";
 import { uploadTumbnailImg } from "./upload-single-img";
+import { deletePortfolio } from "./delete-portfolio";
 import {
   PortfolioType,
   PortfolioResType,
@@ -134,9 +135,8 @@ const processPortfolioData = async (
   portfolioId?: string,
 ): Promise<PortfolioEditResType> => {
   // 0. 생성 api 호출
-  console.log("포트폴리오 데이터:", portfolioData);
   let _id = portfolioId;
-  console.log("포트폴리오 아이디:", _id);
+
   if (!_id) {
     const response = await api
       .post("portfolios", {
@@ -149,42 +149,52 @@ const processPortfolioData = async (
   // _id가 있는 상태
 
   if (_id) {
-    console.log("있어야 하는 포트폴리오 아이디:", _id);
-    console.log("포트폴리오 데이터:", portfolioData);
-    // 1. 썸네일 이미지 처리
-    let thumbnailUrl = portfolioData.thumbnailImage; // base64 이미지
-    if (thumbnailUrl?.startsWith("data:image")) {
-      const thumbnailFile = await base64ToFile(thumbnailUrl, "thumbnail.png");
-      const uploadedThumbnailUrl = await uploadTumbnailImg(thumbnailFile, _id);
-      if (!uploadedThumbnailUrl) {
-        throw new Error("썸네일 이미지 업로드 실패");
+    try {
+      // 1. 썸네일 이미지 처리
+      let thumbnailUrl = portfolioData.thumbnailImage; // base64 이미지
+      if (thumbnailUrl?.startsWith("data:image")) {
+        const thumbnailFile = await base64ToFile(thumbnailUrl, "thumbnail.png");
+        const uploadedThumbnailUrl = await uploadTumbnailImg(thumbnailFile, _id);
+        if (!uploadedThumbnailUrl) {
+          throw new Error("썸네일 이미지 업로드 실패");
+        }
+        thumbnailUrl = uploadedThumbnailUrl;
       }
-      thumbnailUrl = uploadedThumbnailUrl;
+
+      // 2. 에디터 컨텐츠 내 이미지 처리
+      const { updatedContent, uploadedUrls } = await processEditorContent(
+        portfolioData.contents,
+        _id,
+      );
+
+      // 3. 서버 형식으로 데이터 변환
+      const serverData = transformToServerFormat(
+        {
+          ...portfolioData,
+          thumbnailImage: thumbnailUrl,
+          contents: updatedContent,
+        },
+        uploadedUrls,
+      );
+
+      // 수정 api 이용하여 변환된 이미지 src 집어넣기
+      const response = await api
+        .put(`portfolios/${_id}`, {
+          json: serverData,
+        })
+        .json<PortfolioEditResType>();
+
+      return response;
+    } catch (error) {
+      console.error("포트폴리오 이미지 처리 중 오류:", error);
+      const deleteResponse = await deletePortfolio(_id);
+      if (deleteResponse.success) {
+        console.log("포트폴리오가 성공적으로 삭제되었습니다.");
+      } else {
+        console.error("포트폴리오 삭제 실패:", deleteResponse.message);
+      }
+      throw error;
     }
-
-    // 2. 에디터 컨텐츠 내 이미지 처리
-    const { updatedContent, uploadedUrls } = await processEditorContent(
-      portfolioData.contents,
-      _id,
-    );
-
-    // 3. 서버 형식으로 데이터 변환
-    const serverData = transformToServerFormat(
-      {
-        ...portfolioData,
-        thumbnailImage: thumbnailUrl,
-        contents: updatedContent,
-      },
-      uploadedUrls,
-    );
-    console.log("서버형식으로 변환된 데이터:", serverData);
-    // 수정 api 이용하여 변환된 이미지 src 집어넣기
-    const response = await api
-      .put(`portfolios/${_id}`, {
-        json: serverData,
-      })
-      .json<PortfolioEditResType>();
-    return response;
   }
   return {} as PortfolioEditResType;
 };

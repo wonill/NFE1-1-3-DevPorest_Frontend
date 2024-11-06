@@ -48,6 +48,11 @@ export interface PortfolioEditResType {
   _id: string;
 }
 
+export interface PortfolioDeleteResType {
+  success: boolean;
+  message: string;
+}
+
 /**
  * --------------------------------------------------
  * API 응답
