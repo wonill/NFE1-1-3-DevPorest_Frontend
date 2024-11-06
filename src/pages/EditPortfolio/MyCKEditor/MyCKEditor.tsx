@@ -53,6 +53,7 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [editorInstance, setEditorInstance] = useState<CKEditorType | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     setIsLayoutReady(true);
@@ -62,10 +63,14 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
 
   // initialContent가 변경될 때 에디터 내용 업데이트
   useEffect(() => {
-    if (editorInstance && initialContent !== undefined) {
-      editorInstance.setData(initialContent);
+    if (editorInstance && initialContent !== undefined && !isInitialized) {
+      editorInstance.setData(
+        initialContent ||
+          "<h2>포트폴리오 생성 공간에 오신 것을 환영합니다🎉</h2>\n<p>나만의 포트폴리오를 만들어보세요</p>",
+      );
+      setIsInitialized(true);
     }
-  }, [initialContent, editorInstance]);
+  }, [initialContent, editorInstance, isInitialized]);
 
   const editorConfig = {
     toolbar: {
@@ -185,7 +190,6 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
       ],
     },
     initialData:
-      initialContent ||
       "<h2>포트폴리오 생성 공간에 오신 것을 환영합니다🎉</h2>\n<p>나만의 포트폴리오를 만들어보세요</p>",
     link: {
       addTargetToExternalLinks: true,
@@ -239,8 +243,9 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
                   }}
                   onReady={editor => {
                     setEditorInstance(editor);
-                    if (initialContent) {
+                    if (initialContent && !isInitialized) {
                       editor.setData(initialContent);
+                      setIsInitialized(true);
                     }
                   }}
                 />
