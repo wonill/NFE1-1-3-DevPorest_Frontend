@@ -97,7 +97,7 @@ export const Name = styled.p`
   font-size: 14px;
   color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
 
-  max-width: 150px;
+  max-width: 110px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
