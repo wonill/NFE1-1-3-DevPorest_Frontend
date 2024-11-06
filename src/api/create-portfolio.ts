@@ -5,19 +5,14 @@ import {
   PortfolioResType,
   PortfolioImagesResType,
   PostPortfolioType,
+  PortfolioDetailResType,
 } from "../types/api-types/PortfolioType";
 
 /**
  * Base64 이미지 데이터를 File 객체로 변환
  */
-const base64ToFile = async (
-  base64Data: string,
-  fileName: string = "image.png"
-): Promise<File> => {
-  const base64WithoutHeader = base64Data.replace(
-    /^data:image\/\w+;base64,/,
-    ""
-  );
+const base64ToFile = async (base64Data: string, fileName: string = "image.png"): Promise<File> => {
+  const base64WithoutHeader = base64Data.replace(/^data:image\/\w+;base64,/, "");
   const byteString = atob(base64WithoutHeader);
   const arrayBuffer = new ArrayBuffer(byteString.length);
   const int8Array = new Uint8Array(arrayBuffer);
@@ -34,7 +29,7 @@ const base64ToFile = async (
  * CKEditor 컨텐츠에서 이미지 URL 추출 및 base64 이미지 필터링
  */
 const extractImagesFromContent = (
-  content: string
+  content: string,
 ): {
   base64Images: { element: HTMLImageElement; src: string }[];
   otherImages: string[];
@@ -44,12 +39,10 @@ const extractImagesFromContent = (
   const images = Array.from(doc.querySelectorAll("img"));
 
   const base64Images = images
-    .filter((img) => img.src.startsWith("data:image"))
-    .map((img) => ({ element: img, src: img.src }));
+    .filter(img => img.src.startsWith("data:image"))
+    .map(img => ({ element: img, src: img.src }));
 
-  const otherImages = images
-    .filter((img) => !img.src.startsWith("data:image"))
-    .map((img) => img.src);
+  const otherImages = images.filter(img => !img.src.startsWith("data:image")).map(img => img.src);
 
   return { base64Images, otherImages };
 };
@@ -59,7 +52,7 @@ const extractImagesFromContent = (
  */
 const uploadMultipleImages = async (files: File[]): Promise<string[]> => {
   const formData = new FormData();
-  files.forEach((file) => {
+  files.forEach(file => {
     formData.append("images", file);
   });
 
@@ -85,7 +78,7 @@ const uploadMultipleImages = async (files: File[]): Promise<string[]> => {
  * 에디터 컨텐츠 내의 이미지 처리
  */
 const processEditorContent = async (
-  content: string
+  content: string,
 ): Promise<{
   updatedContent: string;
   uploadedUrls: string[];
@@ -101,9 +94,7 @@ const processEditorContent = async (
 
   // base64 이미지들을 File 객체로 변환
   const imageFiles = await Promise.all(
-    base64Images.map((img, index) =>
-      base64ToFile(img.src, `content-image-${index}.png`)
-    )
+    base64Images.map((img, index) => base64ToFile(img.src, `content-image-${index}.png`)),
   );
 
   // 다중 이미지 업로드
@@ -126,59 +117,70 @@ const processEditorContent = async (
  */
 const transformToServerFormat = (
   clientData: PortfolioType,
-  uploadedImages: string[]
+  uploadedImages: string[],
 ): PostPortfolioType => {
   return {
     ...clientData,
-    techStack: clientData.techStack?.map((tech) => tech.skill) || [],
+    techStack: clientData.techStack?.map(tech => tech.skill) || [],
     jobGroup: clientData.jobGroup || "",
     images: uploadedImages,
   };
 };
 
-/**
- * 포트폴리오 생성 (이미지 업로드 포함)
- */
-export const createPortfolio = async (
-  portfolioData: PortfolioType
-): Promise<PortfolioResType> => {
-  try {
-    // 1. 썸네일 이미지 처리
-    let thumbnailUrl = portfolioData.thumbnailImage;
-    if (thumbnailUrl?.startsWith("data:image")) {
-      const thumbnailFile = await base64ToFile(thumbnailUrl, "thumbnail.png");
-      const uploadedThumbnailUrl = await uploadSingleImg(thumbnailFile);
-      if (!uploadedThumbnailUrl) {
-        throw new Error("썸네일 이미지 업로드 실패");
-      }
-      thumbnailUrl = uploadedThumbnailUrl;
+// 포트폴리오 데이터 처리 및 변환 공통 함수
+const processPortfolioData = async (portfolioData: PortfolioType): Promise<PostPortfolioType> => {
+  // 1. 썸네일 이미지 처리
+  let thumbnailUrl = portfolioData.thumbnailImage;
+  if (thumbnailUrl?.startsWith("data:image")) {
+    const thumbnailFile = await base64ToFile(thumbnailUrl, "thumbnail.png");
+    const uploadedThumbnailUrl = await uploadSingleImg(thumbnailFile);
+    if (!uploadedThumbnailUrl) {
+      throw new Error("썸네일 이미지 업로드 실패");
     }
+    thumbnailUrl = uploadedThumbnailUrl;
+  }
 
-    // 2. 에디터 컨텐츠 내 이미지 처리
-    const { updatedContent, uploadedUrls } = await processEditorContent(
-      portfolioData.contents
-    );
+  // 2. 에디터 컨텐츠 내 이미지 처리
+  const { updatedContent, uploadedUrls } = await processEditorContent(portfolioData.contents);
 
-    // 3. 서버 형식으로 데이터 변환
-    const serverData = transformToServerFormat(
-      {
-        ...portfolioData,
-        thumbnailImage: thumbnailUrl,
-        contents: updatedContent,
-      },
-      uploadedUrls
-    );
+  // 3. 서버 형식으로 데이터 변환
+  return transformToServerFormat(
+    {
+      ...portfolioData,
+      thumbnailImage: thumbnailUrl,
+      contents: updatedContent,
+    },
+    uploadedUrls,
+  );
+};
 
-    // 4. 포트폴리오 생성 API 호출
-    const response = await api
-      .post("portfolios", {
-        json: serverData,
-      })
-      .json<PortfolioResType>();
+// 포트폴리오 생성/수정 통합 함수
+export const handlePortfolio = async (
+  portfolioData: PortfolioType,
+  portfolioId?: string,
+): Promise<PortfolioResType | PortfolioDetailResType> => {
+  try {
+    const processedData = await processPortfolioData(portfolioData);
 
-    return response;
+    if (portfolioId) {
+      // 수정
+      const response = await api
+        .put(`portfolios/${portfolioId}`, {
+          json: processedData,
+        })
+        .json<PortfolioDetailResType>();
+      return response;
+    } else {
+      // 생성
+      const response = await api
+        .post("portfolios", {
+          json: processedData,
+        })
+        .json<PortfolioResType>();
+      return response;
+    }
   } catch (error) {
-    console.error("포트폴리오 생성 오류:", error);
+    console.error("포트폴리오 처리 오류:", error);
     throw error;
   }
 };
