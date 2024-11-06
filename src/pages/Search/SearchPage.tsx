@@ -48,10 +48,13 @@ const SearchPage: React.FC = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { searchParams, setSearchParams } = useStoreSearchPage();
 
-  const loadMoreData = async () => {
-    if (pagination?.hasNextPage && pagination.totalCount > 5)
-      setSearchParams({ page: searchParams.page + 1 });
-  };
+  useEffect(() => {
+    if (techStackList) setFilteredTechStacks(techStackList);
+  }, [techStackList]);
+
+  useEffect(() => {
+    setSearchParams({ page: 1 });
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -87,6 +90,7 @@ const SearchPage: React.FC = () => {
     searchParams.sort,
     searchParams.keyword,
     searchParams.page,
+    jobGroupList,
   ]);
 
   useEffect(() => {
@@ -94,7 +98,6 @@ const SearchPage: React.FC = () => {
 
     const fetchNextPortfolio = async () => {
       const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
-      // console.log(portfolioData);
 
       if ("data" in portfolioData!)
         setPortfolioList(prev => [...(prev || []), ...portfolioData.data]);
@@ -105,17 +108,13 @@ const SearchPage: React.FC = () => {
     fetchNextPortfolio();
   }, [searchParams.page]);
 
-  useEffect(() => {
-    if (techStackList) setFilteredTechStacks(techStackList);
-  }, [techStackList]);
-
-  useEffect(() => {
-    setSearchParams({ page: 1 });
-  }, []);
+  const loadMoreData = async () => {
+    if (pagination?.hasNextPage && pagination.totalCount > 5)
+      setSearchParams({ page: searchParams.page + 1 });
+  };
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
-    // console.log(portfolioData);
 
     if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
     if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
@@ -170,9 +169,6 @@ const SearchPage: React.FC = () => {
     if (selectedTechStack?.includes(skill)) return true;
     return false;
   };
-
-  // console.log(searchParams);
-  // console.log(pagination);
 
   return (
     <Main>
