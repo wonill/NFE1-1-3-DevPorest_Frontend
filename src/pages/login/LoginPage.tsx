@@ -5,6 +5,7 @@ import GithubLoginBtn from "./GithubLoginBtn/GithubLoginBtn";
 import { useEffect } from "react";
 import api from "../../api";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
+import { getMyProfile } from "../../api/get-user-profile";
 
 const LoginPage = () => {
   const location = useLocation();
@@ -31,11 +32,9 @@ const LoginPage = () => {
      * @returns void
      */
     const handleLoginRoute = async () => {
-      const userInfo = await api
-        .get("users/user")
-        .json<UserApiResType<UserProfileResType & { newUser: boolean }>>();
+      const userInfo = await getMyProfile();
 
-      if (userInfo.data?.newUser) {
+      if (userInfo && userInfo.newUser) {
         alert("프로필을 등록해주세요.");
         navigate("/edit_profile");
         return;
