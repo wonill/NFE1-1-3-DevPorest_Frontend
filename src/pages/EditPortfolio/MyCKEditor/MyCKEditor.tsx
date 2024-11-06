@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
 
 import "./MyCKEditor.css";
 import "ckeditor5/ckeditor5.css";
@@ -44,18 +45,27 @@ import translations from "ckeditor5/translations/ko.js";
 
 interface MyCKEditorProps {
   onChange?: (content: string) => void;
+  initialContent?: string;
 }
 
-const MyCKEditor = ({ onChange }: MyCKEditorProps) => {
+const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+  const [editorInstance, setEditorInstance] = useState<CKEditorType | null>(null);
 
   useEffect(() => {
     setIsLayoutReady(true);
 
     return () => setIsLayoutReady(false);
   }, []);
+
+  // initialContent가 변경될 때 에디터 내용 업데이트
+  useEffect(() => {
+    if (editorInstance && initialContent !== undefined) {
+      editorInstance.setData(initialContent);
+    }
+  }, [initialContent, editorInstance]);
 
   const editorConfig = {
     toolbar: {
@@ -175,7 +185,8 @@ const MyCKEditor = ({ onChange }: MyCKEditorProps) => {
       ],
     },
     initialData:
-      "<h2>포트폴리오 생성 공간에 오신 것을 환영합니다🎉</h2>\n<p>나만의 포트폴리오를 만들어보세요</p>  ",
+      initialContent ||
+      "<h2>포트폴리오 생성 공간에 오신 것을 환영합니다🎉</h2>\n<p>나만의 포트폴리오를 만들어보세요</p>",
     link: {
       addTargetToExternalLinks: true,
       defaultProtocol: "https://",
@@ -212,10 +223,7 @@ const MyCKEditor = ({ onChange }: MyCKEditorProps) => {
   return (
     <div>
       <div className="main-container">
-        <div
-          className="editor-container editor-container_classic-editor"
-          ref={editorContainerRef}
-        >
+        <div className="editor-container editor-container_classic-editor" ref={editorContainerRef}>
           <div className="editor-container__editor">
             <div ref={editorRef}>
               {isLayoutReady && (
@@ -228,6 +236,12 @@ const MyCKEditor = ({ onChange }: MyCKEditorProps) => {
                       onChange(data);
                     }
                     // console.log(data);
+                  }}
+                  onReady={editor => {
+                    setEditorInstance(editor);
+                    if (initialContent) {
+                      editor.setData(initialContent);
+                    }
                   }}
                 />
               )}

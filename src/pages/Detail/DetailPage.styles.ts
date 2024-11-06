@@ -36,6 +36,7 @@ export const UserImage = styled.div`
     height: 100%;
     object-fit: cover;
     border-radius: inherit;
+    cursor: pointer;
   }
 `;
 
