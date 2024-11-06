@@ -32,6 +32,47 @@ const Header = () => {
     setIsSearchOpen(!isSearchOpen);
   };
 
+  // 모달 외부 클릭 감지를 위한 useEffect
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // 검색 모달 외부 클릭 감지
+      if (isSearchOpen) {
+        const searchModal = document.querySelector(".searchModal");
+        const searchIcon = document.querySelector(".searchIcon");
+        if (
+          searchModal &&
+          !searchModal.contains(event.target as Node) &&
+          searchIcon &&
+          !searchIcon.contains(event.target as Node)
+        ) {
+          setIsSearchOpen(false);
+        }
+      }
+
+      // 프로필 모달 외부 클릭 감지
+      if (isProfileOpen) {
+        const profileModal = document.querySelector(".profileModal");
+        const profileImg = document.querySelector(".profileImg");
+        if (
+          profileModal &&
+          !profileModal.contains(event.target as Node) &&
+          profileImg &&
+          !profileImg.contains(event.target as Node)
+        ) {
+          setIsProfileOpen(false);
+        }
+      }
+    };
+
+    // 이벤트 리스너 등록
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // 클린업 함수
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchOpen, isProfileOpen]); // 의존성 배열에 모달 상태 추가
+
   useEffect(() => {
     setIsSearchPage(location.pathname === "/search");
   }, [useLocation()]);

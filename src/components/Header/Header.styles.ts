@@ -1,4 +1,3 @@
-import { BORDER_RADIUS } from "./../../styles/theme";
 import styled from "@emotion/styled";
 
 export const HeaderWrapper = styled.div`
