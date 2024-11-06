@@ -3,8 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import GithubLoginBtn from "./GithubLoginBtn/GithubLoginBtn";
 import { useEffect } from "react";
-import api from "../../api";
-import { UserProfileResType } from "../../types/api-types/UserType";
+import { getMyProfile } from "../../api/get-user-profile";
 
 const LoginPage = () => {
   const location = useLocation();
@@ -31,13 +30,11 @@ const LoginPage = () => {
      * @returns void
      */
     const handleLoginRoute = async () => {
-      const userInfo = await api
-        .get("users/user")
-        .json<UserProfileResType & { newUser: boolean }>();
+      const userInfo = await getMyProfile();
 
-      if (userInfo.newUser) {
+      if (userInfo && userInfo.newUser) {
         alert("프로필을 등록해주세요.");
-        navigate("/edit-profile");
+        navigate("/edit_profile");
         return;
       }
 
