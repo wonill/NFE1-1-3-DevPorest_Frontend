@@ -1,12 +1,9 @@
 import api from "./index";
 import { PortfolioThumbnailResType } from "../types/api-types/PortfolioType";
 
-export const uploadSingleImg = async (
-  img: File
-): Promise<string | undefined> => {
+export const uploadSingleImg = async (img: File): Promise<string | undefined> => {
   const formData = new FormData();
   formData.append("image", img);
-
   try {
     const response = await api
       .post("portfolios/upload", {
