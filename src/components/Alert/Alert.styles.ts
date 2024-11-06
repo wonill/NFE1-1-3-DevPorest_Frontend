@@ -15,7 +15,7 @@ export const AlertWrapper = styled.div<AlertWrapperProps>`
   text-align: center;
   padding: ${({ theme }) => theme.PADDINGS.SMALL};
   margin-top: 1rem;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: calc(50% - 15vw);
 
