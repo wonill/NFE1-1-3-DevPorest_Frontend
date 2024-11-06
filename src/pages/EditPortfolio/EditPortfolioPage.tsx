@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EditPortfolioPageWrapper } from "./EditPortfolioPage.styles";
 import Tag from "../../components/Tag/Tag";
@@ -33,27 +33,25 @@ const EditPortfolioPage = () => {
   const [newLink, setNewLink] = useState<string>("");
 
   const handleInputChange = (field: keyof PortfolioType, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleTechStackSelect = (techStack: ITechStackType) => {
-    if (formData.techStack?.some((item) => item.skill === techStack.skill)) {
+    if (formData.techStack?.some(item => item.skill === techStack.skill)) {
       alert("이미 추가된 기술스택입니다.");
       return;
     }
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       techStack: [...(prev.techStack || []), techStack],
     }));
   };
 
   const handleTechStackRemove = (techStackToRemove: ITechStackType) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      techStack: prev.techStack?.filter(
-        (item) => item.skill !== techStackToRemove.skill
-      ),
+      techStack: prev.techStack?.filter(item => item.skill !== techStackToRemove.skill),
     }));
   };
 
@@ -64,7 +62,7 @@ const EditPortfolioPage = () => {
       return;
     }
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       links: [...(prev.links || []), newLink],
     }));
@@ -79,7 +77,7 @@ const EditPortfolioPage = () => {
   };
 
   const handleRemoveLink = (indexToRemove: number) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       links: prev.links?.filter((_, index) => index !== indexToRemove),
     }));
@@ -137,26 +135,20 @@ const EditPortfolioPage = () => {
           type="text"
           placeholder="제목을 입력하세요"
           value={formData.title}
-          onChange={(e) => handleInputChange("title", e.target.value)}
+          onChange={e => handleInputChange("title", e.target.value)}
           required
         />
 
         <div className="input">
           <ThumbnailInput
-            setPreviewThumbnail={(url) =>
-              handleInputChange("thumbnailImage", url)
-            }
+            setPreviewThumbnail={url => handleInputChange("thumbnailImage", url)}
             previewThumbnail={formData.thumbnailImage || ""}
           />
         </div>
 
         {formData.thumbnailImage && (
           <div className="preview-container">
-            <img
-              className="preview"
-              src={formData.thumbnailImage}
-              alt="썸네일 미리보기"
-            />
+            <img className="preview" src={formData.thumbnailImage} alt="썸네일 미리보기" />
           </div>
         )}
 
@@ -167,7 +159,7 @@ const EditPortfolioPage = () => {
               type="url"
               placeholder="https://example.com"
               value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
+              onChange={e => setNewLink(e.target.value)}
               onKeyDown={handleLinkKeyDown}
             />
             <button type="button" onClick={handleAddLink}>
@@ -203,7 +195,7 @@ const EditPortfolioPage = () => {
             onChange={handleTechStackSelect}
           />
           <div className="tech-stack-list">
-            {formData.techStack?.map((techStack) => (
+            {formData.techStack?.map(techStack => (
               <TechStack
                 key={techStack.skill}
                 content={techStack}
@@ -220,17 +212,11 @@ const EditPortfolioPage = () => {
             placeholder="직군을 입력해주세요."
             onChange={handleJobGroupSelect}
           />
-          {displayJobGroup && (
-            <Tag content={displayJobGroup} onClick={handleJobGroupRemove} />
-          )}
+          {displayJobGroup && <Tag content={displayJobGroup} onClick={handleJobGroupRemove} />}
         </div>
 
         <div className="editor">
-          <MyCKEditor
-            onChange={(content: string) =>
-              handleInputChange("contents", content)
-            }
-          />
+          <MyCKEditor onChange={(content: string) => handleInputChange("contents", content)} />
         </div>
 
         <div className="input">
@@ -240,18 +226,13 @@ const EditPortfolioPage = () => {
                 key={index}
                 content={tag}
                 onClick={() => {
-                  const updatedTags = formData.tags?.filter(
-                    (_, i) => i !== index
-                  );
+                  const updatedTags = formData.tags?.filter((_, i) => i !== index);
                   handleInputChange("tags", updatedTags);
                 }}
               />
             ))}
           </div>
-          <TagInput
-            tags={formData.tags || []}
-            setTags={(tags) => handleInputChange("tags", tags)}
-          />
+          <TagInput tags={formData.tags || []} setTags={tags => handleInputChange("tags", tags)} />
         </div>
 
         <div className="submitBtn">

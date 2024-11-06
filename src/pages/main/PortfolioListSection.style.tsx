@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { SwiperSlide } from "swiper/react";
-import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
 
 export const StyledPortfolioListSection = styled.div`
   padding: ${({ theme }) => theme.PADDINGS.SMALL} 0
@@ -28,12 +27,10 @@ export const StyledSwiperSlide = styled(SwiperSlide)`
   display: flex;
 `;
 
-
 export const SortSelect = styled.div`
   position: relative;
 
-  margin: -10px 0
-    ${({ theme }) => theme.PADDINGS.MEDIUM} 0;
+  margin: -10px 0 ${({ theme }) => theme.PADDINGS.MEDIUM} 0;
 `;
 
 export const PortfolioList = styled.div`
@@ -62,4 +59,4 @@ export const StyledEmptyPortfolio = styled.div`
   > div {
     height: 500px;
   }
-`
+`;
