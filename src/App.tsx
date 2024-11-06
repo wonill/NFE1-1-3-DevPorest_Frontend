@@ -24,8 +24,8 @@ const App: React.FC = () => {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<MainPage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/detail" element={<DetailPage />} />
-          <Route path="/edit_portfolio" element={<EditPortfolioPage />} />
+          <Route path="/detail/:portfolio_id" element={<DetailPage />} />
+          <Route path="/edit_portfolio/:portfolio_id" element={<EditPortfolioPage />} />
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/register" element={<Register />} />
         </Route>

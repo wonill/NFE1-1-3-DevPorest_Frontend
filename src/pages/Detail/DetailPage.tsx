@@ -20,13 +20,7 @@ import {
 import noImg from "../../assets/no_image.svg";
 import TechStack from "../../components/TechStack/TechStack";
 import Tag from "../../components/Tag/Tag";
-import {
-  techStacks,
-  dummyTags2,
-  links,
-  dummyContents,
-  dummyComments,
-} from "../../data/dummyData";
+// import { techStacks, dummyTags2, links, dummyContents, dummyComments } from "../../data/dummyData";
 import LikesAndViews from "../../components/LikesAndViews/LikesAndViews";
 import comment from "../../assets/comment.svg";
 import link from "../../assets/link.svg";
@@ -36,30 +30,105 @@ import Button from "../../components/Button/Button";
 import CommentInput from "../../components/CommentInput/CommentInput";
 import CommentBox from "../../components/CommentBox/CommentBox";
 import Modal from "../../components/Modal/Modal";
+import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
+// import ky from "ky";
+// import { useSearchParams } from "react-router-dom";
+import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
+// const apiUrl = import.meta.env.VITE_SERVER_URL;
+import userApi from "../../api/index";
+import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 const DetailPage: React.FC = () => {
-  const [visibleData, setVisibleData] = useState(dummyComments.slice(0, 5));
+  const { portfolio_id } = useParams(); // useParams로 id 받아오기
+  const [portfolioId, setPortfolioId] = useState<string>(portfolio_id || "");
+  console.log(portfolio_id, portfolioId);
+
+  const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
+  const [portfolioUserId, setPortfolioUserId] = useState<string>();
+  const [commentPage, setCommentPage] = useState(1);
+  const [comments, setComments] = useState<CommentApiResType>();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-  // 추후에 아이디 넣을 때 number로 수정
-  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
-    null
-  );
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
 
-  const loadMoreData = () => {
-    const nextData = dummyComments.slice(
-      visibleData.length,
-      visibleData.length + 5
-    );
-    setVisibleData((prev) => [...prev, ...nextData]);
+  const [loggedInID, setLoggedInID] = useState<string | undefined>("");
+  const navigate = useNavigate();
+
+  const fetchLoggedInUser = async () => {
+    try {
+      const response = await userApi.get(`users/user`);
+      const jsonData: UserApiResType<UserProfileResType> = await response.json();
+      setLoggedInID(jsonData.data?.userID);
+      console.log(jsonData.data?.userID, "로 로그인되어있습니다.");
+    } catch (err) {
+      console.error(err);
+      setLoggedInID(undefined);
+    }
   };
 
+  const fetchPortfolio = async (portfolio_id: string) => {
+    try {
+      const response = await userApi.get(`portfolios/${portfolio_id}`);
+      const jsonData: PortfolioResType = await response.json();
+      console.log("pppppppp", jsonData);
+
+      setPortfolioData(prev => {
+        if (!prev) return jsonData.data;
+        return {
+          ...prev,
+          ...jsonData.data,
+        };
+      });
+      setPortfolioUserId(jsonData.data?.userInfo.userID);
+
+      console.log("이미지", portfolioData?.userInfo.profileImage);
+
+      if (!jsonData.success) {
+        throw new Error(`Server responded with ${jsonData.message}`);
+      }
+    } catch (err) {
+      console.error("상세 에러 정보:", err);
+    }
+  };
+
+  const fetchComment = async (portfolio_id: string) => {
+    try {
+      const response = await userApi.get(`comments/${portfolio_id}?page=${commentPage}?limit=20`);
+      const jsonData: CommentApiResType = await response.json();
+      setComments(jsonData);
+      console.log("commentfetch:", jsonData);
+      // if (comments?.to) console.log("이미지", comments[0]._id);
+      if (!jsonData.success) {
+        throw new Error(`Server responded with ${jsonData.success}`);
+      }
+      return jsonData.data;
+    } catch (err) {
+      console.error("상세 에러 정보:", err);
+    }
+  };
+
+  // const linkToProfile = () => {
+  //   console.log("clicked");
+  //   if (userID) navigate(`/profile/${userID}`);
+  // };
+
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+    if (!!localStorage.getItem("token")) fetchLoggedInUser(); // 로그인 토큰 존재시 불러오기
+    console.log(portfolioId);
+    if (portfolioId) {
+      setPortfolioId(portfolioId);
+      fetchPortfolio(portfolioId);
+      fetchComment(portfolioId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          loadMoreData();
+          // loadMoreData();
         }
       });
     });
@@ -73,21 +142,44 @@ const DetailPage: React.FC = () => {
         observer.unobserve(loadMoreRef.current);
       }
     };
-  }, [visibleData]);
+  }, [comments]);
 
   // 포트폴리오 삭제
   const handlePortfolioDelete = () => {
     setIsPortfolioModalOpen(false);
-    console.log("포트폴리오 삭제 로직");
+    const deletePortfolio = async () => {
+      try {
+        if (!portfolioData?._id) {
+          throw new Error("Portfolio ID is missing");
+        }
+
+        const response = await userApi.delete(`/portfolios/${portfolioData._id}`).json();
+        return response;
+      } catch (error) {
+        console.error("포폴 삭제 중 에러 발생:", error);
+        throw error;
+      }
+    };
+    deletePortfolio();
   };
 
   // 댓글 삭제
   const handleCommentDelete = () => {
     console.log(`댓글 id ${selectedCommentId} 삭제하는 로직`);
-    // setVisibleData((prev) =>
-    //   prev.filter((comment) => comment.id !== selectedCommentId)
-    // );
     setIsCommentModalOpen(false); // 모달 닫기
+    const deleteComment = async () => {
+      try {
+        if (!selectedCommentId) {
+          throw new Error("Comment ID is missing");
+        }
+        await userApi.delete(`comments/${selectedCommentId}`).json();
+        fetchComment(portfolioId);
+      } catch (error) {
+        console.error("댓굴 삭제 중 에러 발생:", error);
+        throw error;
+      }
+    };
+    deleteComment();
   };
 
   return (
@@ -95,37 +187,45 @@ const DetailPage: React.FC = () => {
       <UserProfileSection>
         <TitleWrapper>
           <UserImage>
-            <img src={noImg} alt="userImg" />
+            <img src={portfolioData?.userInfo.profileImage || noImg} alt="noImg" />
           </UserImage>
           <Title>
-            <h2>제목이 들어갑니다.</h2>
-            <p>설명이 들어갑니다. 설명 설명 설명</p>
+            <h2>{portfolioData?.title}</h2>
+            <p style={{ overflow: "none" }}>
+              {/* {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}{" "} */}
+            </p>
           </Title>
         </TitleWrapper>
         <StatsAndTags>
           <div>
-            {techStacks.slice(0, 3).map((techStack) => (
-              <TechStack
-                key={techStack.skill}
-                content={{ ...techStack }}
-                onClick={() => {}}
-              />
-            ))}
-            {dummyTags2.map((tag, i) => (
-              <Tag key={i} {...tag} />
-            ))}
+            {portfolioData?.techStack
+              ? portfolioData.techStack
+                  .slice(0, 3)
+                  .map(techStack => (
+                    <TechStack
+                      key={techStack.skill}
+                      content={{ ...techStack }}
+                      onClick={() => {}}
+                    />
+                  ))
+              : ""}
+            {portfolioData?.tags?.map((tag, i) => <Tag key={i} content={tag} />)}
           </div>
           <div>
-            <LikesAndViews views={262} likes={7} />
+            {portfolioData ? (
+              <LikesAndViews views={portfolioData?.view} likes={portfolioData?.likeCount} />
+            ) : (
+              ""
+            )}
             <CommentImage>
               <img src={comment} alt="" />
-              {dummyComments.length}
+              {comments?.pagination.totalComments}
             </CommentImage>
           </div>
         </StatsAndTags>
       </UserProfileSection>
       <LinksSection>
-        {links.map((url, i) => (
+        {portfolioData?.links?.map((url, i) => (
           <Link key={i}>
             <div>
               <img src={link} alt="" />
@@ -134,43 +234,49 @@ const DetailPage: React.FC = () => {
           </Link>
         ))}
       </LinksSection>
-      <ContentSection>{HTMLReactParser(dummyContents)}</ContentSection>
+      <ContentSection>
+        <img src={portfolioData?.thumbnailImage || noImg} />
+        <p style={{ height: "5rem" }} />
+        {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}
+      </ContentSection>
       <ActionBtnSection>
-        <DetailPageButton
-          text="좋아요"
-          onClick={() => console.log("clicked!")}
-        />
-        <DetailPageButton
-          text="공유하기"
-          onClick={() => console.log("clicked!")}
-        />
-        <DetailPageButton
-          text="PDF로 내보내기"
-          onClick={() => console.log("clicked!")}
-        />
+        <DetailPageButton text="좋아요" onClick={() => console.log("clicked!")} />
+        <DetailPageButton text="공유하기" onClick={() => console.log("clicked!")} />
+        <DetailPageButton text="PDF로 내보내기" onClick={() => console.log("clicked!")} />
       </ActionBtnSection>
-      <EditDeleteSection>
-        <Button text="수정" colorType={1} />
-        <Button
-          text="삭제"
-          colorType={1}
-          onClick={() => setIsPortfolioModalOpen(true)}
-        />
-      </EditDeleteSection>
+      {portfolioUserId === loggedInID ? (
+        <EditDeleteSection>
+          <Button
+            text="수정"
+            colorType={1}
+            onClick={() => {
+              navigate(`/edit_portfolio`);
+            }}
+          />
+          <Button text="삭제" colorType={1} onClick={() => setIsPortfolioModalOpen(true)} />
+        </EditDeleteSection>
+      ) : (
+        ""
+      )}
       <CommentSection>
         <CommentWrite>
           <p>댓글 작성하기</p>
-          <CommentInput isLoggedin={true} />
+          <CommentInput
+            portfolioID={portfolioId as string}
+            isLoggedIn={!!loggedInID}
+            onCommentAdded={() => fetchComment(portfolioId)}
+          />
         </CommentWrite>
         <CommentView>
-          <p>댓글 ({dummyComments.length})</p>
-          {visibleData.map((comment, i) => (
+          <p>댓글 ({comments?.pagination.totalComments})</p>
+          {comments?.data.map((comment, i) => (
             <CommentBox
               key={i}
               {...comment}
-              onClick={() => {
+              isMyComment={loggedInID === comment.userID}
+              onClickDelete={() => {
                 // 추후에 아이디로 수정
-                setSelectedCommentId(visibleData[i].name);
+                setSelectedCommentId(comments.data[i]._id);
                 setIsCommentModalOpen(true);
               }}
             />

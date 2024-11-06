@@ -8,6 +8,7 @@ export const CommentBoxWrapper = styled.div`
     font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
 
     margin: 0;
+    margin-top: 1rem;
     box-sizing: border-box;
   }
 
@@ -28,12 +29,17 @@ export const CommentBoxWrapper = styled.div`
 
   .infoWrap * {
     margin: 0;
+    font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
   }
   .infoWrap {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+    gap: 5px;
+  }
+  .infoWrap .job {
+    color: rgba(from ${({ theme }) => theme.COLORS.MAIN_GREEN2} r g b / 0.8);
   }
 
   .textBox {
