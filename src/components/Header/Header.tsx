@@ -138,21 +138,11 @@ const LoggedInHeaderComp: React.FC<HeaderCompProps> = ({
     }
 
     try {
-      // userID에 대한 프로필 존재 여부를 확인하는 API 요청
-      const response = await userApi.get(`profile/${userProfile.userID}`);
-      console.log("ressss:", response);
-
-      if (response.ok) {
-        // 프로필이 존재하는 경우에만 페이지 이동
-        navigate(`/profile/${userProfile.userID}`);
-      }
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        alert("해당 프로필이 존재하지 않습니다.");
-      } else {
-        console.error("프로필로 이동중 오류 발생:", error);
-        alert("프로필페이지로 이동하는 도중 문제가 발생했습니다.");
-      }
+      if (!userProfile.newUser) navigate(`/profile/${userProfile.userID}`);
+      else alert("해당 프로필이 존재하지 않습니다.");
+    } catch (error) {
+      console.error("프로필로 이동중 오류 발생:", error);
+      alert("프로필페이지로 이동하는 도중 문제가 발생했습니다.");
     }
   };
 
