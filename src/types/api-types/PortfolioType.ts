@@ -29,8 +29,7 @@ export interface DetailPortfolioType extends PortfolioType {
  * --------------------------------------------------
  */
 // ReqBody
-export interface PostPortfolioType
-  extends Omit<PortfolioType, "techStack" | "jobGroup"> {
+export interface PostPortfolioType extends Omit<PortfolioType, "techStack" | "jobGroup"> {
   techStack: string[]; // ITechStackType[]에서 skill만 추출한 string 배열
   jobGroup: string; // optional에서 required로 변경
 }
@@ -40,6 +39,13 @@ export interface PortfolioResType {
   success: boolean; // 성공 여부
   message: string;
   data?: DetailPortfolioType;
+}
+
+// ResBody
+export interface PortfolioDetailResType {
+  success: boolean;
+  message: string;
+  _id: string;
 }
 
 /**

@@ -2,9 +2,7 @@ import styled from "@emotion/styled";
 
 export const EditPortfolioPageWrapper = styled.section`
   & {
-    background-color: rgba(
-      from ${({ theme }) => theme.COLORS.MAIN_GRAY} r g b / 0.25
-    );
+    background-color: rgba(from ${({ theme }) => theme.COLORS.MAIN_GRAY} r g b / 0.25);
   }
   .mw-900 {
     max-width: 900px;
@@ -74,10 +72,10 @@ export const EditPortfolioPageWrapper = styled.section`
     justify-content: end;
     padding-bottom: 1rem;
   }
-  /*
+
   .links-section input {
     width: calc(100% - 34px);
-  } */
+  }
 
   .links-list {
     display: flex;
@@ -119,5 +117,21 @@ export const EditPortfolioPageWrapper = styled.section`
     display: contents;
     flex-wrap: wrap;
     gap: 8px;
+  }
+
+  .linkAddBtn {
+    background-color: ${({ theme }) => theme.COLORS.MAIN_BG};
+    border: solid 1px ${({ theme }) => theme.COLORS.MAIN_BLACK};
+    color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
+    font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+    border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
+    /* padding: ${({ theme }) => theme.PADDINGS.X_SMALL} ${({ theme }) => theme.PADDINGS.SMALL}; */
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+
+    &:hover {
+      border: solid 1px #525b76;
+      color: #525b76;
+    }
   }
 `;
