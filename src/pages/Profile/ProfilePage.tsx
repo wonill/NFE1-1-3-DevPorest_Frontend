@@ -68,6 +68,7 @@ const ProfilePage = () => {
   const [likePortfolioData, setLikePortfolioData] = useState<DetailPortfolioType[] | undefined>(undefined);
   const [pagination, setPagination] = useState<pagination | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[] | undefined>(undefined);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -90,6 +91,14 @@ const ProfilePage = () => {
     if ('data' in likePortfolio) setLikePortfolioData(prev => prev? [...prev, ...likePortfolio.data] : likePortfolio.data);
     if ('pagination' in likePortfolio) setPagination(likePortfolio.pagination);
   };
+
+  useEffect(() => {
+    setPortfolioList(userPortfolioData);
+  }, [userPortfolioData]);
+
+  useEffect(() => {
+    setPortfolioList(likePortfolioData);
+  }, [likePortfolioData]);
 
   useEffect(() => {
     fetchUserProfile();
@@ -159,22 +168,9 @@ const ProfilePage = () => {
     return activeTab === "나의 포레스트" ? userPortfolioData : likePortfolioData;
   };
 
-  const renderPortfolioCards = (data: DetailPortfolioType[]) => {
-    return <UserPortfolioList>{data.map((item, index) => (
-      <PortfolioCard 
-        key={index} 
-        portfolio_id={item._id}
-        title={item.title}
-        thumbnailImg={item.thumbnailImage}
-        profileImg={profileData.profileImage}
-        userName={item.userInfo.name}
-        views={item.view}
-        likes={item.likeCount}
-        onClick={() => handleCardClick(item._id)} 
-      />
-    ))};
-    </UserPortfolioList>
-  };
+  // const renderPortfolioCards = (data: DetailPortfolioType[]) => {
+  //   return 
+  // };
 
   return (
     <ProfilePageWrapper>
@@ -248,16 +244,22 @@ const ProfilePage = () => {
           </UserInfoRight>
         </UserInfo>
         <TabComponent tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-          {(() => {
-            const currentData = getCurrentData();
-            if (!currentData) return;
-            if (currentData.length === 0 && !isLoading) {
-              return <EmptyPortfolio text={activeTab === '나의 포레스트' ? '등록된 작업물이 없습니다.' : '좋아요를 누른 게시물이 없습니다.'} />;
-            }
-            return renderPortfolioCards(currentData);
-          })()}
+          <UserPortfolioList>{portfolioList && portfolioList.map((item, index) => (
+            <PortfolioCard 
+              key={index} 
+              portfolio_id={item._id}
+              title={item.title}
+              thumbnailImg={item.thumbnailImage}
+              profileImg={profileData.profileImage}
+              userName={item.userInfo.name}
+              views={item.view}
+              likes={item.likeCount}
+              onClick={() => handleCardClick(item._id)} 
+            />
+          ))}
+          </UserPortfolioList>
+        {portfolioList?.length === 0 && <EmptyPortfolio text={activeTab === '나의 포레스트' ? '등록된 작업물이 없습니다.' : '좋아요를 누른 게시물이 없습니다.'} />}
         {pagination?.hasNextPage && <Indicator ref={loadMoreRef} />}
-        {isLoading && <div>Loading...</div>}
       </ProfileContainer>
     </ProfilePageWrapper>
   );
