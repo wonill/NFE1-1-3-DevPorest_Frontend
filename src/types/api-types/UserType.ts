@@ -12,7 +12,7 @@ export interface UserProfileType {
   intro: string; // 소개
   phoneNumber: string; // 전화번호
   links: string[]; // 관련 링크
-  techStack: ITechStackType[]; // 기술 스택
+  techStack: string[]; // 기술 스택
   jobGroup: string; // 직군
   profileImage: string; // 프로필 이미지 URL
 }
@@ -23,11 +23,13 @@ export interface UserProfileType {
  * /api/users/user/:userid
  * --------------------------------------------------
  */
-export interface UserProfileResType extends UserProfileType {
+export interface UserProfileResType extends Omit<UserProfileType, "techStack"> {
+  techStack: ITechStackType[];
   userID: string; // 사용자 ID
   name: string; // 이름
   totalLikes?: number; // 좋아요 수
   createdAt?: string; // 생성날짜
+  newUser?: boolean;
 }
 
 /**
@@ -62,4 +64,17 @@ export interface UserApiResType<T> {
   success: boolean; // 성공 여부
   data?: T; // 성공 시 데이터
   error?: string; // 실패 시 오류 메시지
+}
+
+/**
+ * --------------------------------------------------
+ * Github 프로필 조회: GET
+ * /api/users/user
+ * --------------------------------------------------
+ */
+export interface GithubUserProfileResType {
+  userID: string; // 사용자 ID
+  name: string; // 이름
+  profileImage: string;
+  newUser: boolean;
 }
