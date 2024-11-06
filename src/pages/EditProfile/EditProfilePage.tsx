@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+//assets
+import NoImage from "../../assets/no_image.svg";
+
+//styles
 import {
   CenteredContainer,
   EditProfilePageContainer,
@@ -14,6 +19,8 @@ import {
   Intro,
   SubmitBtn,
 } from "./EditProfilePage.styles";
+
+//component
 import Button from "../../components/Button/Button";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import ProfileImage from "./ProfileImage";
@@ -21,13 +28,17 @@ import UserInfoInputs from "./UserInfoInputs";
 import Tag from "../../components/Tag/Tag";
 import TechStack from "../../components/TechStack/TechStack";
 import { ITechStackType } from "../../types/api-types/TechStackType";
-import { UserProfileType } from "../../types/api-types/UserType";
+
+//types
+import { GithubUserProfileResType, UserProfileResType } from "../../types/api-types/UserType";
 import { JobGroupType } from "../../types/api-types/JobGroup";
+
+//api
 import { uploadSingleImg } from "../../api/upload-single-img";
-import { createProfile } from "../../api/create-profile";
+import { createProfile, modifyProfile } from "../../api/create-profile";
 import { getJobGroup } from "../../api/get-job-group";
 import { getTechStacks } from "../../api/get-tech-stacks";
-import { getUserProfile } from "../../api/get-user-profile";
+import { getMyProfile } from "../../api/get-user-profile";
 
 /**
  * todo
@@ -41,17 +52,25 @@ import { getUserProfile } from "../../api/get-user-profile";
 const EditProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewProfileImg, setPreviewProfileImg] = useState<string | null>(null);
-  const [name, setName] = useState("");
-  const [userInfo, setUserInfo] = useState({
-    email: "",
-    mobile: "",
-    github: "",
-    instagram: "",
-    blog: "",
+  const [githubInfo, setGithubInfo] = useState<GithubUserProfileResType>({
+    userID: "",
+    name: "",
+    profileImage: "",
+    newUser: false,
   });
-  const [intro, setIntro] = useState("");
-  const [selectedJob, setSelectedJob] = useState<JobGroupType | null>(null);
-  const [selectedTechStacks, setSelectedTechStacks] = useState<ITechStackType[]>([]);
+  const [userInfo, setUserInfo] = useState<UserProfileResType>({
+    email: "",
+    phoneNumber: "",
+    links: [],
+    intro: "",
+    name: "",
+    userID: "",
+    techStack: [],
+    jobGroup: "",
+    profileImage: "",
+  });
+
+  // Dropdown 상태들 .. 나중에 정리
   const [isTechStackOpen, setIsTechStackOpen] = useState(false);
   const [isJobOpen, setIsJobOpen] = useState(false);
   const [techStackPosition, setTechStackPosition] = useState({ x: 0, y: 0 });
@@ -64,7 +83,7 @@ const EditProfilePage: React.FC = () => {
   const jobBtnRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -85,30 +104,35 @@ const EditProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const userData = await getUserProfile(userId!);
-      console.log(userData);
+      const userData = await getMyProfile();
       if (!userData) {
         console.log("유저 정보 없음");
-      } else if (typeof userData === "string") {
-        console.log(userData);
-      } else {
-        setPreviewProfileImg(userData.profileImage);
-        setName(userData.name);
-        setUserInfo({
-          ...userInfo,
-          email: userData.email,
-          mobile: userData.phoneNumber,
-        });
-        setSelectedTechStacks(userData.techStack);
-        setSelectedJob(jobGroups?.find(jobGroup => jobGroup.job === userData.jobGroup)!);
-        setIntro(userData.intro);
+        return;
       }
+      setGithubInfo(userData as GithubUserProfileResType);
+      if (userData.newUser) {
+        setPreviewProfileImg("");
+        setUserInfo(prev => {
+          return {
+            ...prev,
+            userID: githubInfo.userID,
+            name: githubInfo.name,
+            profileImage: "",
+          };
+        });
+        return;
+      }
+      setUserInfo(prev => {
+        return {
+          ...prev,
+          ...userData,
+        };
+      });
+      setPreviewProfileImg(userData.profileImage);
     };
 
-    if (userId && jobGroups) {
-      fetchUserProfile();
-    }
-  }, [userId, jobGroups]);
+    fetchUserProfile();
+  }, []);
 
   const handleTechStackClick = () => {
     if (techStackBtnRef.current) {
@@ -128,6 +152,7 @@ const EditProfilePage: React.FC = () => {
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    console.log(file);
     if (file) {
       setProfileImage(file);
       const reader = new FileReader();
@@ -136,11 +161,14 @@ const EditProfilePage: React.FC = () => {
       };
       reader.readAsDataURL(file);
     }
+
+    //file 사용이 끝나면 초기화
+    event.target.value = "";
   };
 
   const handleSetDefaultProfile = () => {
     setProfileImage(null);
-    setPreviewProfileImg(null);
+    setPreviewProfileImg(NoImage);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -149,39 +177,63 @@ const EditProfilePage: React.FC = () => {
     }
   };
 
-  const handleJobSelect = (job: JobGroupType) => {
-    setSelectedJob(job);
+  const handleJobSelect = (jobGroup: JobGroupType) => {
+    setUserInfo(prev => {
+      return { ...prev, jobGroup: jobGroup.job };
+    });
     setIsJobOpen(false);
   };
 
-  const handleTechStackSelect = (techStack: ITechStackType) => {
-    setSelectedTechStacks(prev => {
-      if (prev.some(stack => stack.skill === techStack.skill)) {
-        return prev.filter(stack => stack.skill !== techStack.skill);
-      } else {
-        return [...prev, techStack];
-      }
-    });
-  };
-
-  const handleSubmit = async () => {
-    if (!profileImage) {
+  const addTeckStack = (techStack: ITechStackType) => {
+    if (userInfo.techStack.find(stack => stack.skill === techStack.skill)) {
       return;
     }
 
-    const profileImgUrl = await uploadSingleImg(profileImage);
-    const userProfileData: UserProfileType = {
-      email: userInfo.email,
-      intro: intro,
-      phoneNumber: userInfo.mobile,
-      links: [userInfo.github, userInfo.instagram, userInfo.blog],
-      techStack: selectedTechStacks,
-      jobGroup: selectedJob?.job!,
-      profileImage: profileImgUrl!,
+    setUserInfo(prev => {
+      return { ...prev, techStack: [...prev.techStack, techStack] };
+    });
+  };
+
+  const removeTeckStack = (skill: string) => {
+    setUserInfo(prev => {
+      return { ...prev, techStack: prev.techStack.filter(stack => stack.skill !== skill) };
+    });
+  };
+  const handleSubmit = async () => {
+    let profileImgUrl: string = "";
+    let jobCode: string = jobGroups?.find(job => job.job === userInfo.jobGroup)?._id ?? "";
+
+    if (!jobCode) {
+      alert("직무 명이 올바르지 않습니다.");
+      return;
+    }
+
+    if (profileImage) {
+      profileImgUrl = (await uploadSingleImg(profileImage)) ?? "";
+
+      setUserInfo(prev => {
+        return { ...prev, profileImage: profileImgUrl };
+      });
+    }
+
+    const { userID, name, ...userProfileData } = {
+      ...userInfo,
+      techStack: userInfo.techStack.map(stack => stack.skill),
+      jobGroup: jobCode,
+      profileImage: profileImgUrl,
     };
 
-    const response = await createProfile(userProfileData);
-    console.log(response);
+    console.log(userProfileData);
+    if (githubInfo.newUser) {
+      const response = await createProfile(userProfileData);
+      alert("프로필 등록이 완료되었습니다.");
+      navigate("/");
+      return;
+    }
+
+    const response = await modifyProfile(userProfileData);
+    alert("프로필 수정이 완료되었습니다.");
+    navigate("/");
   };
 
   const fetchJobGroup = async () => {
@@ -213,7 +265,7 @@ const EditProfilePage: React.FC = () => {
               ref={modalRef}
             />
             <UserInfoInputWrapper>
-              <UserInfoInputs name={name} userInfo={userInfo} onChange={setUserInfo} />
+              <UserInfoInputs name={userInfo.name} userInfo={userInfo} setUserInfo={setUserInfo} />
             </UserInfoInputWrapper>
           </LeftUserInfo>
           <RightUserInfo>
@@ -223,8 +275,15 @@ const EditProfilePage: React.FC = () => {
                   직무
                 </SelectBtn>
                 <div>
-                  {selectedJob && (
-                    <Tag content={selectedJob.job} onClick={() => setSelectedJob(null)} />
+                  {userInfo.jobGroup && (
+                    <Tag
+                      content={userInfo.jobGroup}
+                      onClick={() =>
+                        setUserInfo(prev => {
+                          return { ...prev, jobGroup: "" };
+                        })
+                      }
+                    />
                   )}
                 </div>
               </SelectWrapper>
@@ -233,11 +292,13 @@ const EditProfilePage: React.FC = () => {
                   기술스택
                 </SelectBtn>
                 <div>
-                  {selectedTechStacks.map(stack => (
+                  {userInfo.techStack.map(stack => (
                     <TechStack
                       key={stack.skill}
                       content={stack}
-                      onClick={() => handleTechStackSelect(stack)}
+                      onClick={() => {
+                        removeTeckStack(stack.skill);
+                      }}
                     />
                   ))}
                 </div>
@@ -245,13 +306,17 @@ const EditProfilePage: React.FC = () => {
             </SelectContainer>
             <Intro
               placeholder="자기소개를 입력해주세요"
-              value={intro}
-              onChange={e => setIntro(e.target.value)}
+              value={userInfo.intro}
+              onChange={e =>
+                setUserInfo(prev => {
+                  return { ...prev, intro: e.target.value };
+                })
+              }
             />
           </RightUserInfo>
         </EditProfileWrapper>
-        <SubmitBtn onClick={handleSubmit}>
-          <Button text="등록" colorType={3} />
+        <SubmitBtn>
+          <Button text="등록" colorType={3} onClick={handleSubmit} />
         </SubmitBtn>
         {isTechStackOpen && (
           <Dropdown
@@ -260,7 +325,7 @@ const EditProfilePage: React.FC = () => {
             position={{ x: techStackPosition.x - 250, y: techStackPosition.y - 40 }}
             placeholder="기술스택을 입력하세요"
             onSelect={item => {
-              if ("skill" in item) handleTechStackSelect(item);
+              if ("skill" in item) addTeckStack(item);
             }}
           />
         )}
