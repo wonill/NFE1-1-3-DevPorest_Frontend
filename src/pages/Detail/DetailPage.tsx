@@ -31,17 +31,21 @@ import CommentInput from "../../components/CommentInput/CommentInput";
 import CommentBox from "../../components/CommentBox/CommentBox";
 import Modal from "../../components/Modal/Modal";
 import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
-import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
+import { CommentApiResType } from "../../types/api-types/CommentType";
 import userApi from "../../api/index";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useStoreSearchPage from "../../store/store-search-page";
+import { ITechStackType } from "./../../types/api-types/TechStackType";
+import { useTechStacksAndJobGroups } from "../../hooks/useTechStacksAndJobGroups";
+import Alert from "../../components/Alert/Alert";
 
 const DetailPage: React.FC = () => {
   const { portfolio_id } = useParams(); // useParams로 id 받아오기
   const [portfolioId, setPortfolioId] = useState<string>(portfolio_id || "");
   const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
   const [portfolioUserId, setPortfolioUserId] = useState<string>();
-  const [commentPage, setCommentPage] = useState(1);
+  const [commentPage] = useState(1);
   const [comments, setComments] = useState<CommentApiResType>();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
@@ -49,6 +53,10 @@ const DetailPage: React.FC = () => {
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
 
   const [loggedInID, setLoggedInID] = useState<string | undefined>("");
+  const [alertText, setAlertText] = useState("");
+  const { setSearchParams } = useStoreSearchPage();
+  const { jobGroupList } = useTechStacksAndJobGroups();
+  const pdfRef = useRef<HTMLElement | null>(null);
   const navigate = useNavigate();
 
   const fetchLoggedInUser = async () => {
@@ -185,8 +193,32 @@ const DetailPage: React.FC = () => {
     deleteComment();
   };
 
+  const handleTechStackClick = (item: ITechStackType) => {
+    const selectedJobGroup = jobGroupList.filter(jobGroup => jobGroup._id === item.jobCode);
+    setSearchParams({
+      techStacks: item.skill,
+      jobGroup: selectedJobGroup[0].job,
+      keyword: "",
+      searchType: "title",
+    });
+    navigate("/search");
+  };
+
+  const handleTagClick = (tag: string) => {
+    setSearchParams({ searchType: "tag", keyword: tag, techStacks: "", jobGroup: "all" });
+    navigate("/search");
+  };
+
+  const copyUrlToClipBoard = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      setAlertText("URl 복사가 완료되었습니다.");
+    });
+    setAlertText("");
+  };
+
   return (
-    <Main>
+    <Main ref={pdfRef}>
       <UserProfileSection>
         <TitleWrapper>
           <UserImage>
@@ -210,11 +242,13 @@ const DetailPage: React.FC = () => {
                     <TechStack
                       key={techStack.skill}
                       content={{ ...techStack }}
-                      onClick={() => {}}
+                      onClick={() => handleTechStackClick(techStack)}
                     />
                   ))
               : ""}
-            {portfolioData?.tags?.map((tag, i) => <Tag key={i} content={tag} />)}
+            {portfolioData?.tags?.map((tag, i) => (
+              <Tag key={i} content={tag} onClick={() => handleTagClick(tag)} />
+            ))}
           </div>
           <div>
             {portfolioData ? (
@@ -245,9 +279,10 @@ const DetailPage: React.FC = () => {
         {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}
       </ContentSection>
       <ActionBtnSection>
+        {alertText && <Alert text={alertText} />}
         <DetailPageButton text="좋아요" onClick={addLike} />
-        <DetailPageButton text="공유하기" onClick={() => console.log("clicked!")} />
-        <DetailPageButton text="PDF로 내보내기" onClick={() => console.log("clicked!")} />
+        <DetailPageButton text="공유하기" onClick={copyUrlToClipBoard} />
+        <DetailPageButton text="PDF로 내보내기" onClick={() => {}} />
       </ActionBtnSection>
       {portfolioUserId === loggedInID ? (
         <EditDeleteSection>
