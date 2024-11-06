@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
+// import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
 
 import "./MyCKEditor.css";
 import "ckeditor5/ckeditor5.css";
@@ -52,7 +52,7 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const [editorInstance, setEditorInstance] = useState<CKEditorType | null>(null);
+  // const [editorInstance, setEditorInstance] = useState<CKEditorType | null>(null);
 
   useEffect(() => {
     setIsLayoutReady(true);
@@ -61,11 +61,11 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
   }, []);
 
   // initialContent가 변경될 때 에디터 내용 업데이트
-  useEffect(() => {
-    if (editorInstance && initialContent !== undefined) {
-      editorInstance.setData(initialContent);
-    }
-  }, [initialContent, editorInstance]);
+  // useEffect(() => {
+  //   if (editorInstance && initialContent !== undefined) {
+  //     editorInstance.setData(initialContent);
+  //   }
+  // }, [initialContent, editorInstance]);
 
   const editorConfig = {
     toolbar: {
@@ -237,12 +237,12 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
                     }
                     // console.log(data);
                   }}
-                  onReady={editor => {
-                    setEditorInstance(editor);
-                    if (initialContent) {
-                      editor.setData(initialContent);
-                    }
-                  }}
+                  // onReady={editor => {
+                  //   setEditorInstance(editor);
+                  //   if (initialContent) {
+                  //     editor.setData(initialContent);
+                  //   }
+                  // }}
                 />
               )}
             </div>
