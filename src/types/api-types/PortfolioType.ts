@@ -42,10 +42,15 @@ export interface PortfolioResType {
 }
 
 // ResBody
-export interface PortfolioDetailResType {
+export interface PortfolioEditResType {
   success: boolean;
   message: string;
   _id: string;
+}
+
+export interface PortfolioDeleteResType {
+  success: boolean;
+  message: string;
 }
 
 /**

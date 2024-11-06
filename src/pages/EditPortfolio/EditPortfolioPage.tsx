@@ -19,7 +19,6 @@ const EditPortfolioPage = () => {
   const navigate = useNavigate();
   const { techStackList, jobGroupList } = useTechStacksAndJobGroups();
   const { portfolioId } = useParams<{ portfolioId: string }>();
-
   const [formData, setFormData] = useState<Omit<PortfolioType, "userInfo">>({
     title: "",
     contents: "",
@@ -60,6 +59,7 @@ const EditPortfolioPage = () => {
         const selectedJobGroup = jobGroupList.find(job => job.job === portfolioData?.jobGroup);
         if (selectedJobGroup) {
           setDisplayJobGroup(selectedJobGroup.job);
+          handleInputChange("jobGroup", selectedJobGroup._id); // 수정 api 요청시에는 _id를 사용
         }
       } catch (error) {
         alert("포트폴리오 데이터를 불러오는데 실패했습니다.");
@@ -153,20 +153,14 @@ const EditPortfolioPage = () => {
     }
 
     try {
+      console.log("formData:", formData);
+      // console.log("formData title ", formData.title);
       const response = await handlePortfolio(formData as PortfolioType, portfolioId);
-      alert(
-        portfolioId
-          ? "포트폴리오가 성공적으로 수정되었습니다."
-          : "포트폴리오가 성공적으로 등록되었습니다.",
-      );
-      // PortfolioResType은 생성 응답, PortfolioDetailResType은 수정 응답
-      if ("data" in response) {
-        // 생성 응답
-        navigate(`/detail/${response.data?._id}`);
-      } else {
-        // 수정 응답
-        navigate(`/detail/${portfolioId}`);
-      }
+
+      // 생성도 수정을 거치면서, 생성 수정 response가 동일해져서 분간 힘듦
+      // 작성완료버튼 누르면 -> alert 대신 그냥 바로 디테일 페이지로 넘어가는걸로...
+
+      navigate(`/detail/${response._id}`);
     } catch (error) {
       alert(
         portfolioId
