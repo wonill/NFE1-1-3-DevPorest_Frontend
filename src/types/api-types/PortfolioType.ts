@@ -4,12 +4,12 @@ import { UserProfileResType } from "./UserType";
 export interface PortfolioType {
   title: string; // 제목
   contents: string; // 내용
-  images: string[]; // 이미지들
-  tags: string[]; // 태그들
-  techStack?: ITechStackType[]; // 기술스택
+  images?: string[]; // 이미지들
+  tags?: string[]; // 태그들
+  techStack: ITechStackType[]; // 기술스택
   thumbnailImage: string; // 썸네일 이미지
   userInfo: Pick<UserProfileResType, "userID" | "name" | "profileImage">;
-  jobGroup?: string; // 직군
+  jobGroup: string; // 직군
   links?: string[];
 }
 
@@ -28,6 +28,13 @@ export interface DetailPortfolioType extends PortfolioType {
  * 포트폴리오 상세 조회: GET, /api/portfolios/:id
  * --------------------------------------------------
  */
+// ReqBody
+export interface PostPortfolioType
+  extends Omit<PortfolioType, "techStack" | "jobGroup"> {
+  techStack: string[]; // ITechStackType[]에서 skill만 추출한 string 배열
+  jobGroup: string; // optional에서 required로 변경
+}
+
 // ResBody
 export interface PortfolioResType {
   success: boolean; // 성공 여부
@@ -93,7 +100,7 @@ export interface PortfolioImagesType {
 export interface PortfolioImagesResType {
   success: boolean;
   data?: {
-    url: string[];
+    urls: string[];
   };
   error?: string;
 }

@@ -22,7 +22,7 @@ const api = ky.create({
        * @param options -
        * @param response HTTP Response
        */
-      async (request, options, response) => {
+      async (_request, _options, response) => {
         if (response.status === 401) {
           const token = localStorage.getItem("token");
           if (token) {
