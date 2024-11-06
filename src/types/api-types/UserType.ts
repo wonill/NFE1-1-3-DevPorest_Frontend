@@ -28,6 +28,7 @@ export interface UserProfileResType extends UserProfileType {
   name: string; // 이름
   totalLikes?: number; // 좋아요 수
   createdAt?: string; // 생성날짜
+  newUser?: boolean;
 }
 
 /**
