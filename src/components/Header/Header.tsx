@@ -129,6 +129,33 @@ const LoggedInHeaderComp: React.FC<HeaderCompProps> = ({
   setIsProfileOpen,
   toggleSearch,
 }) => {
+  const navigate = useNavigate();
+
+  const handleProfileClick = async () => {
+    if (!userProfile?.userID) {
+      alert("로그인 오류 (userID 없음)");
+      return;
+    }
+
+    try {
+      // userID에 대한 프로필 존재 여부를 확인하는 API 요청
+      const response = await userApi.get(`profile/${userProfile.userID}`);
+      console.log("ressss:", response);
+
+      if (response.ok) {
+        // 프로필이 존재하는 경우에만 페이지 이동
+        navigate(`/profile/${userProfile.userID}`);
+      }
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        alert("해당 프로필이 존재하지 않습니다.");
+      } else {
+        console.error("프로필로 이동중 오류 발생:", error);
+        alert("프로필페이지로 이동하는 도중 문제가 발생했습니다.");
+      }
+    }
+  };
+
   const logout = async () => {
     try {
       await userApi.get("auth/logout");
@@ -140,6 +167,7 @@ const LoggedInHeaderComp: React.FC<HeaderCompProps> = ({
       console.log("로그아웃 요청 실패했습니다 :", err);
     }
   };
+
   return (
     <>
       <div className="wrap">
@@ -169,9 +197,9 @@ const LoggedInHeaderComp: React.FC<HeaderCompProps> = ({
         />
       </div>
       <div className={`profileModal ${isProfileOpen ? "" : "hidden"}`}>
-        <Link to={`/profile`}>
-          <Button text="내 프로필" colorType={0} />
-        </Link>
+        {/* <Link to={`/profile/${userProfile?.userID}`}> */}
+        <Button text="내 프로필" colorType={0} onClick={handleProfileClick} />
+        {/* </Link> */}
         <Link to="/edit_portfolio">
           <Button text="포트폴리오 등록" colorType={0} />
         </Link>
