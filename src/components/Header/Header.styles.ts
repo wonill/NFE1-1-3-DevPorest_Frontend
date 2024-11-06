@@ -1,3 +1,4 @@
+import { BORDER_RADIUS } from "./../../styles/theme";
 import styled from "@emotion/styled";
 
 export const HeaderWrapper = styled.div`
@@ -33,6 +34,10 @@ export const HeaderWrapper = styled.div`
     .md-flex {
       display: none;
     }
+    .searchBarIcon {
+      width: 1.5rem;
+      cursor: pointer;
+    }
     .searchIcon.md-hidden {
       width: 1.5rem;
       margin: 0 15px;
@@ -67,10 +72,31 @@ export const HeaderWrapper = styled.div`
     height: 2.3rem;
     cursor: pointer;
   }
+
+  .profileModal {
+    z-index: 100;
+    position: absolute;
+    top: 3.5rem;
+    right: 0.5rem;
+    background-color: ${({ theme }) => theme.COLORS.MAIN_BG};
+    border: 3px solid ${({ theme }) => theme.COLORS.LIGHTGREEN_BG};
+    border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: 0.3s;
+  }
+  .profileModal.hidden {
+    /* height: 0; */
+    overflow: hidden;
+    opacity: 0%;
+    transition: 0.3s;
+  }
 `;
 
 export const SearchBarWrapper = styled.div`
   & {
+    z-index: 100;
     position: relative;
     display: flex;
     align-items: center;
@@ -93,13 +119,10 @@ export const SearchBarWrapper = styled.div`
   .searchBar:focus {
     outline: transparent;
   }
-  .searchIcon {
+  .searchBarIcon {
     width: 1.5rem;
     position: absolute;
     left: 8px;
-    margin: 0;
-  }
-  .searchIcon.md-hidden {
     margin: 0;
   }
 `;
