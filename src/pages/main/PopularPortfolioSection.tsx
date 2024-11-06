@@ -36,9 +36,9 @@ const PopularPortfolioSection = () => {
           id={portfolio._id}
           image={portfolio.thumbnailImage}
           title={portfolio.title}
-          name={portfolio.userInfo.name}
+          name={portfolio.userInfo?.name}
           job={portfolio.jobGroup!}
-          onClick={() => navigate(`detail?portfolio_id=${portfolio._id}`)}
+          onClick={() => navigate(`/detail/${portfolio._id}`)}
         />
       ))}
     </StyledPopularPortfolioSection>

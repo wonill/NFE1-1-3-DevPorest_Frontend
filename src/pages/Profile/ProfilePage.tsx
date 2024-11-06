@@ -145,8 +145,7 @@ const ProfilePage = () => {
   
 
   const handleCardClick = (portfolio_id: string) => {
-    console.log(`${portfolio_id}에 해당하는 페이지로 이동`);
-    navigate(`/detail?portfolio_id=${portfolio_id}`);
+    navigate(`/detail/${portfolio_id}`);
   };
 
   const onClickEditProfile = () => {
