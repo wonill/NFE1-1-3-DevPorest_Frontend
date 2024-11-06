@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
+// import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
 
 import "./MyCKEditor.css";
 import "ckeditor5/ckeditor5.css";
