@@ -206,14 +206,11 @@ const EditPortfolioPage = () => {
             <img src="/link-icon.svg" alt="link" />
             <input
               type="url"
-              placeholder="https://example.com"
+              placeholder="https://example.com (enter로 추가)"
               value={newLink}
               onChange={e => setNewLink(e.target.value)}
               onKeyDown={handleLinkKeyDown}
             />
-            <button type="button" onClick={handleAddLink}>
-              추가
-            </button>
 
             {formData.links && formData.links.length > 0 && (
               <div className="links-list">
