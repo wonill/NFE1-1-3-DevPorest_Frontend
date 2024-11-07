@@ -270,23 +270,23 @@ const SearchBar = ({
   const { setSearchParams } = useStoreSearchPage();
   const navigate = useNavigate();
 
-  const handleSearch = (ev: React.KeyboardEvent<HTMLInputElement>) => {
-    if (ev.key !== "Enter") return;
-    if (searchWord.trim()) {
-      setSearchParams({
-        keyword: searchWord,
-        page: 1,
-        jobGroup: "all",
-        techStacks: "",
-        sort: "latest",
-        searchType: "title",
-      });
-      navigate(`/search`);
+  const handleSearch = (ev?: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log("serach");
+    if (ev?.key && ev.key !== "Enter") return;
+    setSearchWord(searchWord.trim());
+    setSearchParams({
+      keyword: searchWord,
+      page: 1,
+      jobGroup: "all",
+      techStacks: "",
+      sort: "latest",
+      searchType: "title",
+    });
+    navigate(`/search`);
 
-      console.log(`/search로 리디랙트(keyword:${searchWord})`);
-      setIsSearchOpen(false);
-      setIsProfileOpen ? setIsProfileOpen(false) : "";
-    }
+    console.log(`/search로 리디랙트(keyword:${searchWord})`);
+    setIsSearchOpen(false);
+    setIsProfileOpen ? setIsProfileOpen(false) : "";
   };
   return (
     <SearchBarWrapper>
@@ -301,6 +301,7 @@ const SearchBar = ({
       <img
         src="/search-icon.svg"
         className={`searchBarIcon ${isMainBar ? "" : "md-hidden"}`}
+        onClick={() => handleSearch()}
         alt=""
       />
     </SearchBarWrapper>

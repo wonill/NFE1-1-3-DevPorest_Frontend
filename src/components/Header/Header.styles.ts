@@ -123,5 +123,6 @@ export const SearchBarWrapper = styled.div`
     position: absolute;
     left: 8px;
     margin: 0;
+    cursor: pointer;
   }
 `;
