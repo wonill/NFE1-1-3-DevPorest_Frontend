@@ -249,7 +249,7 @@ const ProfilePage = () => {
                 portfolio_id={item._id}
                 title={item.title}
                 thumbnailImg={item.thumbnailImage}
-                profileImg={profileData.profileImage}
+                profileImg={item.userInfo.profileImage}
                 userName={item.userInfo.name}
                 views={item.view}
                 likes={item.likeCount}
