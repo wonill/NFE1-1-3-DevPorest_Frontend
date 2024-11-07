@@ -40,6 +40,8 @@ import useStoreSearchPage from "../../store/store-search-page";
 import { ITechStackType } from "./../../types/api-types/TechStackType";
 import { useTechStacksAndJobGroups } from "../../hooks/useTechStacksAndJobGroups";
 import Alert from "../../components/Alert/Alert";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const DetailPage: React.FC = () => {
   const { portfolio_id } = useParams(); // useParams로 id 받아오기
@@ -52,12 +54,13 @@ const DetailPage: React.FC = () => {
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
 
   const [loggedInID, setLoggedInID] = useState<string | undefined>("");
   const [alertText, setAlertText] = useState("");
   const { setSearchParams } = useStoreSearchPage();
   const { jobGroupList } = useTechStacksAndJobGroups();
-  const pdfRef = useRef<HTMLElement | null>(null);
+  const pdfRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
 
   const fetchLoggedInUser = async () => {
@@ -222,8 +225,55 @@ const DetailPage: React.FC = () => {
     setAlertText("");
   };
 
+  const handleDownloadPdf = async () => {
+    if (pdfRef.current) {
+      setPdfLoading(true);
+      // 캔버스로 변환
+      const canvas = await html2canvas(pdfRef.current, {
+        scale: 2, // 고해상도
+        useCORS: true,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "pt", "a4"); // A4 크기 PDF
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+
+      // 비율에 따른 이미지 크기 설정
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvasHeight * pdfWidth) / canvasWidth;
+
+      let position = 0; // 이미지 시작 위치 (yOffset)
+
+      // 여러 페이지로 나누어 출력
+      while (position < imgHeight) {
+        // 현재 페이지에 이미지 추가
+        pdf.addImage(
+          imgData,
+          "PNG",
+          0,
+          -position, // 페이지 상에서 이미지 위치 조정
+          imgWidth,
+          imgHeight,
+        );
+        position += pdfHeight; // 다음 페이지로 이동
+
+        // 추가 페이지 필요시 addPage()
+        if (position < imgHeight) {
+          pdf.addPage();
+        }
+      }
+
+      // PDF 저장
+      pdf.save(`${portfolioId}.pdf`);
+      setPdfLoading(false);
+    }
+  };
+
   return (
-    <Main ref={pdfRef}>
+    <Main>
       <UserProfileSection>
         <TitleWrapper>
           <UserImage>
@@ -278,7 +328,7 @@ const DetailPage: React.FC = () => {
           </Link>
         ))}
       </LinksSection>
-      <ContentSection>
+      <ContentSection ref={pdfRef}>
         <img src={portfolioData?.thumbnailImage || noImg} />
         <p style={{ height: "5rem" }} />
         <div className="ck-content">
@@ -289,7 +339,7 @@ const DetailPage: React.FC = () => {
         {alertText && <Alert text={alertText} />}
         <DetailPageButton text="좋아요" onClick={addLike} />
         <DetailPageButton text="공유하기" onClick={copyUrlToClipBoard} />
-        <DetailPageButton text="PDF로 내보내기" onClick={() => {}} />
+        <DetailPageButton text="PDF로 내보내기" onClick={handleDownloadPdf} disabled={pdfLoading} />
       </ActionBtnSection>
       {portfolioUserId === loggedInID ? (
         <EditDeleteSection>

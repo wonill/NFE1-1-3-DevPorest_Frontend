@@ -8,6 +8,7 @@ interface DetailPageButtonProps {
   text: string;
   onClick: () => void;
   isLiked?: boolean;
+  disabled?: boolean;
 }
 
 const iconMap: { [key: string]: string } = {
@@ -17,9 +18,14 @@ const iconMap: { [key: string]: string } = {
   "PDF로 내보내기": exportPDFImg,
 };
 
-const DetailPageButton: React.FC<DetailPageButtonProps> = ({ text, onClick, isLiked = false }) => {
+const DetailPageButton: React.FC<DetailPageButtonProps> = ({
+  text,
+  onClick,
+  isLiked = false,
+  disabled = false,
+}) => {
   return (
-    <StyledButton onClick={onClick} text={text} isLiked={isLiked}>
+    <StyledButton onClick={onClick} text={text} isLiked={isLiked} disabled={disabled}>
       <div>
         <img src={isLiked ? iconMap["좋아요(active)"] : iconMap[text]} alt={text} />
       </div>
