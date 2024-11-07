@@ -4,9 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../Logo/Logo";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
 import { useEffect, useState } from "react";
-// import ky from "ky";
 import noImg from "../../assets/no_image.svg";
-// const apiUrl = import.meta.env.VITE_SERVER_URL;
 import useStoreSearchPage from "../../store/store-search-page";
 import userApi from "../../api/index";
 
@@ -84,7 +82,6 @@ const Header = () => {
         const jsonData: UserApiResType<UserProfileResType> = await response.json();
         setUserProfile(jsonData.data);
         setUserId(jsonData.data?.userID);
-        console.log("헤더: ", jsonData.data?.userID, "로 로그인되어있습니다.");
       } catch (err) {
         console.error(err);
         setUserId(undefined);
@@ -138,8 +135,10 @@ const LoggedInHeaderComp: React.FC<HeaderCompProps> = ({
     }
 
     try {
-      if (!userProfile.newUser) navigate(`/profile/${userProfile.userID}`);
-      else alert("해당 프로필이 존재하지 않습니다.");
+      if (!userProfile.newUser) {
+        navigate(`/profile/${userProfile.userID}`);
+        setIsProfileOpen ? setIsProfileOpen(false) : "";
+      } else alert("해당 프로필이 존재하지 않습니다.");
     } catch (error) {
       console.error("프로필로 이동중 오류 발생:", error);
       alert("프로필페이지로 이동하는 도중 문제가 발생했습니다.");
@@ -187,11 +186,13 @@ const LoggedInHeaderComp: React.FC<HeaderCompProps> = ({
         />
       </div>
       <div className={`profileModal ${isProfileOpen ? "" : "hidden"}`}>
-        {/* <Link to={`/profile/${userProfile?.userID}`}> */}
         <Button text="내 프로필" colorType={0} onClick={handleProfileClick} />
-        {/* </Link> */}
         <Link to="/edit_portfolio">
-          <Button text="포트폴리오 등록" colorType={0} />
+          <Button
+            text="포트폴리오 등록"
+            colorType={0}
+            onClick={() => (setIsProfileOpen ? setIsProfileOpen(false) : "")}
+          />
         </Link>
         <Link to="/">
           <Button text="로그아웃" colorType={0} onClick={logout} />
@@ -229,10 +230,7 @@ const LoggedOutHeaderComp: React.FC<HeaderCompProps> = ({
         )}
         <div className="btnWrap">
           <Link to="/login">
-            <Button text="로그인" colorType={0} />
-          </Link>
-          <Link to="/edit_profile">
-            <Button text="회원가입" colorType={3} />
+            <Button text="로그인" colorType={3} />
           </Link>
           {isSearchPage ? (
             ""
@@ -271,7 +269,6 @@ const SearchBar = ({
   const navigate = useNavigate();
 
   const handleSearch = (ev?: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log("serach");
     if (ev?.key && ev.key !== "Enter") return;
     setSearchWord(searchWord.trim());
     setSearchParams({
@@ -283,8 +280,6 @@ const SearchBar = ({
       searchType: "title",
     });
     navigate(`/search`);
-
-    console.log(`/search로 리디랙트(keyword:${searchWord})`);
     setIsSearchOpen(false);
     setIsProfileOpen ? setIsProfileOpen(false) : "";
   };
