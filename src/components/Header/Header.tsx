@@ -25,6 +25,7 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const toggleSearch = () => {
     if (!isSearchOpen) setIsProfileOpen(false);
     setIsSearchOpen(!isSearchOpen);
@@ -82,6 +83,7 @@ const Header = () => {
         const jsonData: UserApiResType<UserProfileResType> = await response.json();
         setUserProfile(jsonData.data);
         setUserId(jsonData.data?.userID);
+        if (jsonData.data?.newUser) navigate("/edit_profile");
       } catch (err) {
         console.error(err);
         setUserId(undefined);
