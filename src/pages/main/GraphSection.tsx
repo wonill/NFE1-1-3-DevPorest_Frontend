@@ -14,8 +14,8 @@ import { TechStackStatType } from "../../types/api-types/TechStackType";
 import { getTechStackStatistic } from "../../api/get-tech-stacks";
 import useStoreSearchPage from "../../store/store-search-page";
 
-const frontendJobGroup = '671f9d162a296054c7477856';
-const backendJobGroup = '672616239a64f518f7c8d530';
+const frontendJobGroup = "671f9d162a296054c7477856";
+const backendJobGroup = "672616239a64f518f7c8d530";
 
 const GraphSection = () => {
   const navigate = useNavigate();
@@ -27,29 +27,30 @@ const GraphSection = () => {
   useEffect(() => {
     const fetchTechStackList = async () => {
       const result = await getTechStackStatistic();
-      console.log(result);
       if (Array.isArray(result)) setTechStacks(result);
-    }
+    };
     fetchTechStackList();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (techStacks.length > 0) {
-      const front = techStacks.filter(techStack => techStack.jobCode === frontendJobGroup && techStack.totalCount > 0).map((v) => ({
-        id: v.skill,
-        value: v.totalCount,
-        color: v.bgColor,
-      }));
+      const front = techStacks
+        .filter(techStack => techStack.jobCode === frontendJobGroup && techStack.totalCount > 0)
+        .map(v => ({
+          id: v.skill,
+          value: v.totalCount,
+          color: v.bgColor,
+        }));
       setfrontStats(front);
-      console.log('프론트', front);
 
-      const back = techStacks.filter(techStack => techStack.jobCode === backendJobGroup && techStack.totalCount > 0).map((v) => ({
-        id: v.skill,
-        value: v.totalCount,
-        color: v.bgColor,
-      }));
+      const back = techStacks
+        .filter(techStack => techStack.jobCode === backendJobGroup && techStack.totalCount > 0)
+        .map(v => ({
+          id: v.skill,
+          value: v.totalCount,
+          color: v.bgColor,
+        }));
       setBackendStats(back);
-      console.log('백엔드', back);
     }
   }, [techStacks]);
 
@@ -63,23 +64,23 @@ const GraphSection = () => {
         <FrontendGraph>
           <Graph
             data={frontStats}
-            onClick={(frontStats) => {
-              setSearchParams({jobGroup: 'Frontend Developer'});
-              setSearchParams({techStacks: String(frontStats.id)});
-              navigate('/search');
+            onClick={frontStats => {
+              setSearchParams({ jobGroup: "Frontend Developer" });
+              setSearchParams({ techStacks: String(frontStats.id) });
+              navigate("/search");
             }}
-            />
+          />
           <GraphTitle>Frontend</GraphTitle>
         </FrontendGraph>
         <BackendGraph>
           <Graph
             data={backendStats}
-            onClick={(backendStats) => {
-              setSearchParams({jobGroup: 'Backend Developer'});
-              setSearchParams({techStacks: String(backendStats.id)});
-              navigate('/search');
+            onClick={backendStats => {
+              setSearchParams({ jobGroup: "Backend Developer" });
+              setSearchParams({ techStacks: String(backendStats.id) });
+              navigate("/search");
             }}
-            />
+          />
           <GraphTitle>Backend</GraphTitle>
         </BackendGraph>
       </GraphWrapper>
