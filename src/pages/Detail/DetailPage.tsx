@@ -55,9 +55,10 @@ const DetailPage: React.FC = () => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState<boolean>(false);
-
   const [loggedInID, setLoggedInID] = useState<string | undefined>("");
   const [alertText, setAlertText] = useState("");
+  const [isLiked, setIsLiked] = useState<boolean>();
+  const [likeCount, setLikeCount] = useState<number>();
   const { setSearchParams } = useStoreSearchPage();
   const { jobGroupList } = useTechStacksAndJobGroups();
   const pdfRef = useRef<HTMLElement>(null);
@@ -125,14 +126,32 @@ const DetailPage: React.FC = () => {
     if (portfolioUserId) navigate(`/profile/${portfolioUserId}`);
   };
 
-  const addLike = async () => {
+  const toggleLike = async () => {
     try {
-      await userApi.post(`portfolios/${portfolio_id}/like`);
+      const res: { like: boolean; likeCount: number } = await userApi
+        .post(`portfolios/${portfolio_id}/like`)
+        .json();
+      setLikeCount(res.likeCount);
+      setIsLiked(!isLiked);
     } catch (err) {
       console.error("상세 에러 정보:", err);
     }
   };
-
+  const checkLike = async (portfolio_id: string) => {
+    try {
+      const res1: { like: boolean; likeCount: number } = await userApi
+        .post(`portfolios/${portfolio_id}/like`)
+        .json();
+      setIsLiked(!res1.like);
+      const res2: { like: boolean; likeCount: number } = await userApi
+        .post(`portfolios/${portfolio_id}/like`)
+        .json(); // 현재 상태 확인 후 다시 토글
+      setLikeCount(res2.likeCount);
+    } catch (err) {
+      console.error("상세 에러 정보:", err);
+    }
+  };
+  const isLikeChecked = useRef(false);
   useEffect(() => {
     if (!!localStorage.getItem("token")) fetchLoggedInUser(); // 로그인 토큰 존재시 불러오기
     console.log(portfolioId);
@@ -140,6 +159,10 @@ const DetailPage: React.FC = () => {
       setPortfolioId(portfolioId);
       fetchPortfolio(portfolioId);
       fetchComment(portfolioId);
+      if (!isLikeChecked.current) {
+        checkLike(portfolioId);
+        isLikeChecked.current = true;
+      }
     }
   }, []);
 
@@ -307,7 +330,7 @@ const DetailPage: React.FC = () => {
           </div>
           <div>
             {portfolioData ? (
-              <LikesAndViews views={portfolioData?.view} likes={portfolioData?.likeCount} />
+              <LikesAndViews views={portfolioData?.view} likes={likeCount || 0} />
             ) : (
               ""
             )}
@@ -337,7 +360,7 @@ const DetailPage: React.FC = () => {
       </ContentSection>
       <ActionBtnSection>
         {alertText && <Alert text={alertText} />}
-        <DetailPageButton text="좋아요" onClick={addLike} />
+        <DetailPageButton text="좋아요" isLiked={isLiked} onClick={toggleLike} />
         <DetailPageButton text="공유하기" onClick={copyUrlToClipBoard} />
         <DetailPageButton text="PDF로 내보내기" onClick={handleDownloadPdf} disabled={pdfLoading} />
       </ActionBtnSection>
