@@ -34,11 +34,11 @@ import { GithubUserProfileResType, UserProfileResType } from "../../types/api-ty
 import { JobGroupType } from "../../types/api-types/JobGroup";
 
 //api
-// import { uploadSingleImg } from "../../api/upload-single-img";
 import { createProfile, modifyProfile } from "../../api/create-profile";
 import { getJobGroup } from "../../api/get-job-group";
 import { getTechStacks } from "../../api/get-tech-stacks";
 import { getMyProfile } from "../../api/get-user-profile";
+import { uploadProfileImg } from "../../api/upload-single-img";
 
 /**
  * todo
@@ -209,7 +209,7 @@ const EditProfilePage: React.FC = () => {
     }
 
     if (profileImage) {
-      // profileImgUrl = (await uploadSingleImg(profileImage)) ?? "";
+      profileImgUrl = (await uploadProfileImg(profileImage)) ?? "";
 
       setUserInfo(prev => {
         return { ...prev, profileImage: profileImgUrl };
