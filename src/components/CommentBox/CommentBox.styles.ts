@@ -13,11 +13,14 @@ export const CommentBoxWrapper = styled.div`
   }
 
   .commentInfo {
-    display: flex;
+    /* border: 1px solid black; */
+    display: inline-flex;
     align-items: center;
     gap: 15px;
     padding-bottom: 13px;
     height: 50px;
+    min-width: 20%; /* 최소 너비 */
+    max-width: 80%; /* 최대 너비 */
   }
   .commentInfo img {
     width: 2.5rem;

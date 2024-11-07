@@ -32,7 +32,7 @@ import CommentInput from "../../components/CommentInput/CommentInput";
 import CommentBox from "../../components/CommentBox/CommentBox";
 import Modal from "../../components/Modal/Modal";
 import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
-import { CommentApiResType } from "../../types/api-types/CommentType";
+import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
 import userApi from "../../api/index";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
 import { useNavigate, useParams } from "react-router-dom";
@@ -49,15 +49,17 @@ const DetailPage: React.FC = () => {
   const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
   const [portfolioUserId, setPortfolioUserId] = useState<string>();
   const [commentPage] = useState(1);
-  const [comments, setComments] = useState<CommentApiResType>();
+  const [totComment, setTotComment] = useState<number>();
+  const [comments, setComments] = useState<CommentResType[]>([]);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState<boolean>(false);
-
   const [loggedInID, setLoggedInID] = useState<string | undefined>("");
   const [alertText, setAlertText] = useState("");
+  const [isLiked, setIsLiked] = useState<boolean>();
+  const [likeCount, setLikeCount] = useState<number>();
   const { setSearchParams } = useStoreSearchPage();
   const { jobGroupList } = useTechStacksAndJobGroups();
   const pdfRef = useRef<HTMLElement>(null);
@@ -102,21 +104,22 @@ const DetailPage: React.FC = () => {
       const response = await userApi.get(`comments/${portfolio_id}?page=${commentPage}?limit=20`);
       const jsonData: CommentApiResType = await response.json();
 
-      // 상태 업데이트를 함수형으로 변경하여 최신 상태 보장
-      setComments(prevComments => {
-        if (JSON.stringify(prevComments) === JSON.stringify(jsonData)) {
-          return { ...jsonData }; // 강제 리렌더링을 위해 새로운 객체 반환
-        }
-        return jsonData;
-      });
-      console.log("commentfetch:", jsonData);
-      // if (comments?.to) console.log("이미지", comments[0]._id);
       if (!jsonData.success) {
         throw new Error(`Server responded with ${jsonData.success}`);
       }
+
+      // 데이터가 배열인지 확인하고 타입 안전하게 업데이트
+      if (Array.isArray(jsonData.data)) {
+        setComments(jsonData.data);
+        setTotComment(jsonData.pagination.totalComments);
+      }
+
       return jsonData.data;
     } catch (err) {
       console.error("상세 에러 정보:", err);
+      // 에러 발생시 빈 배열로 설정
+      setComments([]);
+      return [];
     }
   };
 
@@ -125,14 +128,34 @@ const DetailPage: React.FC = () => {
     if (portfolioUserId) navigate(`/profile/${portfolioUserId}`);
   };
 
-  const addLike = async () => {
+  const toggleLike = async () => {
     try {
-      await userApi.post(`portfolios/${portfolio_id}/like`);
+      const res: { like: boolean; likeCount: number } = await userApi
+        .post(`portfolios/${portfolio_id}/like`)
+        .json();
+      setLikeCount(res.likeCount);
+      setAlertText(isLiked ? "좋아요 취소되었습니다" : "좋아요 추가되었습니다");
+      setTimeout(() => setAlertText(""), 3000);
+      setIsLiked(!isLiked);
     } catch (err) {
       console.error("상세 에러 정보:", err);
     }
   };
-
+  const checkLike = async (portfolio_id: string) => {
+    try {
+      const res1: { like: boolean; likeCount: number } = await userApi
+        .post(`portfolios/${portfolio_id}/like`)
+        .json();
+      setIsLiked(!res1.like);
+      const res2: { like: boolean; likeCount: number } = await userApi
+        .post(`portfolios/${portfolio_id}/like`)
+        .json(); // 현재 상태 확인 후 다시 토글
+      setLikeCount(res2.likeCount);
+    } catch (err) {
+      console.error("상세 에러 정보:", err);
+    }
+  };
+  const isLikeChecked = useRef(false);
   useEffect(() => {
     if (!!localStorage.getItem("token")) fetchLoggedInUser(); // 로그인 토큰 존재시 불러오기
     console.log(portfolioId);
@@ -140,6 +163,10 @@ const DetailPage: React.FC = () => {
       setPortfolioId(portfolioId);
       fetchPortfolio(portfolioId);
       fetchComment(portfolioId);
+      if (!isLikeChecked.current) {
+        checkLike(portfolioId);
+        isLikeChecked.current = true;
+      }
     }
   }, []);
 
@@ -307,13 +334,13 @@ const DetailPage: React.FC = () => {
           </div>
           <div>
             {portfolioData ? (
-              <LikesAndViews views={portfolioData?.view} likes={portfolioData?.likeCount} />
+              <LikesAndViews views={portfolioData?.view} likes={likeCount || 0} />
             ) : (
               ""
             )}
             <CommentImage>
               <img src={comment} alt="" />
-              {comments?.pagination.totalComments}
+              {totComment}
             </CommentImage>
           </div>
         </StatsAndTags>
@@ -337,7 +364,7 @@ const DetailPage: React.FC = () => {
       </ContentSection>
       <ActionBtnSection>
         {alertText && <Alert text={alertText} />}
-        <DetailPageButton text="좋아요" onClick={addLike} />
+        <DetailPageButton text="좋아요" isLiked={isLiked} onClick={toggleLike} />
         <DetailPageButton text="공유하기" onClick={copyUrlToClipBoard} />
         <DetailPageButton text="PDF로 내보내기" onClick={handleDownloadPdf} disabled={pdfLoading} />
       </ActionBtnSection>
@@ -365,21 +392,20 @@ const DetailPage: React.FC = () => {
           />
         </CommentWrite>
         <CommentView>
-          <p>댓글 ({comments?.pagination.totalComments})</p>
-          {comments?.data.map((comment, i) => (
-            <CommentBox
-              key={i}
-              {...comment}
-              isMyComment={loggedInID === comment.userID}
-              // isMyComment={true}
-              onClickDelete={() => {
-                // 추후에 아이디로 수정
-                setSelectedCommentId(comments.data[i]._id);
-                setIsCommentModalOpen(true);
-              }}
-              onCommentAdded={() => fetchComment(portfolioId)}
-            />
-          ))}
+          <p>댓글 ({totComment || 0})</p>
+          {Array.isArray(comments) &&
+            comments.map(comment => (
+              <CommentBox
+                key={comment._id} // index 대신 고유 ID 사용
+                {...comment}
+                isMyComment={loggedInID === comment.userID}
+                onClickDelete={() => {
+                  setSelectedCommentId(comment._id);
+                  setIsCommentModalOpen(true);
+                }}
+                onCommentAdded={() => fetchComment(portfolioId)}
+              />
+            ))}
         </CommentView>
       </CommentSection>
 
