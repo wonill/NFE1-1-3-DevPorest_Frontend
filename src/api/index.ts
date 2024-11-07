@@ -27,7 +27,8 @@ const api = ky.create({
           const token = localStorage.getItem("token");
           if (token) {
             localStorage.removeItem("token");
-            alert("만료되거나 잘못된 토큰입니다.");
+            alert("잘못된 혹은 만료된 토큰입니다.");
+            window.location.href = "/login";
           }
         }
       },
