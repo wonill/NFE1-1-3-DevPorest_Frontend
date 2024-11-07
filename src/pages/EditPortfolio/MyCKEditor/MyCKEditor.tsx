@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
+import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
 
 import "./MyCKEditor.css";
 import "ckeditor5/ckeditor5.css";
@@ -44,28 +44,21 @@ import {
 import translations from "ckeditor5/translations/ko.js";
 
 interface MyCKEditorProps {
-  onChange?: (content: string) => void;
+  onChange: (content: string) => void;
+  onReady: (editor: CKEditorType) => void;
   initialContent?: string;
 }
 
-const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
+const MyCKEditor = ({ onChange, onReady, initialContent }: MyCKEditorProps) => {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
-  // const [editorInstance, setEditorInstance] = useState<CKEditorType | null>(null);
 
   useEffect(() => {
     setIsLayoutReady(true);
 
     return () => setIsLayoutReady(false);
   }, []);
-
-  // initialContent가 변경될 때 에디터 내용 업데이트
-  // useEffect(() => {
-  //   if (editorInstance && initialContent !== undefined) {
-  //     editorInstance.setData(initialContent);
-  //   }
-  // }, [initialContent, editorInstance]);
 
   const editorConfig = {
     toolbar: {
@@ -237,12 +230,12 @@ const MyCKEditor = ({ onChange, initialContent }: MyCKEditorProps) => {
                     }
                     // console.log(data);
                   }}
-                  // onReady={editor => {
-                  //   setEditorInstance(editor);
-                  //   if (initialContent) {
-                  //     editor.setData(initialContent);
-                  //   }
-                  // }}
+                  onReady={editor => {
+                    onReady(editor);
+                    if (initialContent) {
+                      editor.setData(initialContent);
+                    }
+                  }}
                 />
               )}
             </div>

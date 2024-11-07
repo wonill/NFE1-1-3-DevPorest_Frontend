@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
 import { EditPortfolioPageWrapper } from "./EditPortfolioPage.styles";
 import Tag from "../../components/Tag/Tag";
 import Button from "../../components/Button/Button";
@@ -32,6 +33,7 @@ const EditPortfolioPage = () => {
   // 화면에 표시할 jobGroup.job을 위한 별도의 상태 -> post 요청 시에는 jobGroup._id를 사용
   const [displayJobGroup, setDisplayJobGroup] = useState<string>("");
   const [newLink, setNewLink] = useState<string>("");
+  const [editorInstance, setEditorInstance] = useState<CKEditorType | null>(null);
 
   // 포트폴리오 데이터 불러오기
   useEffect(() => {
@@ -41,7 +43,7 @@ const EditPortfolioPage = () => {
       try {
         const response = await getPortfolio(portfolioId);
         const portfolioData = response.data;
-        //console.log("portfolioData:", portfolioData);
+
         if (portfolioData) {
           setFormData({
             title: portfolioData.title,
@@ -53,13 +55,18 @@ const EditPortfolioPage = () => {
             jobGroup: portfolioData.jobGroup,
             links: portfolioData.links || [],
           });
-        }
 
-        // jobGroup 표시 이름 설정
-        const selectedJobGroup = jobGroupList.find(job => job.job === portfolioData?.jobGroup);
-        if (selectedJobGroup) {
-          setDisplayJobGroup(selectedJobGroup.job);
-          handleInputChange("jobGroup", selectedJobGroup._id); // 수정 api 요청시에는 _id를 사용
+          // 에디터 내용 업데이트
+          if (editorInstance) {
+            editorInstance.setData(portfolioData.contents);
+          }
+
+          // jobGroup 표시 이름 설정
+          const selectedJobGroup = jobGroupList.find(job => job.job === portfolioData?.jobGroup);
+          if (selectedJobGroup) {
+            setDisplayJobGroup(selectedJobGroup.job);
+            handleInputChange("jobGroup", selectedJobGroup._id); // 수정 api 요청시에는 _id를 사용
+          }
         }
       } catch (error) {
         alert("포트폴리오 데이터를 불러오는데 실패했습니다.");
@@ -258,6 +265,7 @@ const EditPortfolioPage = () => {
         <div className="editor">
           <MyCKEditor
             onChange={(content: string) => handleInputChange("contents", content)}
+            onReady={editor => setEditorInstance(editor)}
             initialContent={formData.contents}
           />
         </div>

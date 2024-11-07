@@ -116,6 +116,10 @@ export const ContentSection = styled.section`
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
     object-fit: contain;
   }
+
+  .ck-content {
+    max-height: fit-content;
+  }
 `;
 
 export const ActionBtnSection = styled.section`

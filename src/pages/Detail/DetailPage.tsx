@@ -17,6 +17,7 @@ import {
   CommentView,
   Indicator,
 } from "./DetailPage.styles";
+import "ckeditor5/ckeditor5.css";
 import noImg from "../../assets/no_image.svg";
 import TechStack from "../../components/TechStack/TechStack";
 import Tag from "../../components/Tag/Tag";
@@ -276,7 +277,9 @@ const DetailPage: React.FC = () => {
       <ContentSection>
         <img src={portfolioData?.thumbnailImage || noImg} />
         <p style={{ height: "5rem" }} />
-        {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}
+        <div className="ck-content">
+          {portfolioData?.contents ? HTMLReactParser(portfolioData.contents) : ""}
+        </div>
       </ContentSection>
       <ActionBtnSection>
         {alertText && <Alert text={alertText} />}
