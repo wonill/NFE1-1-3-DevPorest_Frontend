@@ -38,7 +38,6 @@ import { UserApiResType, UserProfileResType } from "../../types/api-types/UserTy
 import { useNavigate, useParams } from "react-router-dom";
 import useStoreSearchPage from "../../store/store-search-page";
 import { ITechStackType } from "./../../types/api-types/TechStackType";
-import { useTechStacksAndJobGroups } from "../../hooks/useTechStacksAndJobGroups";
 import Alert from "../../components/Alert/Alert";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -61,7 +60,6 @@ const DetailPage: React.FC = () => {
   const [isLiked, setIsLiked] = useState<boolean>();
   const [likeCount, setLikeCount] = useState<number>();
   const { setSearchParams } = useStoreSearchPage();
-  const { jobGroupList } = useTechStacksAndJobGroups();
   const pdfRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
 
@@ -229,10 +227,9 @@ const DetailPage: React.FC = () => {
   };
 
   const handleTechStackClick = (item: ITechStackType) => {
-    const selectedJobGroup = jobGroupList.filter(jobGroup => jobGroup._id === item.jobCode);
     setSearchParams({
       techStacks: item.skill,
-      jobGroup: selectedJobGroup[0].job,
+      jobGroup: "all",
       keyword: "",
       searchType: "title",
     });
