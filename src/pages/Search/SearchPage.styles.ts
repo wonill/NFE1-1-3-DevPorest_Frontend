@@ -140,7 +140,23 @@ export const PortfolioSection = styled.section`
   }
 `;
 
-export const Indicator = styled.div`
-  height: 20px;
-  margin: 20px 0;
+export const PaginationWrapper = styled.div`
+  display: flex;
+  margin: auto;
+  gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
+  padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+
+  > button {
+    outline: none;
+    background-color: translations;
+    font-size: ${({ theme }) => theme.FONT_SIZE.CONTENT};
+    font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+    border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+    border: 1px solid ${({ theme }) => theme.COLORS.MAIN_BG};
+    cursor: pointer;
+
+    &:hover {
+      border-color: ${({ theme }) => theme.COLORS.MAIN_GREEN};
+    }
+  }
 `;

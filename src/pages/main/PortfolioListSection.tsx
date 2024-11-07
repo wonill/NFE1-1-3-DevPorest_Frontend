@@ -25,37 +25,70 @@ import { useNavigate } from "react-router-dom";
 import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
 
 type SortMapType = {
-  [key: string] : string;
-}
+  [key: string]: string;
+};
 
-const sortMap:SortMapType = {
-  '최신순' : 'latest',
-  '좋아요순' : 'likes',
-  '조회수순' : 'views'
-}
-
+const sortMap: SortMapType = {
+  최신순: "latest",
+  좋아요순: "likes",
+  조회수순: "views",
+};
 
 const PortfolioListSection = () => {
   const navigate = useNavigate();
   const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
   const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
-  const [selectedSortOption, setSelectedSortOption] =
-    useState<string>("최신순");
+  const [selectedSortOption, setSelectedSortOption] = useState<string>("최신순");
   const [jobGroups2, setJobGroups] = useState<JobGroupType[] | null>(null);
   const [techStacks2, setTechStacks] = useState<ITechStackType[] | null>(null);
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[]>();
+  const [flag, setFlag] = useState(false);
   const { searchParams, setSearchParams } = useStoreSearchPage();
-  
+
+  useEffect(() => {
+    if (!flag) {
+      setFlag(true);
+      fetchInitialPortfolio();
+      return;
+    }
+    fetchPortfolio();
+  }, [searchParams]);
+
+  useEffect(() => {
+    const fetchJobGroup = async () => {
+      const jobGroupData = await getJobGroup();
+      if (Array.isArray(jobGroupData)) setJobGroups(jobGroupData);
+    };
+
+    const fetchTechStacks = async () => {
+      const techStackData = await getTechStacks();
+      if (Array.isArray(techStackData)) {
+        setTechStacks(techStackData);
+        setFilteredTechStacks(techStackData);
+      }
+    };
+
+    fetchJobGroup();
+    fetchTechStacks();
+  }, []);
+
+  const fetchPortfolio = async () => {
+    const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
+  };
+
   const fetchInitialPortfolio = async () => {
-    const portfolioData = await getPortfolios(buildSearchQuery({
-      jobGroup: "all",
-      techStacks: "",
-      searchType: "title",
-      keyword: "",
-      sort: "latest",
-      page: 1,
-      limit: 10,
-    },));
+    const portfolioData = await getPortfolios(
+      buildSearchQuery({
+        jobGroup: "all",
+        techStacks: "",
+        searchType: "title",
+        keyword: "",
+        sort: "latest",
+        page: 1,
+        limit: 10,
+      }),
+    );
     setSearchParams({
       jobGroup: "all",
       techStacks: "",
@@ -66,40 +99,7 @@ const PortfolioListSection = () => {
       limit: 10,
     });
     if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
-  }
-
-  const fetchPortfolio = async () => {
-    const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
-    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
   };
-
-  useEffect(() => {
-    console.log('searchParams', searchParams);
-  }, [searchParams])
-
-    useEffect(() => {
-      fetchPortfolio();
-    }, [searchParams.techStacks, searchParams.jobGroup, searchParams.sort]);
-
-    useEffect(() => {
-      const fetchJobGroup = async () => {
-        const jobGroupData = await getJobGroup();
-        if (Array.isArray(jobGroupData)) setJobGroups(jobGroupData);
-      };
-  
-      const fetchTechStacks = async () => {
-        const techStackData = await getTechStacks();
-        if (Array.isArray(techStackData)) {
-          setTechStacks(techStackData);
-          setFilteredTechStacks(techStackData);
-        }
-      };
-  
-      fetchJobGroup();
-      fetchTechStacks();
-      fetchInitialPortfolio();
-    }, []);
-
 
   const handleCardClick = (portfolio_id: string) => {
     navigate(`/detail/${portfolio_id}`);
@@ -114,8 +114,7 @@ const PortfolioListSection = () => {
     if (job.job === searchParams.jobGroup) return;
 
     const updatedJobGroup = job.job === "All" ? "all" : job.job;
-    setSearchParams({ jobGroup: updatedJobGroup });
-    setSearchParams({ techStacks: "" });
+    setSearchParams({ jobGroup: updatedJobGroup, techStacks: "", page: 1 });
     setSelectedTechStack([]);
 
     if (job.job === "All") {
@@ -128,53 +127,50 @@ const PortfolioListSection = () => {
 
   const handleTechStackClick = (techStack: string) => {
     const currentTechStacks = searchParams.techStacks.split(",").map(stack => stack.trim());
-    
+
     if (currentTechStacks.includes(techStack)) {
-      const updatedTechStacks = currentTechStacks
-      .filter(stack => stack !== techStack)
-        .join(", ")
-        .trim();
-        setSearchParams({ techStacks: updatedTechStacks });
+      const updatedTechStacks = currentTechStacks.filter(stack => stack !== techStack).join(",");
+      setSearchParams({ techStacks: updatedTechStacks });
       setSelectedTechStack(selectedTechStack!.filter(stack => stack !== techStack));
     } else {
       const updatedTechStacks = [...currentTechStacks, techStack].filter(Boolean).join(",").trim();
       setSearchParams({ techStacks: updatedTechStacks });
-      selectedTechStack ? setSelectedTechStack([...selectedTechStack, techStack]) : setSelectedTechStack([techStack]);
+      selectedTechStack
+        ? setSelectedTechStack([...selectedTechStack, techStack])
+        : setSelectedTechStack([techStack]);
     }
   };
 
-  useEffect(() => {
-  }, [selectedSortOption]);
-
   const handleSortChange = (option: string) => {
     setSelectedSortOption(option);
-    setSearchParams({sort: sortMap[option]})
+    setSearchParams({ sort: sortMap[option] });
   };
+
   return (
     <StyledPortfolioListSection>
       <SectionTitle>다양한 포트폴리오를 확인해보세요</SectionTitle>
       <JobFilterContainer>
-            {jobGroups2?.map(job => (
-              <StyledSwiperSlide key={job._id}>
-                <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job)} />
-              </StyledSwiperSlide>
-            ))}
+        {jobGroups2?.map(job => (
+          <StyledSwiperSlide key={job._id}>
+            <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job)} />
+          </StyledSwiperSlide>
+        ))}
       </JobFilterContainer>
       <TechStackWrapper>
-          <Swiper slidesPerView="auto" spaceBetween={10}>
-            {filteredTechStacks?.map((item, i) => (
-              <StyledSwiperSlide key={i}>
-                <TechStackWrapper>
-                  <TechStack2
-                    content={{ ...item }}
-                    isActive={handleActive(item.skill)}
-                    onClick={() => handleTechStackClick(item.skill)}
-                  />
-                </TechStackWrapper>
-              </StyledSwiperSlide>
-            ))}
-          </Swiper>
-        </TechStackWrapper>
+        <Swiper slidesPerView="auto" spaceBetween={10}>
+          {filteredTechStacks?.map((item, i) => (
+            <StyledSwiperSlide key={i}>
+              <TechStackWrapper>
+                <TechStack2
+                  content={{ ...item }}
+                  isActive={handleActive(item.skill)}
+                  onClick={() => handleTechStackClick(item.skill)}
+                />
+              </TechStackWrapper>
+            </StyledSwiperSlide>
+          ))}
+        </Swiper>
+      </TechStackWrapper>
       <SortSelect>
         <SortingDropdown
           options={["최신순", "조회수순", "좋아요순"]}
@@ -197,10 +193,11 @@ const PortfolioListSection = () => {
           />
         ))}
       </PortfolioList>
-      {portfolioList?.length === 0 && 
-      <StyledEmptyPortfolio>
-        <EmptyPortfolio text="등록된 작업물이 없습니다." />
-      </StyledEmptyPortfolio>}
+      {portfolioList?.length === 0 && (
+        <StyledEmptyPortfolio>
+          <EmptyPortfolio text="등록된 작업물이 없습니다." />
+        </StyledEmptyPortfolio>
+      )}
     </StyledPortfolioListSection>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Main,
@@ -11,7 +11,7 @@ import {
   StyledSwiperSlide,
   Sorting,
   PortfolioSection,
-  Indicator,
+  PaginationWrapper,
 } from "./SearchPage.styles";
 import Tag from "../../components/Tag/Tag";
 import TechStack2 from "../../components/TechStack2/TechStack2";
@@ -45,7 +45,6 @@ const SearchPage: React.FC = () => {
   const [inputTerm, setInputTerm] = useState<string>("");
   const [selectedTechStack, setSelectedTechStack] = useState<string[]>([]);
 
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { searchParams, setSearchParams } = useStoreSearchPage();
 
   useEffect(() => {
@@ -57,21 +56,7 @@ const SearchPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) loadMoreData();
-      });
-    });
-
-    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
-
-    return () => {
-      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
-    };
-  }, [portfolioList]);
-
-  useEffect(() => {
-    if (searchParams.page === 1) fetchPortfolio();
+    fetchPortfolio();
 
     if (jobGroupList) {
       const selectedJobGroup = jobGroupList.find(job => job.job === searchParams.jobGroup);
@@ -94,24 +79,13 @@ const SearchPage: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (searchParams.page === 1) return;
-
-    const fetchNextPortfolio = async () => {
-      const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
-
-      if ("data" in portfolioData!)
-        setPortfolioList(prev => [...(prev || []), ...portfolioData.data]);
-
-      if ("pagination" in portfolioData!) setPagination(portfolioData.pagination!);
-    };
-
-    fetchNextPortfolio();
-  }, [searchParams.page]);
-
-  const loadMoreData = async () => {
-    if (pagination?.hasNextPage && pagination.totalCount > 5)
-      setSearchParams({ page: searchParams.page + 1 });
-  };
+    // 검색 파라미터에서 기술 스택을 가져와서 상태를 설정합니다.
+    const techStacks = searchParams.techStacks
+      .split(",")
+      .map(stack => stack.trim())
+      .filter(Boolean);
+    setSelectedTechStack(techStacks);
+  }, [searchParams.techStacks]);
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
@@ -166,8 +140,11 @@ const SearchPage: React.FC = () => {
   };
 
   const handleActive = (skill: string) => {
-    if (selectedTechStack?.includes(skill)) return true;
-    return false;
+    return selectedTechStack.includes(skill);
+  };
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ ...searchParams, page });
   };
 
   return (
@@ -226,7 +203,7 @@ const SearchPage: React.FC = () => {
           <Select
             onChange={e => {
               const sortValue = e.target.value;
-              setSearchParams({ sort: sortValue, page: 1 });
+              setSearchParams({ sort: sortValue });
             }}
           >
             <option value="latest">최신순</option>
@@ -251,9 +228,20 @@ const SearchPage: React.FC = () => {
           />
         ))}
       </PortfolioSection>
+      {pagination && (
+        <PaginationWrapper>
+          {Array.from({ length: pagination.totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              disabled={searchParams.page === index + 1}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </PaginationWrapper>
+      )}
       {portfolioList?.length === 0 && <EmptyPortfolio text="검색 결과가 없습니다." />}
-
-      <Indicator ref={loadMoreRef} />
     </Main>
   );
 };

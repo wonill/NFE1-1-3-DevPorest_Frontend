@@ -15,8 +15,7 @@ export const Button = styled.button<{ color: string; isActive: boolean }>`
   box-sizing: border-box;
 
   &:hover {
-    background-color: ${({ isActive, theme }) =>
-      isActive ? "#FFFFFF" : theme.COLORS.LIGHTGREEN_BG};
+    background-color: ${({ theme }) => theme.COLORS.LIGHTGREEN_SUB};
 
     > p {
       color: ${({ isActive }) => isActive && "#201E50"};

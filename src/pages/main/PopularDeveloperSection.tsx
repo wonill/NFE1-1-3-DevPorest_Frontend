@@ -20,11 +20,10 @@ const PopularDeveloperSection = () => {
   useEffect(() => {
     const fetchPopularUserList = async () => {
       const result = await getPopularUserProfile();
-      console.log(result);
       if (Array.isArray(result)) setPopularUserList(result);
-    }
+    };
     fetchPopularUserList();
-  }, [])
+  }, []);
   return (
     <StyledPorpularDeveloperSection>
       <PorpularDeveloperSectionWrapper>
