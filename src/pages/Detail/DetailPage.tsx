@@ -32,7 +32,7 @@ import CommentInput from "../../components/CommentInput/CommentInput";
 import CommentBox from "../../components/CommentBox/CommentBox";
 import Modal from "../../components/Modal/Modal";
 import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
-import { CommentApiResType } from "../../types/api-types/CommentType";
+import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
 import userApi from "../../api/index";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
 import { useNavigate, useParams } from "react-router-dom";
@@ -49,7 +49,8 @@ const DetailPage: React.FC = () => {
   const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
   const [portfolioUserId, setPortfolioUserId] = useState<string>();
   const [commentPage] = useState(1);
-  const [comments, setComments] = useState<CommentApiResType>();
+  const [totComment, setTotComment] = useState<number>();
+  const [comments, setComments] = useState<CommentResType[]>([]);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -103,21 +104,22 @@ const DetailPage: React.FC = () => {
       const response = await userApi.get(`comments/${portfolio_id}?page=${commentPage}?limit=20`);
       const jsonData: CommentApiResType = await response.json();
 
-      // 상태 업데이트를 함수형으로 변경하여 최신 상태 보장
-      setComments(prevComments => {
-        if (JSON.stringify(prevComments) === JSON.stringify(jsonData)) {
-          return { ...jsonData }; // 강제 리렌더링을 위해 새로운 객체 반환
-        }
-        return jsonData;
-      });
-      console.log("commentfetch:", jsonData);
-      // if (comments?.to) console.log("이미지", comments[0]._id);
       if (!jsonData.success) {
         throw new Error(`Server responded with ${jsonData.success}`);
       }
+
+      // 데이터가 배열인지 확인하고 타입 안전하게 업데이트
+      if (Array.isArray(jsonData.data)) {
+        setComments(jsonData.data);
+        setTotComment(jsonData.pagination.totalComments);
+      }
+
       return jsonData.data;
     } catch (err) {
       console.error("상세 에러 정보:", err);
+      // 에러 발생시 빈 배열로 설정
+      setComments([]);
+      return [];
     }
   };
 
@@ -336,7 +338,7 @@ const DetailPage: React.FC = () => {
             )}
             <CommentImage>
               <img src={comment} alt="" />
-              {comments?.pagination.totalComments}
+              {totComment}
             </CommentImage>
           </div>
         </StatsAndTags>
@@ -388,21 +390,20 @@ const DetailPage: React.FC = () => {
           />
         </CommentWrite>
         <CommentView>
-          <p>댓글 ({comments?.pagination.totalComments})</p>
-          {comments?.data.map((comment, i) => (
-            <CommentBox
-              key={i}
-              {...comment}
-              isMyComment={loggedInID === comment.userID}
-              // isMyComment={true}
-              onClickDelete={() => {
-                // 추후에 아이디로 수정
-                setSelectedCommentId(comments.data[i]._id);
-                setIsCommentModalOpen(true);
-              }}
-              onCommentAdded={() => fetchComment(portfolioId)}
-            />
-          ))}
+          <p>댓글 ({totComment || 0})</p>
+          {Array.isArray(comments) &&
+            comments.map((comment, i) => (
+              <CommentBox
+                key={comment._id} // index 대신 고유 ID 사용
+                {...comment}
+                isMyComment={loggedInID === comment.userID}
+                onClickDelete={() => {
+                  setSelectedCommentId(comment._id);
+                  setIsCommentModalOpen(true);
+                }}
+                onCommentAdded={() => fetchComment(portfolioId)}
+              />
+            ))}
         </CommentView>
       </CommentSection>
 
