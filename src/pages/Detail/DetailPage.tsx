@@ -134,6 +134,8 @@ const DetailPage: React.FC = () => {
         .post(`portfolios/${portfolio_id}/like`)
         .json();
       setLikeCount(res.likeCount);
+      setAlertText(isLiked ? "좋아요 취소되었습니다" : "좋아요 추가되었습니다");
+      setTimeout(() => setAlertText(""), 3000);
       setIsLiked(!isLiked);
     } catch (err) {
       console.error("상세 에러 정보:", err);
