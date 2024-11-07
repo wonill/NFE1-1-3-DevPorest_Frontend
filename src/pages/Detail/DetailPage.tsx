@@ -392,7 +392,7 @@ const DetailPage: React.FC = () => {
         <CommentView>
           <p>댓글 ({totComment || 0})</p>
           {Array.isArray(comments) &&
-            comments.map((comment, i) => (
+            comments.map(comment => (
               <CommentBox
                 key={comment._id} // index 대신 고유 ID 사용
                 {...comment}
