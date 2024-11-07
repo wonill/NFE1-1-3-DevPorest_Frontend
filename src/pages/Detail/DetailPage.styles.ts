@@ -63,7 +63,7 @@ export const StatsAndTags = styled.div`
   justify-content: space-between;
   align-items: flex-start;
 
-  & > div:first-child {
+  & > div:first-of-type {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
