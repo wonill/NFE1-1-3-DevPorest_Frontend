@@ -100,7 +100,14 @@ const DetailPage: React.FC = () => {
     try {
       const response = await userApi.get(`comments/${portfolio_id}?page=${commentPage}?limit=20`);
       const jsonData: CommentApiResType = await response.json();
-      setComments(jsonData);
+
+      // 상태 업데이트를 함수형으로 변경하여 최신 상태 보장
+      setComments(prevComments => {
+        if (JSON.stringify(prevComments) === JSON.stringify(jsonData)) {
+          return { ...jsonData }; // 강제 리렌더링을 위해 새로운 객체 반환
+        }
+        return jsonData;
+      });
       console.log("commentfetch:", jsonData);
       // if (comments?.to) console.log("이미지", comments[0]._id);
       if (!jsonData.success) {

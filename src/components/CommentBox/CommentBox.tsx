@@ -89,6 +89,7 @@ const CommentBox: React.FC<CommentBoxProps> = ({
       } catch (error) {
         setAlertText("댓글 수정 중 오류 발생");
         setTimeout(() => setAlertText(""), 3000);
+        setInputText(content);
         onCommentAdded();
         console.error("댓글 수정 중 에러 발생:", error);
         // throw error;
