@@ -5,7 +5,7 @@ export const Button = styled.button<{ color: string; isActive: boolean }>`
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
   outline: none;
   border: 1px solid ${({ theme }) => theme.COLORS.MAIN_GRAY};
-  background-color: ${({ isActive }) => (isActive ? `#88CD34` : "#FFFFFF")};
+  background-color: ${({ isActive }) => (isActive ? "#615aec" : "#FFFFFF")};
   display: flex;
   justify-content: center;
   align-items: center;

@@ -152,7 +152,16 @@ const PortfolioListSection = () => {
       <JobFilterContainer>
         {jobGroups2?.map(job => (
           <StyledSwiperSlide key={job._id}>
-            <Tag key={job._id} content={job.job} onClick={() => handleTagClick(job)} />
+            <Tag
+              key={job._id}
+              content={job.job}
+              onClick={() => handleTagClick(job)}
+              isActive={
+                searchParams.jobGroup === "all"
+                  ? job.job === "All"
+                  : job.job === searchParams.jobGroup
+              }
+            />
           </StyledSwiperSlide>
         ))}
       </JobFilterContainer>
