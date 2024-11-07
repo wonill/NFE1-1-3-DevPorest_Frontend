@@ -314,11 +314,13 @@ const DetailPage: React.FC = () => {
               key={i}
               {...comment}
               isMyComment={loggedInID === comment.userID}
+              // isMyComment={true}
               onClickDelete={() => {
                 // 추후에 아이디로 수정
                 setSelectedCommentId(comments.data[i]._id);
                 setIsCommentModalOpen(true);
               }}
+              onCommentAdded={() => fetchComment(portfolioId)}
             />
           ))}
         </CommentView>
