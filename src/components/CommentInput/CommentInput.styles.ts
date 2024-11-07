@@ -26,6 +26,7 @@ export const CommentInputWrapper = styled.div`
     font-weight: inherit;
     text-overflow: wrap;
     overflow: hidden;
+    resize: vertical;
   }
 
   .textBox:focus {
