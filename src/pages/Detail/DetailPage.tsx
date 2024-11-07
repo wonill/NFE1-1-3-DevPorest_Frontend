@@ -76,7 +76,6 @@ const DetailPage: React.FC = () => {
     try {
       const response = await userApi.get(`portfolios/${portfolio_id}`);
       const jsonData: PortfolioResType = await response.json();
-      console.log("pppppppp", jsonData);
 
       setPortfolioData(prev => {
         if (!prev) return jsonData.data;
@@ -86,8 +85,6 @@ const DetailPage: React.FC = () => {
         };
       });
       setPortfolioUserId(jsonData.data?.userInfo.userID);
-
-      console.log("이미지", portfolioData?.userInfo.profileImage);
 
       if (!jsonData.success) {
         throw new Error(`Server responded with ${jsonData.message}`);
