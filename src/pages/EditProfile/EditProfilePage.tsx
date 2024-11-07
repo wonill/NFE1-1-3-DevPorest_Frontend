@@ -200,7 +200,7 @@ const EditProfilePage: React.FC = () => {
     });
   };
   const handleSubmit = async () => {
-    let profileImgUrl: string = "";
+    let profileImgUrl: string = previewProfileImg || "";
     let jobCode: string = jobGroups?.find(job => job.job === userInfo.jobGroup)?._id ?? "";
 
     if (!jobCode) {
