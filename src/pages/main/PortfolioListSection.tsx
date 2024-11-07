@@ -23,7 +23,6 @@ import { JobGroupType } from "../../types/api-types/JobGroup";
 import { getTechStacks } from "../../api/get-tech-stacks";
 import { useNavigate } from "react-router-dom";
 import EmptyPortfolio from "../../components/EmptyPortfolio/EmptyPortfolio";
-import { useLocation } from "react-router-dom";
 
 type SortMapType = {
   [key: string]: string;
@@ -37,28 +36,21 @@ const sortMap: SortMapType = {
 
 const PortfolioListSection = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [filteredTechStacks, setFilteredTechStacks] = useState<ITechStackType[] | null>(null);
   const [selectedTechStack, setSelectedTechStack] = useState<string[] | null>(null);
   const [selectedSortOption, setSelectedSortOption] = useState<string>("최신순");
   const [jobGroups2, setJobGroups] = useState<JobGroupType[] | null>(null);
   const [techStacks2, setTechStacks] = useState<ITechStackType[] | null>(null);
   const [portfolioList, setPortfolioList] = useState<DetailPortfolioType[]>();
+  const [flag, setFlag] = useState(false);
   const { searchParams, setSearchParams } = useStoreSearchPage();
 
   useEffect(() => {
-    setSearchParams({
-      jobGroup: "all",
-      techStacks: "",
-      searchType: "title",
-      keyword: "",
-      sort: "latest",
-      page: 1,
-      limit: 10,
-    });
-  }, [location]);
-
-  useEffect(() => {
+    if (!flag) {
+      setFlag(true);
+      fetchInitialPortfolio();
+      return;
+    }
     fetchPortfolio();
   }, [searchParams]);
 
@@ -82,6 +74,30 @@ const PortfolioListSection = () => {
 
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
+    if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
+  };
+
+  const fetchInitialPortfolio = async () => {
+    const portfolioData = await getPortfolios(
+      buildSearchQuery({
+        jobGroup: "all",
+        techStacks: "",
+        searchType: "title",
+        keyword: "",
+        sort: "latest",
+        page: 1,
+        limit: 10,
+      }),
+    );
+    setSearchParams({
+      jobGroup: "all",
+      techStacks: "",
+      searchType: "title",
+      keyword: "",
+      sort: "latest",
+      page: 1,
+      limit: 10,
+    });
     if ("data" in portfolioData!) setPortfolioList(portfolioData.data);
   };
 
@@ -125,12 +141,11 @@ const PortfolioListSection = () => {
     }
   };
 
-  console.log(searchParams);
-
   const handleSortChange = (option: string) => {
     setSelectedSortOption(option);
     setSearchParams({ sort: sortMap[option] });
   };
+
   return (
     <StyledPortfolioListSection>
       <SectionTitle>다양한 포트폴리오를 확인해보세요</SectionTitle>
