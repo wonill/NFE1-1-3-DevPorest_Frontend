@@ -72,19 +72,6 @@ export const StatsAndTags = styled.div`
   }
 `;
 
-export const CommentImage = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICKER};
-  color: #7c8484;
-  margin-left: 4px;
-
-  img {
-    margin-right: 4px;
-  }
-`;
-
 export const LinksSection = styled.section``;
 
 export const Link = styled.div`
