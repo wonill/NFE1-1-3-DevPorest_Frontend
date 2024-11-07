@@ -78,6 +78,15 @@ const SearchPage: React.FC = () => {
     jobGroupList,
   ]);
 
+  useEffect(() => {
+    // 검색 파라미터에서 기술 스택을 가져와서 상태를 설정합니다.
+    const techStacks = searchParams.techStacks
+      .split(",")
+      .map(stack => stack.trim())
+      .filter(Boolean);
+    setSelectedTechStack(techStacks);
+  }, [searchParams.techStacks]);
+
   const fetchPortfolio = async () => {
     const portfolioData = await getPortfolios(buildSearchQuery(searchParams));
 
@@ -131,8 +140,7 @@ const SearchPage: React.FC = () => {
   };
 
   const handleActive = (skill: string) => {
-    if (selectedTechStack?.includes(skill)) return true;
-    return false;
+    return selectedTechStack.includes(skill);
   };
 
   const handlePageChange = (page: number) => {
