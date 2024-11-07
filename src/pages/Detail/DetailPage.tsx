@@ -23,7 +23,6 @@ import TechStack from "../../components/TechStack/TechStack";
 import Tag from "../../components/Tag/Tag";
 // import { techStacks, dummyTags2, links, dummyContents, dummyComments } from "../../data/dummyData";
 import LikesAndViews from "../../components/LikesAndViews/LikesAndViews";
-import comment from "../../assets/comment.svg";
 import link from "../../assets/link.svg";
 import HTMLReactParser from "html-react-parser/lib/index";
 import DetailPageButton from "../../components/DetailPageButton/DetailPageButton";
@@ -317,15 +316,13 @@ const DetailPage: React.FC = () => {
         <StatsAndTags>
           <div>
             {portfolioData?.techStack
-              ? portfolioData.techStack
-                  .slice(0, 3)
-                  .map(techStack => (
-                    <TechStack
-                      key={techStack.skill}
-                      content={{ ...techStack }}
-                      onClick={() => handleTechStackClick(techStack)}
-                    />
-                  ))
+              ? portfolioData.techStack.map(techStack => (
+                  <TechStack
+                    key={techStack.skill}
+                    content={{ ...techStack }}
+                    onClick={() => handleTechStackClick(techStack)}
+                  />
+                ))
               : ""}
             {portfolioData?.tags?.map((tag, i) => (
               <Tag key={i} content={tag} onClick={() => handleTagClick(tag)} />
@@ -333,14 +330,14 @@ const DetailPage: React.FC = () => {
           </div>
           <div>
             {portfolioData ? (
-              <LikesAndViews views={portfolioData?.view} likes={likeCount || 0} />
+              <LikesAndViews
+                views={portfolioData?.view}
+                likes={likeCount || 0}
+                comments={totComment || 0}
+              />
             ) : (
               ""
             )}
-            <CommentImage>
-              <img src={comment} alt="" />
-              {totComment}
-            </CommentImage>
           </div>
         </StatsAndTags>
       </UserProfileSection>
