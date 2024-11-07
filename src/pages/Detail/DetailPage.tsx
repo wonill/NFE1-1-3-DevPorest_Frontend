@@ -6,7 +6,6 @@ import {
   UserImage,
   Title,
   StatsAndTags,
-  CommentImage,
   LinksSection,
   Link,
   ContentSection,
