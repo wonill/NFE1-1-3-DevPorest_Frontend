@@ -111,6 +111,15 @@ const ProfilePage = () => {
   }, []);
 
   useEffect(() => {
+    fetchUserProfile();
+    if (activeTab === "나의 포레스트") {
+      fetchUserPortfolio();
+    } else {
+      fetchUserLikePortfolio();
+    }
+  }, [userId]); // userId가 변경될 때마다 useEffect 실행
+
+  useEffect(() => {
     console.log(activeTab);
     setUserPortfolioData([]);
     setLikePortfolioData([]);
