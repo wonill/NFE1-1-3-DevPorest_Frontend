@@ -108,7 +108,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     console.log(activeTab);
