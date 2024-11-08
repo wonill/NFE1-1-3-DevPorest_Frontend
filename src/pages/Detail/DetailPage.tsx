@@ -33,6 +33,7 @@ import Modal from "../../components/Modal/Modal";
 import { DetailPortfolioType, PortfolioResType } from "../../types/api-types/PortfolioType";
 import { CommentApiResType, CommentResType } from "../../types/api-types/CommentType";
 import userApi from "../../api/index";
+import { deletePortfolio } from "../../api/delete-portfolio";
 import { UserApiResType, UserProfileResType } from "../../types/api-types/UserType";
 import { useNavigate, useParams } from "react-router-dom";
 import useStoreSearchPage from "../../store/store-search-page";
@@ -170,22 +171,20 @@ const DetailPage: React.FC = () => {
   }, [comments]);
 
   // 포트폴리오 삭제
-  const handlePortfolioDelete = () => {
+  const handlePortfolioDelete = async () => {
     setIsPortfolioModalOpen(false);
-    const deletePortfolio = async () => {
-      try {
-        if (!portfolioData?._id) {
-          throw new Error("Portfolio ID is missing");
-        }
-
-        const response = await userApi.delete(`/portfolios/${portfolioData._id}`).json();
-        return response;
-      } catch (error) {
-        console.error("포폴 삭제 중 에러 발생:", error);
-        throw error;
+    try {
+      if (!portfolioData?._id) {
+        throw new Error("Portfolio ID is missing");
       }
-    };
-    deletePortfolio();
+      const response = await deletePortfolio(portfolioData?._id);
+      alert("포트폴리오가 삭제되었습니다. 이전페이지로 이동합니다.");
+      navigate(-1); // 이전 페이지로 이동
+      return response;
+    } catch (error) {
+      console.error("포폴 삭제 중 에러 발생:", error);
+      throw error;
+    }
   };
 
   // 댓글 삭제
