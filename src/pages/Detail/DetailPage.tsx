@@ -129,6 +129,11 @@ const DetailPage: React.FC = () => {
   };
 
   const toggleLike = async () => {
+    if (!loggedInID) {
+      setAlertText("로그인하지 않은 유저입니다.");
+      setTimeout(() => setAlertText(""), 3000);
+      return;
+    }
     try {
       const res: { like: boolean; likeCount: number } = await userApi
         .post(`portfolios/${portfolio_id}/like`)
