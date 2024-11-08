@@ -21,7 +21,6 @@ import "ckeditor5/ckeditor5.css";
 import noImg from "../../assets/no_image.svg";
 import TechStack from "../../components/TechStack/TechStack";
 import Tag from "../../components/Tag/Tag";
-// import { techStacks, dummyTags2, links, dummyContents, dummyComments } from "../../data/dummyData";
 import LikesAndViews from "../../components/LikesAndViews/LikesAndViews";
 import comment from "../../assets/comment.svg";
 import link from "../../assets/link.svg";
@@ -44,9 +43,9 @@ import html2canvas from "html2canvas";
 
 const DetailPage: React.FC = () => {
   const { portfolio_id } = useParams(); // useParams로 id 받아오기
-  const [portfolioId, setPortfolioId] = useState<string>(portfolio_id || "");
+  // const [portfolioId, setPortfolioId] = useState<string>(portfolio_id || "");
   const [portfolioData, setPortfolioData] = useState<DetailPortfolioType | undefined>(undefined);
-  const [portfolioUserId, setPortfolioUserId] = useState<string>();
+  const [portfolioUserId, setPortfolioUserId] = useState<string>(); /////
   const [commentPage] = useState(1);
   const [totComment, setTotComment] = useState<number>();
   const [comments, setComments] = useState<CommentResType[]>([]);
@@ -88,6 +87,7 @@ const DetailPage: React.FC = () => {
         };
       });
       setPortfolioUserId(jsonData.data?.userInfo.userID);
+      setIsLiked(jsonData.data?.like);
 
       if (!jsonData.success) {
         throw new Error(`Server responded with ${jsonData.message}`);
@@ -97,7 +97,8 @@ const DetailPage: React.FC = () => {
     }
   };
 
-  const fetchComment = async (portfolio_id: string) => {
+  const fetchComment = async (portfolio_id: string | undefined) => {
+    if (!portfolio_id) console.log("fetchComment : portfolio_id가 존재하지 않습습니다!");
     try {
       const response = await userApi.get(`comments/${portfolio_id}?page=${commentPage}?limit=20`);
       const jsonData: CommentApiResType = await response.json();
@@ -134,37 +135,17 @@ const DetailPage: React.FC = () => {
       setLikeCount(res.likeCount);
       setAlertText(isLiked ? "좋아요 취소되었습니다" : "좋아요 추가되었습니다");
       setTimeout(() => setAlertText(""), 3000);
-      setIsLiked(!isLiked);
+      setIsLiked(res.like);
     } catch (err) {
       console.error("상세 에러 정보:", err);
     }
   };
-  const checkLike = async (portfolio_id: string) => {
-    try {
-      const res1: { like: boolean; likeCount: number } = await userApi
-        .post(`portfolios/${portfolio_id}/like`)
-        .json();
-      setIsLiked(!res1.like);
-      const res2: { like: boolean; likeCount: number } = await userApi
-        .post(`portfolios/${portfolio_id}/like`)
-        .json(); // 현재 상태 확인 후 다시 토글
-      setLikeCount(res2.likeCount);
-    } catch (err) {
-      console.error("상세 에러 정보:", err);
-    }
-  };
-  const isLikeChecked = useRef(false);
+
   useEffect(() => {
     if (!!localStorage.getItem("token")) fetchLoggedInUser(); // 로그인 토큰 존재시 불러오기
-    console.log(portfolioId);
-    if (portfolioId) {
-      setPortfolioId(portfolioId);
-      fetchPortfolio(portfolioId);
-      fetchComment(portfolioId);
-      if (!isLikeChecked.current) {
-        checkLike(portfolioId);
-        isLikeChecked.current = true;
-      }
+    if (portfolio_id) {
+      fetchPortfolio(portfolio_id);
+      fetchComment(portfolio_id);
     }
   }, []);
 
@@ -217,7 +198,7 @@ const DetailPage: React.FC = () => {
           throw new Error("Comment ID is missing");
         }
         await userApi.delete(`comments/${selectedCommentId}`).json();
-        fetchComment(portfolioId);
+        if (portfolio_id) fetchComment(portfolio_id);
       } catch (error) {
         console.error("댓굴 삭제 중 에러 발생:", error);
         throw error;
@@ -291,7 +272,7 @@ const DetailPage: React.FC = () => {
       }
 
       // PDF 저장
-      pdf.save(`${portfolioId}.pdf`);
+      pdf.save(`${portfolio_id}.pdf`);
       setPdfLoading(false);
     }
   };
@@ -371,7 +352,7 @@ const DetailPage: React.FC = () => {
             text="수정"
             colorType={1}
             onClick={() => {
-              navigate(`/edit_portfolio/${portfolioId}`);
+              navigate(`/edit_portfolio/${portfolio_id}`);
             }}
           />
           <Button text="삭제" colorType={1} onClick={() => setIsPortfolioModalOpen(true)} />
@@ -383,9 +364,9 @@ const DetailPage: React.FC = () => {
         <CommentWrite>
           <p>댓글 작성하기</p>
           <CommentInput
-            portfolioID={portfolioId as string}
+            portfolioID={portfolio_id as string}
             isLoggedIn={!!loggedInID}
-            onCommentAdded={() => fetchComment(portfolioId)}
+            onCommentAdded={() => fetchComment(portfolio_id)}
           />
         </CommentWrite>
         <CommentView>
@@ -400,7 +381,7 @@ const DetailPage: React.FC = () => {
                   setSelectedCommentId(comment._id);
                   setIsCommentModalOpen(true);
                 }}
-                onCommentAdded={() => fetchComment(portfolioId)}
+                onCommentAdded={() => fetchComment(portfolio_id)}
               />
             ))}
         </CommentView>

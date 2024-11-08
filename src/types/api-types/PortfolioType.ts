@@ -18,6 +18,7 @@ export interface DetailPortfolioType extends PortfolioType {
   view: number; // 조회수
   createdAt: string; // 생성날짜
   likeCount: number; // 좋아요 수
+  like: boolean; // 현재 사용자 like 여부
 }
 
 /**
