@@ -85,8 +85,7 @@ const ProfilePage = () => {
   const fetchUserPortfolio = async () => {
     const userPortfolio = await getUserPortfolio(userId!);
     console.log("유저 포트폴리오", userPortfolio);
-    if ("data" in userPortfolio)
-      setUserPortfolioData(prev => (prev ? [...prev, ...userPortfolio.data] : userPortfolio.data));
+    if ("data" in userPortfolio) setUserPortfolioData(userPortfolio.data);
     if ("pagination" in userPortfolio) setPagination(userPortfolio?.pagination);
   };
 
