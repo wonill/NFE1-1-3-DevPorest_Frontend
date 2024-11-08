@@ -65,6 +65,7 @@ const GraphSection = () => {
           <Graph
             data={frontStats}
             onClick={frontStats => {
+              if (frontStats.id === "기타") return;
               setSearchParams({ jobGroup: "all" });
               setSearchParams({ techStacks: String(frontStats.id) });
               navigate("/search");
@@ -76,6 +77,7 @@ const GraphSection = () => {
           <Graph
             data={backendStats}
             onClick={backendStats => {
+              if (backendStats.id === "기타") return;
               setSearchParams({ jobGroup: "all" });
               setSearchParams({ techStacks: String(backendStats.id) });
               navigate("/search");
