@@ -85,7 +85,8 @@ const ProfilePage = () => {
   const fetchUserPortfolio = async () => {
     const userPortfolio = await getUserPortfolio(userId!);
     console.log("유저 포트폴리오", userPortfolio);
-    if ("data" in userPortfolio) setUserPortfolioData(userPortfolio.data);
+    if ("data" in userPortfolio)
+      setUserPortfolioData(prev => (prev ? [...prev, ...userPortfolio.data] : userPortfolio.data));
     if ("pagination" in userPortfolio) setPagination(userPortfolio?.pagination);
   };
 
@@ -108,15 +109,6 @@ const ProfilePage = () => {
   useEffect(() => {
     fetchUserProfile();
   }, []);
-
-  useEffect(() => {
-    fetchUserProfile();
-    if (activeTab === "나의 포레스트") {
-      fetchUserPortfolio();
-    } else {
-      fetchUserLikePortfolio();
-    }
-  }, [userId]); // userId가 변경될 때마다 useEffect 실행
 
   useEffect(() => {
     console.log(activeTab);
