@@ -6,7 +6,7 @@ import commentImg from "../../assets/comment.svg";
 interface LikesAndViewsProps {
   views: number;
   likes: number;
-  comments: number;
+  comments?: number;
 }
 
 const LikesAndViews: React.FC<LikesAndViewsProps> = ({ views, likes, comments }) => {
@@ -18,10 +18,12 @@ const LikesAndViews: React.FC<LikesAndViewsProps> = ({ views, likes, comments })
       <span>
         <img src={likeImg} alt="좋아요" /> {likes}
       </span>
-      <span>
-        <img src={commentImg} alt="" />
-        {comments}
-      </span>
+      {comments && (
+        <span>
+          <img src={commentImg} alt="" />
+          {comments}
+        </span>
+      )}
     </StatsWrapper>
   );
 };
