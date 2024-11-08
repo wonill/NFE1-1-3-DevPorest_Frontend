@@ -32,16 +32,17 @@ const base64ToFile = async (base64Data: string, fileName: string = "image.png"):
 const extractImagesFromContent = (
   content: string,
 ): {
-  base64Images: { element: HTMLImageElement; src: string }[];
+  base64Images: { src: string; index: number }[];
   otherImages: string[];
 } => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, "text/html");
   const images = Array.from(doc.querySelectorAll("img"));
 
+  console.log(images);
   const base64Images = images
-    .filter(img => img.src.startsWith("data:image"))
-    .map(img => ({ element: img, src: img.src }));
+    .map((img, idx) => ({ src: img.src, index: idx + 1 }))
+    .filter(img => img.src.startsWith("data:image"));
 
   const otherImages = images.filter(img => !img.src.startsWith("data:image")).map(img => img.src);
 
@@ -96,7 +97,7 @@ const processEditorContent = async (
 
   // base64 이미지들을 File 객체로 변환
   const imageFiles = await Promise.all(
-    base64Images.map((img, index) => base64ToFile(img.src, `content-image-${index}.png`)),
+    base64Images.map(img => base64ToFile(img.src, `${img.index}.png`)),
   );
 
   // 다중 이미지 업로드
