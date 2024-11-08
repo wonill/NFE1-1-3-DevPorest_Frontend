@@ -27,26 +27,64 @@ const base64ToFile = async (base64Data: string, fileName: string = "image.png"):
 };
 
 /**
+ * URL로부터 이미지를 가져와 base64로 변환
+ */
+const urlToBase64 = async (url: string): Promise<string> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Failed to convert to base64"));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Error converting URL to base64:", error);
+    throw error;
+  }
+};
+
+/**
  * CKEditor 컨텐츠에서 이미지 URL 추출 및 base64 이미지 필터링
  */
-const extractImagesFromContent = (
+const extractImagesFromContent = async (
   content: string,
-): {
+): Promise<{
   base64Images: { src: string; index: number }[];
-  otherImages: string[];
-} => {
+}> => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, "text/html");
   const images = Array.from(doc.querySelectorAll("img"));
 
   console.log(images);
-  const base64Images = images
+  // 기존 base64 이미지 수집
+  const existingBase64Images = images
     .map((img, idx) => ({ src: img.src, index: idx + 1 }))
     .filter(img => img.src.startsWith("data:image"));
 
-  const otherImages = images.filter(img => !img.src.startsWith("data:image")).map(img => img.src);
+  // S3 URL 이미지들을 base64로 변환
+  const urlImages = images.filter(img => !img.src.startsWith("data:image"));
+  const convertedBase64Images = await Promise.all(
+    urlImages.map(async (img, idx) => {
+      const base64Data = await urlToBase64(img.src);
+      return {
+        src: base64Data,
+        index: existingBase64Images.length + idx + 1,
+      };
+    }),
+  );
 
-  return { base64Images, otherImages };
+  // 모든 base64 이미지를 합침
+  const allBase64Images = [...existingBase64Images, ...convertedBase64Images];
+
+  return { base64Images: allBase64Images };
 };
 
 /**
@@ -86,12 +124,12 @@ const processEditorContent = async (
   updatedContent: string;
   uploadedUrls: string[];
 }> => {
-  const { base64Images, otherImages } = extractImagesFromContent(content);
+  const { base64Images } = await extractImagesFromContent(content);
 
   if (base64Images.length === 0) {
     return {
       updatedContent: content,
-      uploadedUrls: otherImages,
+      uploadedUrls: [],
     };
   }
 
@@ -111,7 +149,7 @@ const processEditorContent = async (
 
   return {
     updatedContent,
-    uploadedUrls: [...uploadedUrls, ...otherImages],
+    uploadedUrls: uploadedUrls,
   };
 };
 
