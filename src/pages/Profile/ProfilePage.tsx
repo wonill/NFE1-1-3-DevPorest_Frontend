@@ -108,7 +108,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     console.log(activeTab);
@@ -120,7 +120,7 @@ const ProfilePage = () => {
     } else {
       fetchUserLikePortfolio();
     }
-  }, [activeTab]);
+  }, [activeTab, userId]);
 
   const loadMoreData = useCallback(async () => {
     if (isLoading || !pagination?.hasNextPage) return;
