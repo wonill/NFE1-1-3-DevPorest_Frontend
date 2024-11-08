@@ -142,14 +142,23 @@ const processEditorContent = async (
   const uploadedUrls = await uploadMultipleImages(imageFiles, portfolioId);
 
   // 컨텐츠 내 이미지 URL 교체
-  let updatedContent = content;
-  base64Images.forEach((img, index) => {
-    updatedContent = updatedContent.replace(img.src, uploadedUrls[index]);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, "text/html");
+  const images = Array.from(doc.querySelectorAll("img"));
+
+  // 모든 이미지를 uploadedUrls 순서대로 교체
+  images.forEach((img, index) => {
+    if (uploadedUrls[index]) {
+      img.src = uploadedUrls[index];
+    }
   });
+
+  // 수정된 HTML을 문자열로 변환
+  const updatedContent = doc.body.innerHTML;
 
   return {
     updatedContent,
-    uploadedUrls: uploadedUrls,
+    uploadedUrls,
   };
 };
 
