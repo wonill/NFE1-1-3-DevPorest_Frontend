@@ -89,6 +89,7 @@ const DetailPage: React.FC = () => {
       });
       setPortfolioUserId(jsonData.data?.userInfo.userID);
       setIsLiked(jsonData.data?.like);
+      setLikeCount(jsonData.data?.likeCount);
 
       if (!jsonData.success) {
         throw new Error(`Server responded with ${jsonData.message}`);
