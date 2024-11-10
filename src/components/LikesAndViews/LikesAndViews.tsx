@@ -18,7 +18,7 @@ const LikesAndViews: React.FC<LikesAndViewsProps> = ({ views, likes, comments })
       <span>
         <img src={likeImg} alt="좋아요" /> {likes}
       </span>
-      {comments && (
+      {comments !== undefined && (
         <span>
           <img src={commentImg} alt="" />
           {comments}
