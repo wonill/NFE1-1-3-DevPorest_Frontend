@@ -1,4 +1,4 @@
-![_2024_11_11_11_17_20_760-ezgif com-speed](https://github.com/user-attachments/assets/2d3a4d72-7f3e-46c3-a6de-810dd7ac6e6a)# DevPorest - 개발자들을 위한 포트폴리오의 모든 것
+# DevPorest - 개발자들을 위한 포트폴리오의 모든 것
 
 ![Group 74](https://github.com/user-attachments/assets/31e5e681-fd3f-4304-90eb-4550a4e5de0a)
 
