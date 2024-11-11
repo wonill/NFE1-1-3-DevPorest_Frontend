@@ -92,6 +92,7 @@ DevPorest는 개발자들이 자신의 포트폴리오를 쉽게 관리하고 �
 #### 3-1. 상단에는 가장 좋아요를 많이 받은 포트폴리오가 노출됩니다.
 
 ![image](https://github.com/user-attachments/assets/6af531e8-1624-4d1f-92c2-9e3c4d6bc8fa)
+
 - 클릭시 디테일 페이지로 이동합니다.
 
 #### 3-2. 직무별, 기술스택별로 필터링이 가능합니다.
@@ -175,11 +176,11 @@ DevPorest는 개발자들이 자신의 포트폴리오를 쉽게 관리하고 �
 
 ### 기여
 
-1. 채승규(https://github.com/csk6314)
-2. 신아진(https://github.com/dalsu0222)
-3. 고종원(https://github.com/Eugeeun)
-4. 김주영
-5. 남원일
+1. 채승규(https://github.com/csk6314) - 백엔드, 프론트엔드
+2. 신아진(https://github.com/dalsu0222) - 백엔드, 프론트엔드
+3. 고종원(https://github.com/Eugeeun) - 프론트엔드
+4. 김주영(https://github.com/djm06294) - 프론트엔드
+5. 남원일(https://github.com/wonill) - 프론트엔드
 
 ## 참고 사이트
 
