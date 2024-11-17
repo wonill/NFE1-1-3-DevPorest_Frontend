@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { Editor as CKEditorType } from "@ckeditor/ckeditor5-core";
 
 import "./MyCKEditor.css";
 import "ckeditor5/ckeditor5.css";
@@ -28,7 +29,6 @@ import {
   LinkImage,
   List,
   ListProperties,
-  Markdown,
   MediaEmbed,
   PasteFromOffice,
   Table,
@@ -43,7 +43,13 @@ import {
 
 import translations from "ckeditor5/translations/ko.js";
 
-const MyCKEditor = () => {
+interface MyCKEditorProps {
+  onChange: (content: string) => void;
+  onReady: (editor: CKEditorType) => void;
+  initialContent?: string;
+}
+
+const MyCKEditor = ({ onChange, onReady, initialContent }: MyCKEditorProps) => {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -103,7 +109,6 @@ const MyCKEditor = () => {
       LinkImage,
       List,
       ListProperties,
-      Markdown,
       MediaEmbed,
       PasteFromOffice,
       Table,
@@ -173,7 +178,8 @@ const MyCKEditor = () => {
       ],
     },
     initialData:
-      "<h2>포트폴리오 생성 공간에 오신 것을 환영합니다🎉</h2>\n<p>나만의 포트폴리오를 만들어보세요</p>  ",
+      initialContent ||
+      "<h2>포트폴리오 생성 공간에 오신 것을 환영합니다🎉</h2>\n<p>나만의 포트폴리오를 만들어보세요</p>",
     link: {
       addTargetToExternalLinks: true,
       defaultProtocol: "https://",
@@ -210,14 +216,27 @@ const MyCKEditor = () => {
   return (
     <div>
       <div className="main-container">
-        <div
-          className="editor-container editor-container_classic-editor"
-          ref={editorContainerRef}
-        >
+        <div className="editor-container editor-container_classic-editor" ref={editorContainerRef}>
           <div className="editor-container__editor">
             <div ref={editorRef}>
               {isLayoutReady && (
-                <CKEditor editor={ClassicEditor} config={editorConfig} />
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfig}
+                  onChange={(_, editor) => {
+                    const data = editor.getData(); // 포트폴리오 작성내용(html)
+                    if (onChange) {
+                      onChange(data);
+                    }
+                    // console.log(data);
+                  }}
+                  onReady={editor => {
+                    onReady(editor);
+                    if (initialContent) {
+                      editor.setData(initialContent);
+                    }
+                  }}
+                />
               )}
             </div>
           </div>

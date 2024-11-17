@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
+import { SwiperSlide } from "swiper/react";
 
 export const Main = styled.main`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
   padding: 0 ${({ theme }) => theme.PADDINGS.X_LARGE};
 
   > h2 {
@@ -12,6 +13,7 @@ export const Main = styled.main`
     font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICKER};
     color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
     padding-top: ${({ theme }) => theme.PADDINGS.X_LARGE};
+    text-align: center;
   }
 
   > p {
@@ -19,6 +21,7 @@ export const Main = styled.main`
     font-weight: ${({ theme }) => theme.FONT_WEIGHT.THIN};
     color: ${({ theme }) => theme.COLORS.MAIN_GREEN2};
     padding-top: ${({ theme }) => theme.PADDINGS.X_SMALL};
+    text-align: center;
   }
 `;
 
@@ -31,7 +34,7 @@ export const SearchSection = styled.section`
   padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.HALF_CIRCLE};
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-  margin: ${({ theme }) => theme.PADDINGS.X_LARGE};
+  margin: ${({ theme }) => theme.PADDINGS.X_LARGE} auto;
   color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
 
   &:focus-within {
@@ -76,14 +79,32 @@ export const SearchIconContainer = styled.div`
 export const FilterSection = styled.section`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.PADDINGS.SMALL};
   width: 100%;
+
+  > div {
+    margin: 0;
+  }
 `;
 
 export const Category = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
+`;
+
+export const TechStackWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  padding-bottom: ${({ theme }) => theme.PADDINGS.X_SMALL};
+
+  > div {
+    width: 100%;
+  }
+`;
+
+export const StyledSwiperSlide = styled(SwiperSlide)`
+  width: fit-content;
+  display: flex;
 `;
 
 export const Sorting = styled.div`
@@ -119,7 +140,23 @@ export const PortfolioSection = styled.section`
   }
 `;
 
-export const Indicator = styled.div`
-  height: 20px;
-  margin: 20px 0;
+export const PaginationWrapper = styled.div`
+  display: flex;
+  margin: auto;
+  gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
+  padding: ${({ theme }) => theme.PADDINGS.X_SMALL};
+
+  > button {
+    outline: none;
+    background-color: translations;
+    font-size: ${({ theme }) => theme.FONT_SIZE.CONTENT};
+    font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICK};
+    border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+    border: 1px solid ${({ theme }) => theme.COLORS.MAIN_BG};
+    cursor: pointer;
+
+    &:hover {
+      border-color: ${({ theme }) => theme.COLORS.MAIN_GREEN};
+    }
+  }
 `;

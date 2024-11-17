@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
-import { Swiper } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
-import 'swiper/swiper-bundle.css';
-import TechStack, { TechStackType } from '../TechStack/TechStack';
+import React from "react";
+import { Swiper } from "swiper/react";
+import { FreeMode } from "swiper/modules";
+import "swiper/swiper-bundle.css";
+import TechStack from "../TechStack/TechStack";
 import {
   DevProfileCard,
   Image,
@@ -12,14 +12,15 @@ import {
   Intro,
   TechStacks,
   StyledSwiperSlide,
-} from './DevProfile.styles';
+} from "./DevProfile.styles";
+import { ITechStackType } from "../../types/api-types/TechStackType";
 
 export interface DevProfileType {
   profileImage: string;
   name: string;
   category: string;
   intro: string;
-  techStacks: Array<TechStackType>;
+  techStacks: ITechStackType[];
   onClick: () => void;
 }
 
@@ -34,21 +35,16 @@ const DevProfile: React.FC<DevProfileType> = ({
   return (
     <DevProfileCard onClick={onClick}>
       <Image>
-        <img src={profileImage} alt='' />
+        <img src={profileImage} alt="" />
       </Image>
       <Name>{name}</Name>
       <Category>{category}</Category>
       <Intro>{intro}</Intro>
       <TechStacks>
-        <Swiper slidesPerView='auto' spaceBetween={10} freeMode={true} modules={[FreeMode]}>
-          {techStacks.map((techStack: TechStackType, i) => (
+        <Swiper slidesPerView="auto" spaceBetween={10} freeMode={true} modules={[FreeMode]}>
+          {techStacks.map((techStack: ITechStackType, i) => (
             <StyledSwiperSlide key={i}>
-              <TechStack
-                name={techStack.name}
-                backgroundColor={techStack.backgroundColor}
-                color={techStack.color}
-                onClick={techStack.onClick}
-              />
+              <TechStack content={{ ...techStack }} onClick={() => {}} />
             </StyledSwiperSlide>
           ))}
         </Swiper>

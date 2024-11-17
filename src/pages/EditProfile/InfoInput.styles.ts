@@ -17,15 +17,15 @@ export const IconWrapper = styled.div`
   }
 `;
 
-export const Input = styled.input`
+export const Input = styled.input<{ error?: boolean }>`
   width: 100%;
   padding: ${({ theme }) => `calc(${theme.PADDINGS.X_SMALL} / 2)`};
   border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
-  border: 1px solid ${({ theme }) => theme.COLORS.MAIN_GRAY};
+  border: 1px solid ${({ error, theme }) => (error ? theme.COLORS.RED : theme.COLORS.MAIN_GRAY)};
   color: ${({ theme }) => theme.COLORS.MAIN_BLACK};
   font-size: ${({ theme }) => theme.FONT_SIZE.CONTENT};
 
   &:focus {
-    outline: 1px solid ${({ theme }) => theme.COLORS.MAIN_GREEN};
+    outline: 1px solid ${({ error, theme }) => (error ? theme.COLORS.RED : theme.COLORS.MAIN_GREEN)};
   }
 `;

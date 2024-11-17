@@ -11,14 +11,14 @@ import {
 } from "./PortfolioCard.style";
 
 interface PortfolioCardProps {
-  portfolio_id: number;
+  portfolio_id: string;
   title: string;
   thumbnailImg: string;
   profileImg: string;
   userName: string;
   views: number;
   likes: number;
-  onClick: (portfolio_id: number) => void;
+  onClick: (portfolio_id: string) => void;
 }
 
 import noImage from "../../assets/no_image.svg";

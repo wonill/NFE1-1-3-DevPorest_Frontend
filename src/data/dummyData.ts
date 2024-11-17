@@ -1,5 +1,5 @@
-import { TechStackType } from "../components/TechStack/TechStack";
-import { Job } from "../types/job";
+import { ITechStackType } from "../types/api-types/TechStackType";
+import { JobGroupType } from "../types/api-types/JobGroup";
 
 export const dummyTags = [
   {
@@ -7,214 +7,216 @@ export const dummyTags = [
   },
 ];
 
-export const dummyTechStacks: TechStackType[] = [
+export const dummyTechStacks: ITechStackType[] = [
   {
-    name: "React",
-    backgroundColor: "#61dafb",
-    color: "#282c34",
-    onClick: () => console.log("TypeScript clicked"),
+    skill: "React",
+    bgColor: "#61dafb",
+    textColor: "#282c34",
+    jobCode: "frontend", // 임시
   },
   {
-    name: "TypeScript",
-    backgroundColor: "#007acc",
-    color: "#ffffff",
-    onClick: () => console.log("TypeScript clicked"),
-  },
-];
-
-export const techStacks: TechStackType[] = [
-  {
-    name: "React",
-    backgroundColor: "#61dafb",
-    color: "#282c34",
-    onClick: () => console.log("React clicked"),
-  },
-  {
-    name: "Node.js",
-    backgroundColor: "#8CC84B",
-    color: "#ffffff",
-    onClick: () => console.log("Node.js clicked"),
-  },
-  {
-    name: "Angular",
-    backgroundColor: "#dd0031",
-    color: "#ffffff",
-    onClick: () => console.log("Angular clicked"),
-  },
-  {
-    name: "Vue.js",
-    backgroundColor: "#42b883",
-    color: "#ffffff",
-    onClick: () => console.log("Vue.js clicked"),
-  },
-  {
-    name: "Django",
-    backgroundColor: "#092e20",
-    color: "#ffffff",
-    onClick: () => console.log("Django clicked"),
-  },
-  {
-    name: "Flask",
-    backgroundColor: "#000000",
-    color: "#ffffff",
-    onClick: () => console.log("Flask clicked"),
-  },
-  {
-    name: "Spring",
-    backgroundColor: "#6db33f",
-    color: "#ffffff",
-    onClick: () => console.log("Spring clicked"),
-  },
-  {
-    name: "Ruby on Rails",
-    backgroundColor: "#e45d27",
-    color: "#ffffff",
-    onClick: () => console.log("Ruby on Rails clicked"),
-  },
-  {
-    name: "Laravel",
-    backgroundColor: "#ff2d55",
-    color: "#ffffff",
-    onClick: () => console.log("Laravel clicked"),
-  },
-  {
-    name: "ASP.NET",
-    backgroundColor: "#512BD4",
-    color: "#ffffff",
-    onClick: () => console.log("ASP.NET clicked"),
-  },
-  {
-    name: "Firebase",
-    backgroundColor: "#ffca28",
-    color: "#ffffff",
-    onClick: () => console.log("Firebase clicked"),
-  },
-  {
-    name: "Docker",
-    backgroundColor: "#2496ed",
-    color: "#ffffff",
-    onClick: () => console.log("Docker clicked"),
-  },
-  {
-    name: "Kubernetes",
-    backgroundColor: "#326ce5",
-    color: "#ffffff",
-    onClick: () => console.log("Kubernetes clicked"),
-  },
-  {
-    name: "AWS",
-    backgroundColor: "#ff9900",
-    color: "#ffffff",
-    onClick: () => console.log("AWS clicked"),
-  },
-  {
-    name: "Azure",
-    backgroundColor: "#0078d4",
-    color: "#ffffff",
-    onClick: () => console.log("Azure clicked"),
-  },
-  {
-    name: "Google Cloud",
-    backgroundColor: "#4285f4",
-    color: "#ffffff",
-    onClick: () => console.log("Google Cloud clicked"),
-  },
-  {
-    name: "PostgreSQL",
-    backgroundColor: "#336791",
-    color: "#ffffff",
-    onClick: () => console.log("PostgreSQL clicked"),
-  },
-  {
-    name: "MongoDB",
-    backgroundColor: "#47A248",
-    color: "#ffffff",
-    onClick: () => console.log("MongoDB clicked"),
-  },
-  {
-    name: "MySQL",
-    backgroundColor: "#00758f",
-    color: "#ffffff",
-    onClick: () => console.log("MySQL clicked"),
-  },
-  {
-    name: "Redis",
-    backgroundColor: "#d50000",
-    color: "#ffffff",
-    onClick: () => console.log("Redis clicked"),
-  },
-  {
-    name: "Apache Kafka",
-    backgroundColor: "#231f20",
-    color: "#ffffff",
-    onClick: () => console.log("Apache Kafka clicked"),
-  },
-  {
-    name: "GraphQL",
-    backgroundColor: "#e10098",
-    color: "#ffffff",
-    onClick: () => console.log("GraphQL clicked"),
-  },
-  {
-    name: "TypeScript",
-    backgroundColor: "#007ACC",
-    color: "#ffffff",
-    onClick: () => console.log("TypeScript clicked"),
-  },
-  {
-    name: "HTML",
-    backgroundColor: "#e34f26",
-    color: "#ffffff",
-    onClick: () => console.log("HTML clicked"),
-  },
-  {
-    name: "CSS",
-    backgroundColor: "#1572B6",
-    color: "#ffffff",
-    onClick: () => console.log("CSS clicked"),
-  },
-  {
-    name: "Sass",
-    backgroundColor: "#cc6699",
-    color: "#ffffff",
-    onClick: () => console.log("Sass clicked"),
-  },
-  {
-    name: "Bootstrap",
-    backgroundColor: "#563d7c",
-    color: "#ffffff",
-    onClick: () => console.log("Bootstrap clicked"),
-  },
-  {
-    name: "Tailwind CSS",
-    backgroundColor: "#06b6d4",
-    color: "#ffffff",
-    onClick: () => console.log("Tailwind CSS clicked"),
-  },
-  {
-    name: "jQuery",
-    backgroundColor: "#0868ac",
-    color: "#ffffff",
-    onClick: () => console.log("jQuery clicked"),
+    skill: "TypeScript",
+    bgColor: "#007acc",
+    textColor: "#ffffff",
+    jobCode: "frontend", // 임시
   },
 ];
 
-export const jobs: Job[] = [
-  { jobCode: 1, name: "Software Engineer" },
-  { jobCode: 2, name: "Data Scientist" },
-  { jobCode: 3, name: "Product Manager" },
-  { jobCode: 4, name: "UX/UI Designer" },
-  { jobCode: 5, name: "QA Engineer" },
-  { jobCode: 6, name: "DevOps Engineer" },
-  { jobCode: 7, name: "System Administrator" },
-  { jobCode: 8, name: "Database Administrator" },
-  { jobCode: 9, name: "Network Engineer" },
-  { jobCode: 10, name: "Business Analyst" },
-  { jobCode: 11, name: "Sales Representative" },
-  { jobCode: 12, name: "Content Writer" },
-  { jobCode: 13, name: "Marketing Specialist" },
-  { jobCode: 14, name: "SEO Specialist" },
-  { jobCode: 15, name: "Technical Support Specialist" },
+export const techStacks: ITechStackType[] = [
+  {
+    skill: "React",
+    bgColor: "#61dafb",
+    textColor: "#282c34",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "Node.js",
+    bgColor: "#8CC84B",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Angular",
+    bgColor: "#dd0031",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "Vue.js",
+    bgColor: "#42b883",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "Django",
+    bgColor: "#092e20",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Flask",
+    bgColor: "#000000",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Spring",
+    bgColor: "#6db33f",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Ruby on Rails",
+    bgColor: "#e45d27",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Laravel",
+    bgColor: "#ff2d55",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "ASP.NET",
+    bgColor: "#512BD4",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Firebase",
+    bgColor: "#ffca28",
+    textColor: "#ffffff",
+    jobCode: "Backend Developer",
+  },
+  {
+    skill: "Docker",
+    bgColor: "#2496ed",
+    textColor: "#ffffff",
+    jobCode: "devops",
+  },
+  {
+    skill: "Kubernetes",
+    bgColor: "#326ce5",
+    textColor: "#ffffff",
+    jobCode: "devops",
+  },
+  {
+    skill: "AWS",
+    bgColor: "#ff9900",
+    textColor: "#ffffff",
+    jobCode: "devops",
+  },
+  {
+    skill: "Azure",
+    bgColor: "#0078d4",
+    textColor: "#ffffff",
+    jobCode: "devops",
+  },
+  {
+    skill: "Google Cloud",
+    bgColor: "#4285f4",
+    textColor: "#ffffff",
+    jobCode: "devops",
+  },
+  {
+    skill: "PostgreSQL",
+    bgColor: "#336791",
+    textColor: "#ffffff",
+    jobCode: "database",
+  },
+  {
+    skill: "MongoDB",
+    bgColor: "#47A248",
+    textColor: "#ffffff",
+    jobCode: "database",
+  },
+  {
+    skill: "MySQL",
+    bgColor: "#00758f",
+    textColor: "#ffffff",
+    jobCode: "database",
+  },
+  {
+    skill: "Redis",
+    bgColor: "#d50000",
+    textColor: "#ffffff",
+    jobCode: "database",
+  },
+  {
+    skill: "Apache Kafka",
+    bgColor: "#231f20",
+    textColor: "#ffffff",
+    jobCode: "message-broker",
+  },
+  {
+    skill: "GraphQL",
+    bgColor: "#e10098",
+    textColor: "#ffffff",
+    jobCode: "api",
+  },
+  {
+    skill: "TypeScript",
+    bgColor: "#007ACC",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "HTML",
+    bgColor: "#e34f26",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "CSS",
+    bgColor: "#1572B6",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "Sass",
+    bgColor: "#cc6699",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "Bootstrap",
+    bgColor: "#563d7c",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "Tailwind CSS",
+    bgColor: "#06b6d4",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+  {
+    skill: "jQuery",
+    bgColor: "#0868ac",
+    textColor: "#ffffff",
+    jobCode: "Frontend Developer",
+  },
+];
+
+export const jobGroups: JobGroupType[] = [
+  { _id: "job-1", job: "Frontend Developer" },
+  { _id: "job-2", job: "Backend Developer" },
+  { _id: "job-3", job: "Software Engineer" },
+  { _id: "job-4", job: "Data Scientist" },
+  { _id: "job-5", job: "Product Manager" },
+  { _id: "job-6", job: "UX/UI Designer" },
+  { _id: "job-7", job: "QA Engineer" },
+  { _id: "job-8", job: "DevOps Engineer" },
+  { _id: "job-9", job: "System Administrator" },
+  { _id: "job-10", job: "Database Administrator" },
+  { _id: "job-11", job: "Network Engineer" },
+  { _id: "job-12", job: "Business Analyst" },
+  { _id: "job-13", job: "Sales Representative" },
+  { _id: "job-14", job: "Content Writer" },
+  { _id: "job-15", job: "Marketing Specialist" },
+  { _id: "job-16", job: "SEO Specialist" },
+  { _id: "job-17", job: "Technical Support Specialist" },
 ];
 
 export const dummyTags2 = [

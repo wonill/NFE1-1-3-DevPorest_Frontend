@@ -1,19 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TechStackType } from "../TechStack/TechStack";
-import { Job } from "../../types/job";
 import { DropdownContainer, Input, Ul, Li, InputWrapper } from "./Dropdown.styles";
-
-/**
- * todo
- * - 전역 상태 관리로 데이터 관리
- */
+import { ITechStackType } from "../../types/api-types/TechStackType";
+import { JobGroupType } from "../../types/api-types/JobGroup";
 
 export interface DropdownType {
   isOpen: boolean;
-  items: TechStackType[] | Job[];
+  items: ITechStackType[] | JobGroupType[];
   position: { x: number; y: number };
   placeholder: string;
-  onSelect: (item: TechStackType | Job) => void;
+  onSelect: (item: ITechStackType | JobGroupType) => void;
 }
 
 const Dropdown: React.FC<DropdownType> = ({ isOpen, items, position, placeholder, onSelect }) => {
@@ -24,9 +19,14 @@ const Dropdown: React.FC<DropdownType> = ({ isOpen, items, position, placeholder
     if (isOpen && inputRef.current) inputRef.current.focus();
   }, [isOpen]);
 
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(inputValue.toLowerCase())
-  );
+  const filteredItems = items.filter(item => {
+    if ("skill" in item) {
+      return item.skill.toLowerCase().includes(inputValue.toLowerCase());
+    }
+    if ("job" in item) {
+      return item.job.toLowerCase().includes(inputValue.toLowerCase());
+    }
+  });
 
   return (
     <DropdownContainer position={position}>
@@ -41,8 +41,8 @@ const Dropdown: React.FC<DropdownType> = ({ isOpen, items, position, placeholder
       </InputWrapper>
       <Ul>
         {filteredItems.map(item => (
-          <Li key={item.name} onClick={() => onSelect(item)}>
-            {item.name}
+          <Li key={"skill" in item ? item.skill : item.job} onClick={() => onSelect(item)}>
+            {"skill" in item ? item.skill : item.job}
           </Li>
         ))}
       </Ul>

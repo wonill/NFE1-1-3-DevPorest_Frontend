@@ -36,6 +36,7 @@ export const UserImage = styled.div`
     height: 100%;
     object-fit: cover;
     border-radius: inherit;
+    cursor: pointer;
   }
 `;
 
@@ -60,25 +61,14 @@ export const Title = styled.div`
 export const StatsAndTags = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 
-  > div {
+  & > div:first-of-type {
+    flex: 1;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: ${({ theme }) => theme.PADDINGS.X_SMALL};
-  }
-`;
-
-export const CommentImage = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICKER};
-  color: #7c8484;
-  margin-left: 4px;
-
-  img {
-    margin-right: 4px;
   }
 `;
 
@@ -113,6 +103,11 @@ export const ContentSection = styled.section`
     max-width: 100%;
     border: 1px solid ${({ theme }) => theme.COLORS.LIGHTGREEN_GRAY};
     border-radius: ${({ theme }) => theme.BORDER_RADIUS.DEFAULT};
+    object-fit: contain;
+  }
+
+  .ck-content {
+    max-height: fit-content;
   }
 `;
 

@@ -7,6 +7,7 @@ export const StatsWrapper = styled.div`
   font-weight: ${({ theme }) => theme.FONT_WEIGHT.THICKER};
   font-size: ${({ theme }) => theme.FONT_SIZE.DESCRIPTION};
   color: #7c8484;
+  padding-top: 0.75rem;
 
   > span {
     gap: 2px;

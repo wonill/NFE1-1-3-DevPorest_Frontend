@@ -1,19 +1,23 @@
 import { useRef, useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import { DropBtn } from "./Dropdown.styles";
-import { TechStackType } from "../../data/profilePageData";
-import { Job } from "../../types/job";
+import { ITechStackType } from "../../types/api-types/TechStackType";
+import { JobGroupType } from "../../types/api-types/JobGroup";
 
 interface DropDownWithBtnProps {
   name?: string;
-  items: TechStackType[] | Job[];
+  items: ITechStackType[] | JobGroupType[];
   placeholder: string;
+  onChange?: (selected: any) => void;
 }
+
+interface DropdownClickEvent extends React.MouseEvent<HTMLButtonElement> {}
 
 const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
   name,
   items,
   placeholder,
+  onChange,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [DropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
@@ -45,13 +49,21 @@ const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
     };
   }, [isDropdownOpen]);
 
-  const handleDropdownClick = () => {
+  const handleDropdownClick = (e: DropdownClickEvent) => {
+    e.preventDefault();
     if (DropdownBtnRef.current) {
       const rect = DropdownBtnRef.current.getBoundingClientRect();
       setDropdownPosition({ x: rect.left, y: rect.bottom });
     }
     setIsDropdownOpen((prev) => !prev);
   };
+
+  const handleItemSelect = (item: ITechStackType | JobGroupType) => {
+    if (onChange) {
+      onChange(item);
+    }
+  };
+
   return (
     <div>
       <DropBtn ref={DropdownBtnRef} onClick={handleDropdownClick}>
@@ -66,7 +78,7 @@ const DropDownWithBtn: React.FC<DropDownWithBtnProps> = ({
             position={{ x: DropdownPosition.x, y: DropdownPosition.y + 10 }}
             placeholder={placeholder}
             onSelect={(item) => {
-              console.log(item.name);
+              handleItemSelect(item);
               setIsDropdownOpen(false);
             }}
           />
